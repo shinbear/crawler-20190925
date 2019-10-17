@@ -44,7 +44,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-public class Main46 {
+public class Main48 {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
@@ -200,7 +200,7 @@ public class Main46 {
 			Sheet sheet;
 			Workbook book;
 			// book = Workbook.getWorkbook(new File(filename_sheet.getText()));
-			book = Workbook.getWorkbook(new File("e://postdoc_list.xls"));
+			book = Workbook.getWorkbook(new File("postdoc_list.xls"));
 			sheet = book.getSheet(0);
 			rawID_Total = sheet.getRows();
 
@@ -209,7 +209,7 @@ public class Main46 {
 			URL = "http://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=" + libraryStr;
 
 			// Initialize chrome drive in Seleuium
-			System.getProperties().setProperty("webdriver.chrome.driver", "e://chromedriver.exe");
+			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
 			ChromeOptions options = new ChromeOptions();
 			// options.addArguments("--lang=zh-cn");
@@ -471,8 +471,10 @@ public class Main46 {
 					isFirstPage = false;
 				}
 
+				Thread.sleep(4000);
 				// Get the element tr in this iframe
 				List<WebElement> tb = webDriver.findElements(By.xpath("//*[@id=\"ctl00\"]/table/tbody/tr[2]"));
+
 
 				
 				//Get row loop
@@ -504,7 +506,6 @@ public class Main46 {
 						}
 					}
 					
-					String ttt=t.getText();
 					List<WebElement> tbod = t.findElements(By.tagName("tbody"));
 					for (WebElement tr : tbod) {
 						row++;
@@ -518,6 +519,8 @@ public class Main46 {
 
 						for (WebElement tds : td) {
 							try {
+								// Close the detail page and return the list
+								// page
 								tabs = new ArrayList<String>(webDriver.getWindowHandles());
 								if (tabs.size() > 1) {
 									for (int a = tabs.size(); a > 1; a--) {
@@ -527,8 +530,10 @@ public class Main46 {
 									}
 									webDriver.switchTo().window(tabs.get(0));
 								}
-								tabs = null;
+								tabs.clear();
 								
+								// Get iframe
+								// iframe = webDriver.findElement(By.id("iframeResult"));				
 								now_handle = webDriver.getWindowHandle();
 								all_handles = webDriver.getWindowHandles();
 								// identify if the windows is
@@ -640,7 +645,7 @@ public class Main46 {
 											try {
 												// enter author info page
 												tAu_link.click();
-												Thread.sleep(5000);
+												Thread.sleep(4000);
 												clickCount++;
 												if (clickCount == 30) {
 													Thread.sleep(30000);
@@ -835,6 +840,7 @@ public class Main46 {
 								for (i = 0; i < 40; i++) {
 									Result[i] = "";
 								}
+								int aaa=0;
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
