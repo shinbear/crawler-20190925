@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
@@ -166,15 +168,18 @@ public class Main50 {
 			sheet = book.getSheet(0);
 			rawID_Total = sheet.getRows();
 
-			URL = "http://apps.webofknowledge.com/WOS_AdvancedSearch_input.do?SID=8Cgb8H2SkIBebJk6VjV&product=WOS&search_mode=AdvancedSearch";
+			URL = "http://apps.webofknowledge.com/UA_AdvancedSearch_input.do?SID=6B3gXV4OjoR4XD13K2C&product=UA&search_mode=AdvancedSearch";
 			
 
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "e:\\chromedriver.exe");
+			//modify the download path	
+			DesiredCapabilities caps = setDownloadsPath();
 
 			ChromeOptions options = new ChromeOptions();
 			// options.addArguments("--lang=zh-cn");
-			WebDriver webDriver = new ChromeDriver(options);
+			//WebDriver webDriver = new ChromeDriver(options);
+			WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
 			webDriver.get(URL);
@@ -290,20 +295,23 @@ public class Main50 {
 			
 			author = "AU= Zhang JX and AD= Beijing Normal Univ";		
 			author_input.sendKeys(author);
+			
+			try {
+				Thread.sleep(3000);
+				// Input the language
+				Select select_language = new Select(webDriver.findElement(By.xpath("//*[@id='value(input2)']")));
+				// deselect all option
+				select_language.deselectAll();
+				select_language.selectByIndex(1);
 
-			// Input the language
-			Select select_language = new Select(webDriver.findElement(By.xpath("//*[@id='value(input2)']")));
-			//deselect all option
-			select_language.deselectAll();
-			select_language.selectByIndex(1);
-			
-			// Input the article
-			Select select_article = new Select(webDriver.findElement(By.xpath("//*[@id='value(input3)']")));
-			//deselect all option
-			select_article.deselectAll();
-			select_article.selectByIndex(1);
-			
-					
+				// Input the article
+				Select select_article = new Select(webDriver.findElement(By.xpath("//*[@id='value(input3)']")));
+				// deselect all option
+				select_article.deselectAll();
+				select_article.selectByIndex(1);
+			} catch (Exception e1) {
+			}
+
 			// Click "search" button
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='search-button']").click();
 			
@@ -328,6 +336,7 @@ public class Main50 {
 				
 				JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 				String searchlink = t.findElements(By.cssSelector("a[href]")).get(0).getAttribute("href");
+				Thread.sleep(3000);
 				executor.executeScript("window.open('" + searchlink + "')");	
 				break;
 			}						
@@ -338,10 +347,35 @@ public class Main50 {
 
 	public static void getAName(WebDriver webDriver) throws IOException {
 		try {
+			//Shift the second page
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			if (tabs.size() > 1) {
+				webDriver.switchTo().window(tabs.get(1));
+			}
+			tabs = null;
 
-			WebElement exportButton = webDriver.findElement(
-					By.xpath("//*[@id=\'exportTypeName\']"));
+			//Access the export button
+			// WebElement exportButton = webDriver.findElement(By.xpath("//*[@id='exportTypeName']"));
+			WebElement exportButton = webDriver.findElement(By.xpath("//*[@id='exportMoreOptions']"));
 			exportButton.click();
+			
+			//Access the export menu and choose all records
+			webDriver.findElement(By.xpath("//*[@id='saveToMenu']/li[3]/a")).click();
+			webDriver.findElement(By.xpath("//*[@id='numberOfRecordsRange']")).click();
+			webDriver.findElement(By.xpath("//*[@id='save_options_wrapper']")).click();
+			webDriver.findElement(By.xpath("//*[@id='saveOptions']/option[4]")).click();
+			
+			
+			//Click the export records
+			webDriver.findElement(By.xpath("//*[@id='exportButton']")).click();
+			
+			
+					
+					
+					
+
+			
 			
 			// Get the page number
 			int pages;
@@ -459,7 +493,7 @@ public class Main50 {
 				for (WebElement t : tb) {
 					// Close the detail page and return the list
 					// page
-					ArrayList<String> tabs;
+					// ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -1238,5 +1272,15 @@ public class Main50 {
 		} catch (Exception e) {
 		}
 	}
-
+	
+	public static DesiredCapabilities setDownloadsPath() {
+		String downloadsPath = "E:\\jobs";
+		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
+		chromePrefs.put("download.default_directory", downloadsPath);
+		ChromeOptions options = new ChromeOptions();
+		options.setExperimentalOption("prefs", chromePrefs);
+		DesiredCapabilities caps = new DesiredCapabilities();
+		caps.setCapability(ChromeOptions.CAPABILITY, options);
+		return caps;
+	}
 }
