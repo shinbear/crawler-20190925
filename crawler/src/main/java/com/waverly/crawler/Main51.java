@@ -593,8 +593,19 @@ public class Main51 {
 		// Switch to detail page
 		ArrayList<String> tabs;
 		tabs = new ArrayList<String>(webDriver.getWindowHandles());
-		// switches to new tab
-		webDriver.switchTo().window(tabs.get(2));
+		if (tabs.size() > 1) {
+			for (int a = tabs.size(); a > 1; a--) {
+				if (a > 3) {
+					webDriver.switchTo().window(tabs.get(a - 1));
+					try {
+						Thread.sleep(500);
+					} catch (Exception e2) {
+					}
+					webDriver.close();
+				}
+			}
+			webDriver.switchTo().window(tabs.get(2));
+		}
 		tabs = null;
 
 		try {
