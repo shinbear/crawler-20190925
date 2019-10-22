@@ -9,16 +9,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -39,13 +34,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
-
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -64,27 +56,6 @@ public class Main51 {
 	public static String radius;
 	public static String l;
 	public static String dc = "";
-	public static String[] auhorParam = { "Select", "No select" };
-	public static String[] organizationParam = { "Select", "No select" };
-	public static String[] yearParam = { "Select", "No select" };
-
-	public static JComboBox combo1 = new JComboBox(auhorParam);
-	public static JComboBox combo2 = new JComboBox(organizationParam);
-	public static JComboBox combo3 = new JComboBox(yearParam);
-	private static JCheckBox CJFQ = new JCheckBox("期刊", true);
-	private static JCheckBox CJRF = new JCheckBox("教育期刊", true);
-	private static JCheckBox CJFN = new JCheckBox("特色期刊", true);
-	private static JCheckBox CDFD = new JCheckBox("博士", true);
-	private static JCheckBox CPFD = new JCheckBox("国内会议", false);
-	private static JCheckBox IPFD = new JCheckBox("国际会议", false);
-	private static JCheckBox SCOD = new JCheckBox("专利", false);
-	private static JCheckBox CCJD = new JCheckBox("学术辑刊", true);
-	private static Boolean auhorParamState = true;
-	private static Boolean organizationParamState = true;
-	private static Boolean yearParamState = true;
-	private static String publishdate_from = "";
-	private static String publishdate_to = "";
-
 	public static JFrame frame = new JFrame();
 	public static PrintWriter writer;
 	private static ReadProgress dataProgress;
@@ -92,14 +63,8 @@ public class Main51 {
 	private static int page = 0;
 	private static int row = 0;
 	private static int sim_row = 0;
-	public static String projectNo = "";
-	public static String appCode = "";
-	public static String projectName = "";
-	public static String ProjectLeaderName = "";
-	public static String projectOrg = "";
-	public static String approvedAmount = "";
-	public static String projectStartEnd = "";
-	public static String projectYear = "";
+	public static String auadQuery = "";
+
 	public static String author = "";
 	public static String authorOrg = "";
 	public static int rawID = 1;
@@ -109,14 +74,6 @@ public class Main51 {
 	public static int searchCount = 0;
 
 	// List item String
-	public static String list_1 = "";
-	public static String list_2 = "";
-	public static String list_3 = "";
-	public static String list_4 = "";
-	public static String list_5 = "";
-	public static String list_6 = "";
-	public static String list_7 = "";
-	public static String list_8 = "";
 	public static boolean isFirstPage = true;
 	public static boolean isPatentPage = false;
 	public static boolean isFirstSearch = true;
@@ -144,24 +101,6 @@ public class Main51 {
 				input();
 			}
 
-			if (combo1.getSelectedItem().toString().equals("Select")) {
-				auhorParamState = true;
-			} else {
-				auhorParamState = false;
-			}
-
-			if (combo2.getSelectedItem().toString().equals("Select")) {
-				organizationParamState = true;
-			} else {
-				organizationParamState = false;
-			}
-
-			if (combo3.getSelectedItem().toString().equals("Select")) {
-				yearParamState = true;
-			} else {
-				yearParamState = false;
-			}
-
 			// Read the excel sheet
 			Sheet sheet;
 			Workbook book;
@@ -181,8 +120,21 @@ public class Main51 {
 			WebDriver webDriver = new ChromeDriver(options);
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
+			// lanunch the webdriver 
 			webDriver.get(URL);
+			
+			// Show the dialog to wait
+			int res = JOptionPane.showConfirmDialog(null, "Waiting for you access the advanced search page", " ",
+					JOptionPane.YES_NO_OPTION);
+			if (res == JOptionPane.YES_OPTION) {
+				System.out.println("Go to download");
+			} else {
+				writer.close();
+				webDriver.quit();
+				System.exit(0);
+				return;
+			}
+			
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
@@ -202,7 +154,7 @@ public class Main51 {
 			}
 
 			// write the excel the top item
-			String toptitle = "AU\tAD\t题目\t作者\t期刊名称\t出版年\t被引频次\t期刊影响力-现在\t期刊影响力-5年\t作者关键词\\t关键词plus";
+			String toptitle = "AU&AD\t题目\t作者\t期刊名称\t出版年\t被引频次\t期刊影响力-现在\t期刊影响力-5年\t作者关键词\\t关键词plus";
 			
 			writer.println(toptitle);
 
@@ -535,7 +487,6 @@ public class Main51 {
 						for (i = 0; i < 40; i++) {
 							Result[i] = "";
 						}
-						int aaa = 0;
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -637,9 +588,7 @@ public class Main51 {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(projectNo + "\t" + appCode + "\t" + projectName + "\t" + ProjectLeaderName + "\t" + projectOrg
-				+ "\t" + approvedAmount + "\t" + projectStartEnd + "\t" + projectYear + "\t" + Result[0] + "\t"
-				+ Result[1] + "\t" + Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t"
+		writer.println(auadQuery + Result[0] + "\t"+ Result[1] + "\t" + Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t"
 				+ Result[9] + "\t" + Result[10] + "\t" + Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t"
 				+ Result[14] + "\t" + Result[20] + "\t" + Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t"
 				+ Result[24] + "\t" + Result[25] + "\t" + Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t"
@@ -651,23 +600,8 @@ public class Main51 {
 		JPanel panel = new JPanel(new GridLayout(0, 1));
 		panel.add(new JLabel("File path to store results (without extention):"));
 		panel.add(filename);
-		panel.add(new JLabel("Author name:"));
-		panel.add(combo1);
-		panel.add(new JLabel("Organization:"));
-		panel.add(combo2);
-		panel.add(new JLabel("year?:"));
-		panel.add(combo3);
-		panel.add(new JLabel("Library select:"));
-		panel.add(CJFQ);
-		panel.add(CJRF);
-		panel.add(CJFN);
-		panel.add(CDFD);
-		panel.add(CPFD);
-		panel.add(IPFD);
-		panel.add(SCOD);
-		panel.add(CCJD);
 
-		int result = JOptionPane.showConfirmDialog(null, panel, "zhiwang - Search Criteria", 2, -1);
+		int result = JOptionPane.showConfirmDialog(null, panel, "web of science - Search Criteria", 2, -1);
 		if (result == 0) {
 			return;
 		}
@@ -767,27 +701,13 @@ public class Main51 {
 	}
 
 	public static void readExcel(Sheet sheet, int rawID) {
-		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8;
+		Cell cell1;
 		try {
 			cell1 = sheet.getCell(0, rawID);
-			cell2 = sheet.getCell(1, rawID);
-			cell3 = sheet.getCell(2, rawID);
-			cell4 = sheet.getCell(3, rawID);
-			cell5 = sheet.getCell(4, rawID);
-			cell6 = sheet.getCell(5, rawID);
-			cell7 = sheet.getCell(6, rawID);
-			cell8 = sheet.getCell(7, rawID);
 
 			if ("".equals(cell1.getContents()) != true) {
-				projectNo = cell1.getContents();
-				appCode = cell2.getContents();
-				projectName = cell3.getContents();
-				ProjectLeaderName = cell4.getContents();
-				projectOrg = cell5.getContents();
-				approvedAmount = cell6.getContents();
-				projectStartEnd = cell7.getContents();
-				projectYear = cell8.getContents();
-				System.out.println(rawID + " " + cell1.getContents() + " " + cell2.getContents());
+				auadQuery = cell1.getContents();
+				System.out.println(rawID + " " + cell1.getContents());
 			}
 		} catch (Exception e) {
 		}
