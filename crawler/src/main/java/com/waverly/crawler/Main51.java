@@ -165,7 +165,6 @@ public class Main51 {
 					dataProgress.setPanel(total, page, row, sim_row);
 					rawID = i;
 					readExcel(sheet, rawID);
-					exceptionCode = 0;
 					// Split the result file
 					if (i % 500 == 0) {
 						writer.close();
@@ -241,10 +240,8 @@ public class Main51 {
 
 			// Input the author
 			WebElement author_input = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
-			author_input.clear();
-			
-			author = "AU= Zhang JX and AD= Beijing Normal Univ";		
-			author_input.sendKeys(author);
+			author_input.clear();	
+			author_input.sendKeys(auadQuery);
 			
 			if (isFirstSearch) {
 				try {
@@ -488,8 +485,6 @@ public class Main51 {
 							Result[i] = "";
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 						// Write the data into excel
 						writrintExcel();
 
@@ -578,10 +573,7 @@ public class Main51 {
 				Result[8] = Result[8] + ";" + tkk2.getText();
 			}
 			Result[8] = Result[8].substring(1);
-
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return;
 		}
 	}
