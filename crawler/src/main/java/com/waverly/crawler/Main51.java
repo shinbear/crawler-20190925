@@ -14,12 +14,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -46,9 +49,13 @@ public class Main51 {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
-	public static JTextField searchstring = new JTextField();
-	public static JTextField location = new JTextField();
-	public static JTextField filename = new JTextField("E:/Jobs");
+	public static JTextField filename = new JTextField("E:/Jobs");	
+	public static JRadioButton jRadio1 = new JRadioButton("Run all records",true);
+	public static JRadioButton jRadio2 = new JRadioButton("Run the specific records from- to");
+	public static ButtonGroup jRadioGroup = new ButtonGroup();
+	public static JTextField recordFrom = new JTextField("");
+	public static JTextField recordTo = new JTextField("");
+	
 	public static String URL = "";
 	public static String q;
 	public static String dcs;
@@ -79,6 +86,8 @@ public class Main51 {
 	public static boolean isFirstSearch = true;
 	public static String Result[] = new String[40];
 
+	 
+
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -89,11 +98,8 @@ public class Main51 {
 	public static String easyflag = "";
 
 	public static void main(String[] args) throws IOException {
-		try {
+		try {		
 			input();
-			q = "q-" + searchstring.getText();
-			String q1 = q.replace(" ", "_");
-
 			if (filename.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Please enter the file path.");
 				filename.requestFocusInWindow();
@@ -154,12 +160,20 @@ public class Main51 {
 			}
 
 			// write the excel the top item
-			String toptitle = "AU&AD\t题目\t作者\t期刊名称\t出版年\t被引频次\t作者关键词\t关键词plus\t地址\t期刊影响力-现在\t期刊影响力-5年";
-			
+			String toptitle = "AU&AD\t题目\t作者\t期刊名称\t出版年\t被引频次\t作者关键词\t关键词plus\t地址\t期刊影响力-现在\t期刊影响力-5年";			
 			writer.println(toptitle);
+			
+			int startRow, endRow;
+			if (jRadio1.isSelected()) {
+				startRow = 1;
+				endRow = rawID_Total;
+			} else {
+				startRow = Integer.parseInt(recordFrom.getText());
+				endRow = Integer.parseInt(recordTo.getText())+1;
+			}
 
 			// Read the unedname from exccel sheet
-			for (int i = 1; i < rawID_Total; i++) {
+			for (int i = startRow; i < endRow; i++) {
 				try {
 					sim_row = i;
 					dataProgress.setPanel(total, page, row, sim_row);
@@ -570,12 +584,16 @@ public class Main51 {
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
-			// Get the authors			
+			// Get the authors
 			List<WebElement> authorItem = webDriver.findElements(By.xpath("//*[text()='作者:']/.."));
 			for (WebElement tAu : authorItem) {
-				if (!tAu.getText().substring(0,1).equals("["))
-				Result[1] = Result[1] + tAu.getText();
+				if (!tAu.getText().substring(0, 1).equals("["))
+					Result[1] = Result[1] + tAu.getText();
 			}
+			Pattern pattern = Pattern.compile("\\[.*?\\]");
+			Matcher matcher = pattern.matcher(Result[1]);
+			Result[1] = matcher.replaceAll("");
+			Result[1] = Result[1].substring(3);
 			
 			// get author keywords
 			try {
@@ -652,6 +670,17 @@ public class Main51 {
 		JPanel panel = new JPanel(new GridLayout(0, 1));
 		panel.add(new JLabel("File path to store results (without extention):"));
 		panel.add(filename);
+		
+		panel.add(new JLabel("Author name:"));
+		panel.add(jRadio1);
+		panel.add(jRadio2);
+		jRadioGroup.add(jRadio1);
+		jRadioGroup.add(jRadio2);
+		panel.add(new JLabel("From:"));
+		panel.add(recordFrom);
+		panel.add(new JLabel("To:"));
+		panel.add(recordTo);
+		
 
 		int result = JOptionPane.showConfirmDialog(null, panel, "web of science - Search Criteria", 2, -1);
 		if (result == 0) {
