@@ -443,7 +443,7 @@ public class Main51 {
 
 					try {
 						// Get the result row
-						List<WebElement> tc = tbb.findElements(By.cssSelector(".search-results-content > div"));
+						List<WebElement> tc = tbb.findElements(By.cssSelector(".search-results-content"));
 
 						// Title
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
@@ -456,18 +456,19 @@ public class Main51 {
 						}
 						Result[1] = Result[1].substring(1);
 						*/
-
-						// Journal
-						List<WebElement> journalItem = tc.get(2).findElements(By.cssSelector("value"));
-						Result[2] = journalItem.get(0).getText();
-
-						// Publish Year
-						List<WebElement> sourceTitle = tc.get(2).findElements(By.cssSelector("span"));
-						for (i = 0; i < sourceTitle.size(); i++) {
-							if (sourceTitle.get(i).getText().contains("出版年")) {
-								Result[3] = sourceTitle.get(i + 1).getText();
+						
+						for (i = 0; i < tc.size(); i++) {
+							List<WebElement> td = tc.get(i).findElements(By.cssSelector("div"));
+							for (j = 0; j < td.size(); j++) {
+								if (td.get(j).getText().contains("出版年")) {
+									String sourceStr = td.get(j).getText();
+									// Journal
+									Result[2] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
+											.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
+									// Publish Year
+									Result[3] = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
+								}
 							}
-
 						}
 
 						// Being cite
