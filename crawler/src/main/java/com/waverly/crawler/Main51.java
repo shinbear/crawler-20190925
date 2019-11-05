@@ -145,7 +145,7 @@ public class Main51 {
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
-			// Display data extract progress
+			// Show the progress
 			dataProgress = new ReadProgress();
 			dataProgress.setVisible(true);
 			Thread thread1 = new Thread(dataProgress);
@@ -194,6 +194,7 @@ public class Main51 {
 						writer.println(toptitle);
 					}
 
+					//Remain the search page
 					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -290,6 +291,9 @@ public class Main51 {
 			// Click "search" button
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='search-button']").click();
 			
+			// Waiting for the result for 10 seconds
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("/html/body/div[13]/form/table/tbody/tr")));
+
 			//Get the link
 			List<WebElement> tb = webDriver.findElements(By.xpath("/html/body/div[13]/form/table/tbody/tr"));
 			tb.remove(0);
@@ -391,8 +395,7 @@ public class Main51 {
 			total = pages;
 			dataProgress.setPanel(total, page, row, sim_row);
 
-			// Initialize the flag of page
-			isFirstPage = true;
+			//Loop in pages
 			for (int k = 0; k < pages; k++) {
 				page++;
 
@@ -411,6 +414,9 @@ public class Main51 {
 				}
 				tabs = null;
 				Thread.sleep(4000);
+				// Waiting for element for 10 seconds
+				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".search-results")));	
 				WebElement ta = webDriver.findElement(By.cssSelector(".search-results"));
 				List<WebElement> tb = ta.findElements(By.cssSelector(".search-results-item"));
 
@@ -479,9 +485,8 @@ public class Main51 {
 						String detailrecord = titleItem.getAttribute("href");
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						Thread.sleep(3500);
-						executor.executeScript("window.open('" + detailrecord + "')");
-
 						try {
+							executor.executeScript("window.open('" + detailrecord + "')");
 							getDetail(webDriver);
 						} catch (Exception e3) {
 							writrintExcel();
