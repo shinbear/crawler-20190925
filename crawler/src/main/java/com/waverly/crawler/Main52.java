@@ -94,8 +94,8 @@ public class Main52 {
 
 	public static String author = "";
 	public static String authorOrg = "";
-	public static int rawID = 1;
-	public static int rawID_Total = 0;
+	public static int rowid = 1;
+	public static int rowid_Total = 0;
 	public static int exceptionCode = 0;
 	public static int clickCount = 0;
 	public static int searchCount = 0;
@@ -133,7 +133,7 @@ public class Main52 {
 			// book = Workbook.getWorkbook(new File(filename_sheet.getText()));
 			book = Workbook.getWorkbook(new File("e://postdoc_list.xls"));
 			sheet = book.getSheet(0);
-			rawID_Total = sheet.getRows();
+			rowid_Total = sheet.getRows();
 
 			URL = "http://apps.webofknowledge.com/WOS_AdvancedSearch_input.do?SID=8DEJ9qRQSdW6p6ieIOa&product=WOS&search_mode=AdvancedSearch";
 			// Initialize chrome drive in Seleuium
@@ -190,7 +190,7 @@ public class Main52 {
 			int startRow, endRow;
 			if (jRadio1.isSelected()) {
 				startRow = 1;
-				endRow = rawID_Total;
+				endRow = rowid_Total;
 			} else {
 				startRow = Integer.parseInt(recordFrom.getText());
 				endRow = Integer.parseInt(recordTo.getText())+1;
@@ -201,8 +201,8 @@ public class Main52 {
 				try {
 					sim_row = i;
 					dataProgress.setPanel(total, page, row, sim_row);
-					rawID = i;
-					readExcel(sheet, rawID);
+					rowid = i;
+					readExcel(sheet, rowid);
 					// Split the result file
 					if (i % 500 == 0) {
 						writer.close();
@@ -237,6 +237,16 @@ public class Main52 {
 							source_Search = source_SearchArry[k];
 							source_SearchYearFrom = source_SearchYearFromArry[0];
 							source_SearchYearTo = source_SearchYearToArry[0];
+							tabs = new ArrayList<String>(webDriver.getWindowHandles());
+							if (tabs.size() > 1) {
+								for (int a = tabs.size(); a > 1; a--) {
+									webDriver.switchTo().window(tabs.get(a - 1));
+									Thread.sleep(500);
+									webDriver.close();
+								}
+								webDriver.switchTo().window(tabs.get(0));
+							}
+							tabs = null;
 							searchName(webDriver, k);
 							// Get the item name
 							getAName(webDriver);
@@ -485,7 +495,7 @@ public class Main52 {
 
 					row++;
 					// result array clear
-					for (i = 0; i < 48; i++) {
+					for (i = 0; i < 40; i++) {
 						Result[i] = "";
 					}
 
@@ -546,7 +556,7 @@ public class Main52 {
 						writrintExcel();
 
 						// result array clear
-						for (i = 0; i < 48; i++) {
+						for (i = 0; i < 40; i++) {
 							Result[i] = "";
 						}
 					} catch (Exception e) {
@@ -554,7 +564,7 @@ public class Main52 {
 						writrintExcel();
 
 						// result array clear
-						for (i = 0; i < 48; i++) {
+						for (i = 0; i < 40; i++) {
 							Result[i] = "";
 						}
 
@@ -592,20 +602,12 @@ public class Main52 {
 				tabs = null;
 
 				// get the next page
-				int pageclick = 0;
 				try {
 					WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
 					next.click();
 				} catch (Exception e3) {
-					if (pageclick < 3) {
-						WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
-						next.click();
-						Thread.sleep(10000);
-						pageclick++;
-					} else {
-						writrintExcel();
-						return;
-					}
+					// writrintExcel();
+					return;
 				}
 			}
 			Thread.sleep(3000);
@@ -843,54 +845,54 @@ public class Main52 {
 		return result.toString();
 	}
 
-	public static void readExcel(Sheet sheet, int rawID) {
+	public static void readExcel(Sheet sheet, int rowid) {
 		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10, cell11, cell12, cell13, cell14,
 				cell15, cell16, cell17, cell18, cell19, cell20, cell21;
 		try {
-			cell1 = sheet.getCell(0, rawID);
-			cell2 = sheet.getCell(1, rawID);
-			cell3 = sheet.getCell(2, rawID);
-			cell4 = sheet.getCell(3, rawID);
-			cell5 = sheet.getCell(4, rawID);
-			cell6 = sheet.getCell(5, rawID);
-			cell7 = sheet.getCell(6, rawID);
-			cell8 = sheet.getCell(7, rawID);
-			cell9 = sheet.getCell(8, rawID);
-			cell10 = sheet.getCell(9, rawID);
-			cell11 = sheet.getCell(10, rawID);
-			cell12 = sheet.getCell(11, rawID);
-			cell13 = sheet.getCell(12, rawID);
-			cell14 = sheet.getCell(13, rawID);
-			cell15 = sheet.getCell(14, rawID);
-			cell16 = sheet.getCell(15, rawID);
-			cell17 = sheet.getCell(16, rawID);
-			cell18 = sheet.getCell(17, rawID);
-			cell19 = sheet.getCell(18, rawID);
-			cell20 = sheet.getCell(19, rawID);
-			cell21 = sheet.getCell(20, rawID);
+			cell1 = sheet.getCell(0, rowid);
+			cell2 = sheet.getCell(1, rowid);
+			cell3 = sheet.getCell(2, rowid);
+			cell4 = sheet.getCell(3, rowid);
+			cell5 = sheet.getCell(4, rowid);
+			cell6 = sheet.getCell(5, rowid);
+			cell7 = sheet.getCell(6, rowid);
+			cell8 = sheet.getCell(7, rowid);
+			cell9 = sheet.getCell(8, rowid);
+			cell10 = sheet.getCell(9, rowid);
+			cell11 = sheet.getCell(10, rowid);
+			cell12 = sheet.getCell(11, rowid);
+			cell13 = sheet.getCell(12, rowid);
+			cell14 = sheet.getCell(13, rowid);
+			cell15 = sheet.getCell(14, rowid);
+			cell16 = sheet.getCell(15, rowid);
+			cell17 = sheet.getCell(16, rowid);
+			cell18 = sheet.getCell(17, rowid);
+			cell19 = sheet.getCell(18, rowid);
+			cell20 = sheet.getCell(19, rowid);
+			cell21 = sheet.getCell(20, rowid);
 
-			if ("".equals(cell1.getContents()) != true) {
-				source_ID = cell1.getContents();
-				source_NameCN = cell2.getContents();
-				source_LstName = cell3.getContents();
-				source_FstName = cell4.getContents();
-				source_DissYear = cell5.getContents();
-				source_DissInst = cell6.getContents();
-				source_DissIntstWOS = cell7.getContents();
-				source_CurAffi = cell8.getContents();
-				source_CurAffiWOS = cell9.getContents();
-				source_ProgYear = cell10.getContents();
-				source_ProgAffi = cell11.getContents();
-				source_ProgAffiWOS = cell12.getContents();
-				source_SearchArry[0]  = cell13.getContents();
-				source_SearchYearFromArry[0]   = cell14.getContents();
-				source_SearchYearToArry[0] = cell15.getContents();
-				source_SearchArry[1] = cell16.getContents();
-				source_SearchYearFromArry[1] = cell17.getContents();
-				source_SearchYearToArry[1] = cell18.getContents();
-				source_SearchArry[2] = cell19.getContents();
-				source_SearchYearFromArry[2] = cell20.getContents();
-				source_SearchYearToArry[2] = cell21.getContents();
+			if ("".equals(cell1.getContents()) != true) {				
+				source_ID = cell1.getContents().replace('\n',' ');;
+				source_NameCN = cell2.getContents().replace('\n',' ');;
+				source_LstName = cell3.getContents().replace('\n',' ');;
+				source_FstName = cell4.getContents().replace('\n',' ');;
+				source_DissYear = cell5.getContents().replace('\n',' ');;
+				source_DissInst = cell6.getContents().replace('\n',' ');;
+				source_DissIntstWOS = cell7.getContents().replace('\n',' ');;
+				source_CurAffi = cell8.getContents().replace('\n',' ');;
+				source_CurAffiWOS = cell9.getContents().replace('\n',' ');;
+				source_ProgYear = cell10.getContents().replace('\n',' ');;
+				source_ProgAffi = cell11.getContents().replace('\n',' ');;
+				source_ProgAffiWOS = cell12.getContents().replace('\n',' ');;
+				source_SearchArry[0]  = cell13.getContents().replace('\n',' ');;
+				source_SearchYearFromArry[0]   = cell14.getContents().replace('\n',' ');;
+				source_SearchYearToArry[0] = cell15.getContents().replace('\n',' ');;
+				source_SearchArry[1] = cell16.getContents().replace('\n',' ');;
+				source_SearchYearFromArry[1] = cell17.getContents().replace('\n',' ');;
+				source_SearchYearToArry[1] = cell18.getContents().replace('\n',' ');;
+				source_SearchArry[2] = cell19.getContents().replace('\n',' ');;
+				source_SearchYearFromArry[2] = cell20.getContents().replace('\n',' ');;
+				source_SearchYearToArry[2] = cell21.getContents().replace('\n',' ');;
 			}
 		} catch (Exception e) {
 		}
