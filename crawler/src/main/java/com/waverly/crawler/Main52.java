@@ -505,7 +505,7 @@ public class Main52 {
 
 						// Title
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
-						Result[0] = titleItem.getText();
+						Result[3] = titleItem.getText();
 
 						/* author
 						List<WebElement> authorItem = tc.get(1).findElements(By.cssSelector("a[title]"));
@@ -521,10 +521,19 @@ public class Main52 {
 								if (td.get(j).getText().contains("出版年")) {
 									String sourceStr = td.get(j).getText();
 									// Journal
-									Result[2] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
+									Result[4] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
 											.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
 									// Publish Year
-									Result[3] = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
+									String publishDate, publishYear, publishmonth;
+									publishDate = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
+									// match year format
+									Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
+									Matcher matcher = pattern.matcher(publishDate);
+									publishYear = matcher.replaceAll("");
+									publishmonth = publishDate.substring(publishDate.indexOf(publishYear)+publishYear.length());
+									Result[22] = publishYear;
+									Result[21] = publishmonth;
+
 								}
 							}
 						}
@@ -538,7 +547,7 @@ public class Main52 {
 						// Remove the characters
 						Pattern pattern = Pattern.compile("[^0-9]");
 						Matcher matcher = pattern.matcher(beingCiteStr);
-						Result[4] = matcher.replaceAll("");
+						Result[14] = matcher.replaceAll("");
 
 						// Open the detail record page
 						String detailrecord = titleItem.getAttribute("href");
@@ -655,11 +664,11 @@ public class Main52 {
 			try {
 				List<WebElement> tk = webDriver.findElements(By.xpath("//*[text()='作者关键词:']/../following-sibling::a"));
 				for (WebElement tkk : tk) {
-					Result[5] = Result[5] + ";" + tkk.getText();
+					Result[7] = Result[7] + ";" + tkk.getText();
 				}
-				Result[5] = Result[5].substring(1);
+				Result[7] = Result[7].substring(1);
 			} catch (Exception e) {
-				Result[5] = " ";
+				Result[7] = " ";
 			}
 
 			// Get keywords plus
@@ -681,14 +690,14 @@ public class Main52 {
 						.findElements(By.xpath("//span[contains(text(), '地址:')]/../following-sibling::table/tbody/tr"));
 				for (WebElement tkk3 : addressItem) {
 					if (tkk3.getText().substring(0,1).equals("["))
-						Result[7] = Result[7] + "||" + tkk3.getText().substring(5);
+						Result[9] = Result[9] + "||" + tkk3.getText().substring(5);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Result[7] = "";
+				Result[9] = "";
 			}
-			Result[7] = Result[7].substring(2);
+			Result[9] = Result[9].substring(2);
 					
 			// Impact factors
 			try {
