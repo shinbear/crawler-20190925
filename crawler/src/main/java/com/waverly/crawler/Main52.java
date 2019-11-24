@@ -529,8 +529,9 @@ public class Main52 {
 									// match year format
 									Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
 									Matcher matcher = pattern.matcher(publishDate);
-									publishYear = matcher.replaceAll("");
-									publishmonth = publishDate.substring(publishDate.indexOf(publishYear)+publishYear.length());
+									publishmonth = matcher.replaceAll("");
+									publishYear = publishDate
+											.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
 									Result[22] = publishYear;
 									Result[21] = publishmonth;
 
