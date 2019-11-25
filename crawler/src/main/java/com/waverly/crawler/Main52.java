@@ -307,24 +307,29 @@ public class Main52 {
 			author_input.clear();	
 			author_input.sendKeys(source_SearchArry[searchNo]);
 			
+			Thread.sleep(1000);
 			// Year range from to
 			if (isFirstSearch) {
-				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));
+				Thread.sleep(1000);
+				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));				
 				yearRange.selectByIndex(6);
 			}
 		
 			WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
 			List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
 			tss.get(0).click();
+			Thread.sleep(500);
 			WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
 			yearFrom.clear();
 			yearFrom.sendKeys(source_SearchYearFromArry[searchNo]);
 			yearFrom.sendKeys(Keys.ENTER);
 			tss.get(1).click();
+			Thread.sleep(500);
 			WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
 			yearTo.clear();
 			yearTo.sendKeys(source_SearchYearToArry[searchNo]);	
 			yearTo.sendKeys(Keys.ENTER);
+			Thread.sleep(200);
 			
 			
 			if (isFirstSearch) {
@@ -539,7 +544,7 @@ public class Main52 {
 							}
 						}
 
-						// Being cite
+						// Being cite of web science
 						WebElement beingCiteItem = tbb.findElement(By.cssSelector(".search-results-data-cite"));
 						WebElement beingCiteItem_remove = webDriver
 								.findElement(By.cssSelector(".search-results-data-cite .en_data_bold"));
@@ -548,8 +553,35 @@ public class Main52 {
 						// Remove the characters
 						Pattern pattern = Pattern.compile("[^0-9]");
 						Matcher matcher = pattern.matcher(beingCiteStr);
-						Result[14] = matcher.replaceAll("");
+						Result[13] = matcher.replaceAll("");
 
+						// Get Volume
+						try {
+							WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷: ']/following-sibling::span/value"));
+							Result[23] = volumeStr.getText();
+						} catch (Exception e) {
+							Result[23] = " ";
+						}
+						
+						// Get phase
+						try {
+							WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期: ']/following-sibling::span/value"));
+							Result[24] = phaseStr.getText();
+						} catch (Exception e) {
+							Result[24] = " ";
+						}
+						
+						// Get page
+						try {
+							WebElement pageStr = webDriver.findElement(By.xpath("//*[text()='页: ']/following-sibling::span/value"));
+							String[] strPageArray = pageStr.getText().split("-");
+							Result[25] = strPageArray[0];
+							Result[26] = strPageArray[1];
+						} catch (Exception e) {
+							Result[25] = "";
+							Result[26] = "";
+						}
+						
 						// Open the detail record page
 						String detailrecord = titleItem.getAttribute("href");
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
@@ -678,29 +710,33 @@ public class Main52 {
 						.findElements(By.xpath("//*[text()='KeyWords Plus:']/following-sibling::a"));
 				String ddd = tl.get(0).getText();
 				for (WebElement tll : tl) {
-					Result[6] = Result[6] + ";" + tll.getText();
+					Result[7] = Result[7] + ";" + tll.getText();
 				}
-				Result[6] = Result[6].substring(1);
+				// Result[6] = Result[6].substring(1);
 			} catch (Exception e) {
-				Result[6] = " ";
+				// Result[6] = " ";
 			}
-			
+
+			// Get the address
 			try {
-				// Get the address
 				List<WebElement> addressItem = webDriver
 						.findElements(By.xpath("//span[contains(text(), '地址:')]/../following-sibling::table/tbody/tr"));
 				for (WebElement tkk3 : addressItem) {
 					if (tkk3.getText().substring(0,1).equals("["))
-						Result[9] = Result[9] + "||" + tkk3.getText().substring(5);
+						Result[8] = Result[8] + "||" + tkk3.getText().substring(5);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Result[9] = "";
+				Result[8] = "";
 			}
-			Result[9] = Result[9].substring(2);
+			Result[8] = Result[8].substring(2);
+			
+			// Get article category
+			
 					
 			// Impact factors
+			/*
 			try {
 				WebElement journalItem = webDriver.findElement(By.xpath("//*[contains(text(), '查看期刊影响力')]"));
 				journalItem.click();
@@ -718,7 +754,8 @@ public class Main52 {
 				e.printStackTrace();
 				Result[8] = "";
 				Result[9] = "";
-			}					
+			}
+			*/					
 		} catch (Exception e) {
 			return;
 		}
