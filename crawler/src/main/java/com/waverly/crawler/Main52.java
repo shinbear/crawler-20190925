@@ -570,7 +570,7 @@ public class Main52 {
 						} catch (Exception e) {
 							Result[24] = " ";
 						}
-						
+						 
 						// Get page
 						try {
 							WebElement pageStr = webDriver.findElement(By.xpath("//*[text()='页: ']/following-sibling::span/value"));
