@@ -307,6 +307,12 @@ public class Main52 {
 			author_input.clear();	
 			author_input.sendKeys(source_SearchArry[searchNo]);
 			
+			//scroll to the element
+			String js3 = "arguments[0].scrollIntoView();";
+			WebElement element = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
+			((JavascriptExecutor) webDriver).executeScript(js3, element);
+
+			
 			Thread.sleep(1000);
 			// Year range from to
 			if (isFirstSearch) {
@@ -682,40 +688,68 @@ public class Main52 {
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
-			// Get the authors
+			// Get the author‘s short & full names
+			String authorCombine = "";
+			String authorShortName = "";
+			String authorFullName = "";
 			List<WebElement> authorItem = webDriver.findElements(By.xpath("//*[text()='作者:']/.."));
 			for (WebElement tAu : authorItem) {
 				if (!tAu.getText().substring(0, 1).equals("["))
-					Result[1] = Result[1] + tAu.getText();
+					authorCombine = authorCombine + tAu.getText();
 			}
+			// remove the content in th [..]
 			Pattern pattern = Pattern.compile("\\[.*?\\]");
-			Matcher matcher = pattern.matcher(Result[1]);
-			Result[1] = matcher.replaceAll("");
-			Result[1] = Result[1].substring(3);
+			Matcher matcher = pattern.matcher(authorCombine);
+			authorCombine = matcher.replaceAll("");
+			authorCombine = authorCombine.substring(3);
+			// get the full & short names
+			pattern = Pattern.compile("\\(.*?\\)");
+			matcher = pattern.matcher(authorCombine);
 			
-			// get author keywords
+			while (matcher.find()) {
+				for (int i = 0; i <= matcher.groupCount(); i++) {
+					authorFullName = authorFullName + ";" + matcher.group(i);
+				}
+			}
+			authorFullName = authorFullName.substring(1).replaceAll("\\(|\\)", "");
+			authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");
+			Result[1] = authorShortName;
+			Result[2] = authorFullName;
+			
+			// see more
+			webDriver.findElement ( By.linkText ("查看更多数据字段") ).click ();
+			// Get language 
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='语言:']/following-sibling::span"));
+				Result[5] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[5] = "";
+			}
+			
+			// get author keywords & keywords plus
+			String keywordsStr = "";
 			try {
 				List<WebElement> tk = webDriver.findElements(By.xpath("//*[text()='作者关键词:']/../following-sibling::a"));
 				for (WebElement tkk : tk) {
-					Result[7] = Result[7] + ";" + tkk.getText();
+					keywordsStr = keywordsStr + ";" + tkk.getText();
 				}
-				Result[7] = Result[7].substring(1);
+				keywordsStr = keywordsStr.substring(1);
 			} catch (Exception e) {
-				Result[7] = " ";
+				keywordsStr = "";
 			}
 
-			// Get keywords plus
+			String keywordsPlusStr = "";
 			try {
 				List<WebElement> tl = webDriver
 						.findElements(By.xpath("//*[text()='KeyWords Plus:']/following-sibling::a"));
-				String ddd = tl.get(0).getText();
 				for (WebElement tll : tl) {
-					Result[7] = Result[7] + ";" + tll.getText();
+					keywordsPlusStr = keywordsPlusStr + ";" + tll.getText();
 				}
-				// Result[6] = Result[6].substring(1);
+				keywordsPlusStr = keywordsPlusStr.substring(1);
 			} catch (Exception e) {
-				// Result[6] = " ";
+				keywordsPlusStr = "";
 			}
+			Result[7] = keywordsStr + ";" + keywordsPlusStr;
 
 			// Get the address
 			try {
