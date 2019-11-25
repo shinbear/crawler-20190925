@@ -716,14 +716,29 @@ public class Main52 {
 			Result[1] = authorShortName;
 			Result[2] = authorFullName;
 			
+			// scroll to the element
+			try {
+				String js3 = "arguments[0].scrollIntoView();";
+				WebElement element = webDriver.findElement(By.linkText("查看更多数据字段"));
+				((JavascriptExecutor) webDriver).executeScript(js3, element);
+			} catch (Exception e) {
+			}
+			
 			// see more
-			webDriver.findElement ( By.linkText ("查看更多数据字段") ).click ();
-			// Get language 
+			webDriver.findElement(By.linkText("查看更多数据字段")).click();
+			// Get language
 			try {
 				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='语言:']/following-sibling::span"));
 				Result[5] = tl.get(0).getText();
 			} catch (Exception e) {
 				Result[5] = "";
+			}
+
+			// Get article category
+			try {
+				Result[6]= webDriver.findElement(By.xpath("//*[text()='文献类型:']/following-sibling::span")).getText();
+			} catch (Exception e) {
+				Result[6] = "";
 			}
 			
 			// get author keywords & keywords plus
@@ -750,13 +765,13 @@ public class Main52 {
 				keywordsPlusStr = "";
 			}
 			Result[7] = keywordsStr + ";" + keywordsPlusStr;
-
-			// Get the address
+			
+			// Get the  address
 			try {
 				List<WebElement> addressItem = webDriver
-						.findElements(By.xpath("//span[contains(text(), '地址:')]/../following-sibling::table/tbody/tr"));
+						.findElements(By.xpath("//*[text()='地址:']]/../following-sibling::table/tbody/tr"));
 				for (WebElement tkk3 : addressItem) {
-					if (tkk3.getText().substring(0,1).equals("["))
+					if (tkk3.getText().substring(0, 1).equals("["))
 						Result[8] = Result[8] + "||" + tkk3.getText().substring(5);
 				}
 			} catch (Exception e) {
@@ -764,9 +779,22 @@ public class Main52 {
 				e.printStackTrace();
 				Result[8] = "";
 			}
-			Result[8] = Result[8].substring(2);
-			
-			// Get article category
+			Result[8] = Result[8].substring(2);	
+
+			// Get the corresponding address
+			try {
+				List<WebElement> addressItem = webDriver
+						.findElements(By.xpath("//span[contains(text(), '通讯作者地址:')]/../following-sibling::table/tbody/tr"));
+				for (WebElement tkk3 : addressItem) {
+					if (tkk3.getText().substring(0,1).equals("["))
+						Result[9] = Result[9] + "||" + tkk3.getText().substring(5);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Result[9] = "";
+			}
+			Result[9] = Result[9].substring(2);			
 			
 					
 			// Impact factors
