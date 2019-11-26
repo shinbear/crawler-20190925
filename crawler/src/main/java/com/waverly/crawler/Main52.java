@@ -586,7 +586,7 @@ public class Main52 {
 						} catch (Exception e) {
 							Result[25] = "";
 							Result[26] = "";
-						}
+						}						
 						
 						// Open the detail record page
 						String detailrecord = titleItem.getAttribute("href");
@@ -716,30 +716,19 @@ public class Main52 {
 			Result[1] = authorShortName;
 			Result[2] = authorFullName;
 			
-			// scroll to the element
-			try {
-				String js3 = "arguments[0].scrollIntoView();";
-				WebElement element = webDriver.findElement(By.linkText("查看更多数据字段"));
-				((JavascriptExecutor) webDriver).executeScript(js3, element);
-			} catch (Exception e) {
-			}
-			
-			// see more
-			webDriver.findElement(By.linkText("查看更多数据字段")).click();
-			// Get language
-			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='语言:']/following-sibling::span"));
-				Result[5] = tl.get(0).getText();
-			} catch (Exception e) {
-				Result[5] = "";
-			}
-
 			// Get article category
 			try {
 				Result[6]= webDriver.findElement(By.xpath("//*[text()='文献类型:']/following-sibling::span")).getText();
 			} catch (Exception e) {
 				Result[6] = "";
-			}
+			}		
+			
+			// Get the DOI
+			try {
+				Result[27]= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::value")).getText();
+			} catch (Exception e) {
+				Result[27] = "";
+			}	
 			
 			// get author keywords & keywords plus
 			String keywordsStr = "";
@@ -765,11 +754,40 @@ public class Main52 {
 				keywordsPlusStr = "";
 			}
 			Result[7] = keywordsStr + ";" + keywordsPlusStr;
+			Result[7] = Result[7].substring(1);
 			
+			// Get the corresponding address
+			try {
+				List<WebElement> addressItem = webDriver.findElements(
+						By.xpath("//span[contains(text(), '通讯作者地址:')]/../following-sibling::table/tbody/tr"));
+				for (WebElement tkk3 : addressItem) {
+					if (tkk3.getText().substring(0, 1).equals("[")) {
+						Result[8] = Result[8] + "||" + tkk3.getText().substring(5);
+					} else {
+						Result[9] = tkk3.getText();
+					}
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Result[8] = "";
+				Result[9] = "";
+			}
+			Result[9] = Result[9].substring(2);
+			
+			// scroll to the element of "address" title
+			try {
+				String js3 = "arguments[0].scrollIntoView();";
+				WebElement element = webDriver.findElement(By.xpath("//*[text()='地址:']"));
+				((JavascriptExecutor) webDriver).executeScript(js3, element);
+			} catch (Exception e) {
+			}
+			
+			/*
 			// Get the  address
 			try {
 				List<WebElement> addressItem = webDriver
-						.findElements(By.xpath("//*[text()='地址:']]/../following-sibling::table/tbody/tr"));
+						.findElements(By.xpath("//*[text()='地址:']/../following-sibling::table/tbody/tr"));
 				for (WebElement tkk3 : addressItem) {
 					if (tkk3.getText().substring(0, 1).equals("["))
 						Result[8] = Result[8] + "||" + tkk3.getText().substring(5);
@@ -779,24 +797,151 @@ public class Main52 {
 				e.printStackTrace();
 				Result[8] = "";
 			}
-			Result[8] = Result[8].substring(2);	
-
-			// Get the corresponding address
+			Result[8] = Result[8].substring(2);	*/
+			
+			// scroll to the element of "email address" title
 			try {
-				List<WebElement> addressItem = webDriver
-						.findElements(By.xpath("//span[contains(text(), '通讯作者地址:')]/../following-sibling::table/tbody/tr"));
-				for (WebElement tkk3 : addressItem) {
-					if (tkk3.getText().substring(0,1).equals("["))
-						Result[9] = Result[9] + "||" + tkk3.getText().substring(5);
+				String js4 = "arguments[0].scrollIntoView();";
+				WebElement element = webDriver.findElement(By.xpath("//*[text()='电子邮件地址:']"));
+				((JavascriptExecutor) webDriver).executeScript(js4, element);
+			} catch (Exception e) {
+			}
+			
+			// Get email address
+			try {
+				List<WebElement> temail = webDriver
+						.findElements(By.xpath("//*[text()='电子邮件地址:']/following-sibling::a"));
+				for (WebElement tee : temail) {
+					Result[10] = Result[10] + ";" + tee.getText();
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Result[9] = "";
+				Result[10] = "";
 			}
-			Result[9] = Result[9].substring(2);			
-			
 					
+			// Get the being cite 180days&since 2013
+			try {
+				List<WebElement> tbs = webDriver.findElements(
+						By.xpath("//*[text()='在 Web of Science 中 使用次数']/following-sibling::div/div/span"));
+				Result[15] = tbs.get(0).getText();
+				Result[16] = tbs.get(1).getText();
+
+			} catch (Exception e) {
+				Result[15] = "";
+				Result[16] = "";
+			}		
+			
+			// Get the fund organization & authorized codes
+			List<WebElement> tfd = webDriver
+					.findElements(By.xpath("//*[text()='基金资助致谢']/following-sibling::table/tbody/tr"));
+			tfd.remove(0);
+			String fundOrgSingle = "";
+			for (WebElement tfdd : tfd) {
+				String tfddCodeStr = "";
+				if (!tfdd.findElements(By.cssSelector("td")).get(1).getText().equals("")) {
+					List<WebElement> tfddCodes = tfdd.findElements(By.cssSelector("td")).get(1)
+							.findElements(By.cssSelector("div"));
+					for (WebElement tfddCode : tfddCodes) {
+						tfddCodeStr = tfddCodeStr + "&" + tfddCode.getText();
+					}
+					tfddCodeStr = tfddCodeStr.substring(1);
+				} else {
+					tfddCodeStr = " ";
+				}
+				fundOrgSingle = tfdd.findElements(By.cssSelector("td")).get(0).getText() + ";" + tfddCodeStr;
+				Result[11] = Result[11] + "||" + fundOrgSingle;
+			}
+			
+			// scroll to the element of fund assistant information
+			try {
+				String js5 = "arguments[0].scrollIntoView();";
+				WebElement element = webDriver.findElement(By.xpath("//*[text()='关闭基金资助信息']"));
+				((JavascriptExecutor) webDriver).executeScript(js5, element);
+			} catch (Exception e) {
+			}
+			
+			// Get the fund assistant information 
+			try {
+				WebElement fdi = webDriver.findElement(By.xpath("//*[text()='关闭基金资助信息']/../following-sibling::span/p"));
+				Result[12] = fdi.getText();
+			} catch (Exception e) {
+				Result[12] = "";
+			}
+			
+			// scroll to the element of "类别 / 分类" 
+			try {
+				String js6 = "arguments[0].scrollIntoView();";
+				WebElement element = webDriver.findElement(By.xpath("//*[text()='类别 / 分类']"));
+				((JavascriptExecutor) webDriver).executeScript(js6, element);
+			} catch (Exception e) {
+			}
+			
+			// see more
+			webDriver.findElement(By.linkText("查看更多数据字段")).click();
+			
+			// Get the research direction 
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='研究方向:']/../"));
+				Result[29] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[29] = "";
+			}
+			
+			// Get the Web of Science category 
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='Web of Science 类别:']/../"));
+				Result[28] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[28] = "";
+			}
+			
+			// Get language
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='语言:']/../following-sibling::span"));
+				Result[5] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[5] = "";
+			}
+			
+			// Get ru zang number
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='入藏号:']/following-sibling::value"));
+				Result[31] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[31] = "";
+			}
+			
+			// Get IDS number
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='IDS 号:']/following-sibling::value"));
+				Result[30] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[30] = "";
+			}
+			
+			// Get PubMed ID
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='PubMed ID:']/following-sibling::value"));
+				Result[32] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[32] = "";
+			}
+			
+			// Get ISSN:
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='ISSN:']/following-sibling::value"));
+				Result[17] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[17] = "";
+			}
+			
+			// Get eISSN
+			try {
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='eISSN:']/following-sibling::value"));
+				Result[18] = tl.get(0).getText();
+			} catch (Exception e) {
+				Result[18] = "";
+			}
+							
 			// Impact factors
 			/*
 			try {
