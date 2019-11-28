@@ -878,9 +878,10 @@ public class Main52 {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+			     
 			if (Result[11].length()>0)
 			Result[11] = Result[11] .substring(2);   
+			Result[11] = Result[11].replace('\n',' ');;
 			
 			// scroll to the element of fund assistant information
 			try {
@@ -899,7 +900,8 @@ public class Main52 {
 				Result[12] =fdi.findElement(By.cssSelector("#show_fund_blurb")).getText();
 			} catch (Exception e) {
 				Result[12] = "";
-			}
+			}			
+			Result[12] = Result[12].replace('\n',' ');;
 			
 			// scroll to the element of "类别 / 分类" 
 			try {
