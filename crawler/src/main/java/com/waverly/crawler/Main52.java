@@ -593,6 +593,11 @@ public class Main52 {
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						Thread.sleep(3500);
 						try {
+							/*detailrecord = "http://apps.webofknowledge.com/full_record.do?product="
+									+ "WOS&search_mode=AdvancedSearch&qid=1&SID=5AxbrJCtMs9H36wPrP"
+									+ "a&page=1&doc=3&cacheurlFromRightClick=no";
+							*/
+							
 							executor.executeScript("window.open('" + detailrecord + "')");
 							getDetail(webDriver);
 						} catch (Exception e3) {
@@ -716,6 +721,14 @@ public class Main52 {
 			Result[1] = authorShortName;
 			Result[2] = authorFullName;
 			
+			// Get the all being cite
+			try {
+				WebElement beCite = webDriver.findElement(By.xpath("//*[text()=' / 所有数据库']"));
+				Result[14] = beCite.getText().substring(0, beCite.getText().indexOf(" / 所有数据库"));
+			} catch (Exception e) {
+				Result[14] = "";
+			}
+			
 			// Get article category
 			try {
 				Result[6]= webDriver.findElement(By.xpath("//*[text()='文献类型:']/following-sibling::span")).getText();
@@ -773,12 +786,13 @@ public class Main52 {
 				Result[8] = "";
 				Result[9] = "";
 			}
-			Result[9] = Result[9].substring(2);
+			Result[8] = Result[8].substring(2);
 			
 			// scroll to the element of "address" title
 			try {
 				String js3 = "arguments[0].scrollIntoView();";
-				WebElement element = webDriver.findElement(By.xpath("//*[text()='地址:']"));
+				WebElement element = webDriver.findElement(By.xpath("//*[text()='地址:\r\n" + 
+						"        ']"));
 				((JavascriptExecutor) webDriver).executeScript(js3, element);
 			} catch (Exception e) {
 			}
@@ -812,16 +826,19 @@ public class Main52 {
 				List<WebElement> temail = webDriver
 						.findElements(By.xpath("//*[text()='电子邮件地址:']/following-sibling::a"));
 				for (WebElement tee : temail) {
-					Result[10] = Result[10] + ";" + tee.getText();
+					Result[10] = tee.getText();
 				}
 			} catch (Exception e) {
 				Result[10] = "";
 			}
 					
 			// Get the being cite 180days&since 2013
+			WebElement sideBar = webDriver.findElement(By.cssSelector("#sidebar-container"));
+			
+			
 			try {
-				List<WebElement> tbs = webDriver.findElements(
-						By.xpath("//*[text()='在 Web of Science 中 使用次数']/following-sibling::div/div/span"));
+				List<WebElement> tbs = sideBar.findElements(
+						By.xpath("//*[text()='在 Web of Science 中 使用次数']/../following-sibling::div/div"));
 				Result[15] = tbs.get(0).getText();
 				Result[16] = tbs.get(1).getText();
 
@@ -831,38 +848,55 @@ public class Main52 {
 			}		
 			
 			// Get the fund organization & authorized codes
-			List<WebElement> tfd = webDriver
-					.findElements(By.xpath("//*[text()='基金资助致谢']/following-sibling::table/tbody/tr"));
-			tfd.remove(0);
-			String fundOrgSingle = "";
-			for (WebElement tfdd : tfd) {
-				String tfddCodeStr = "";
-				if (!tfdd.findElements(By.cssSelector("td")).get(1).getText().equals("")) {
-					List<WebElement> tfddCodes = tfdd.findElements(By.cssSelector("td")).get(1)
-							.findElements(By.cssSelector("div"));
-					for (WebElement tfddCode : tfddCodes) {
-						tfddCodeStr = tfddCodeStr + "&" + tfddCode.getText();
+			try {
+				List<WebElement> tfd = webDriver
+						.findElements(By.xpath("//*[text()='基金资助致谢']/following-sibling::table/tbody/tr"));
+				tfd.remove(0);
+				String fundOrgSingle = "";
+				for (WebElement tfdd : tfd) {
+					String tfddCodeStr = "";
+					if (!tfdd.findElements(By.cssSelector("td")).get(0).getText().equals("")) {
+						Result[11] = Result[11] + "||" + tfdd.findElements(By.cssSelector("td")).get(0).getText();
+						try {
+							List<WebElement> tfddCodes = tfdd.findElements(By.cssSelector("td")).get(1)
+									.findElements(By.cssSelector("div"));
+							for (WebElement tfddCode : tfddCodes) {
+								tfddCodeStr = tfddCodeStr + "&" + tfddCode.getText();
+							}
+							tfddCodeStr = tfddCodeStr.substring(1);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							tfddCodeStr = "None";
+						}
+						Result[11] = Result[11] + ";" + tfddCodeStr;
+					} else {
+						break;
 					}
-					tfddCodeStr = tfddCodeStr.substring(1);
-				} else {
-					tfddCodeStr = " ";
 				}
-				fundOrgSingle = tfdd.findElements(By.cssSelector("td")).get(0).getText() + ";" + tfddCodeStr;
-				Result[11] = Result[11] + "||" + fundOrgSingle;
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+			
+			if (Result[11].length()>0)
+			Result[11] = Result[11] .substring(2);   
 			
 			// scroll to the element of fund assistant information
 			try {
 				String js5 = "arguments[0].scrollIntoView();";
-				WebElement element = webDriver.findElement(By.xpath("//*[text()='关闭基金资助信息']"));
+				WebElement element = webDriver.findElement(By.xpath("//*[contains(text(), '查看基金资助信息')]"));
 				((JavascriptExecutor) webDriver).executeScript(js5, element);
 			} catch (Exception e) {
 			}
 			
 			// Get the fund assistant information 
 			try {
-				WebElement fdi = webDriver.findElement(By.xpath("//*[text()='关闭基金资助信息']/../following-sibling::span/p"));
-				Result[12] = fdi.getText();
+				// WebElement fdi = webDriver.findElement(By.xpath("//*[contains(text(), '关闭基金资助信息')']/.."));
+				webDriver.findElement(By.xpath("//*[contains(text(), '查看基金资助信息')]")).click();
+				WebElement fdi = webDriver.findElement(By.xpath("//*[text()='基金资助致谢']/.."));
+				
+				Result[12] =fdi.findElement(By.cssSelector("#show_fund_blurb")).getText();
 			} catch (Exception e) {
 				Result[12] = "";
 			}
@@ -876,36 +910,41 @@ public class Main52 {
 			}
 			
 			// see more
-			webDriver.findElement(By.linkText("查看更多数据字段")).click();
+			try {
+				webDriver.findElement(By.linkText("查看更多数据字段")).click();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			// Get the research direction 
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='研究方向:']/../"));
-				Result[29] = tl.get(0).getText();
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='研究方向:']/.."));
+				Result[29] = tl.get(0).getText().substring(5);
 			} catch (Exception e) {
 				Result[29] = "";
 			}
 			
 			// Get the Web of Science category 
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='Web of Science 类别:']/../"));
-				Result[28] = tl.get(0).getText();
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='Web of Science 类别:']/.."));
+				Result[28] = tl.get(0).getText().substring(18);
 			} catch (Exception e) {
 				Result[28] = "";
 			}
 			
 			// Get language
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='语言:']/../following-sibling::span"));
-				Result[5] = tl.get(0).getText();
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='语言:']/.."));
+				Result[5] = tl.get(0).getText().substring(3);
 			} catch (Exception e) {
 				Result[5] = "";
 			}
 			
 			// Get ru zang number
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='入藏号:']/following-sibling::value"));
-				Result[31] = tl.get(0).getText();
+				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='入藏号:']/.."));;
+				Result[31] = tl.get(0).getText().substring(4);
 			} catch (Exception e) {
 				Result[31] = "";
 			}
