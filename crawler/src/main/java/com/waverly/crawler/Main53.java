@@ -717,7 +717,7 @@ public class Main53 {
 			// Get phase
 			try {
 				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));
-				Result[24] = phaseStr.getText();
+				Result[24] = "期: " + phaseStr.getText();
 			} catch (Exception e) {
 				Result[24] = " ";
 			}
