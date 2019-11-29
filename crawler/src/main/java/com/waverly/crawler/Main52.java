@@ -559,46 +559,15 @@ public class Main52 {
 						// Remove the characters
 						Pattern pattern = Pattern.compile("[^0-9]");
 						Matcher matcher = pattern.matcher(beingCiteStr);
-						Result[13] = matcher.replaceAll("");
-
-						// Get Volume
-						try {
-							WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷: ']/following-sibling::span/value"));
-							Result[23] = volumeStr.getText();
-						} catch (Exception e) {
-							Result[23] = " ";
-						}
-						
-						// Get phase
-						try {
-							WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期: ']/following-sibling::span/value"));
-							Result[24] = phaseStr.getText();
-						} catch (Exception e) {
-							Result[24] = " ";
-						}
-						 
-						// Get page
-						try {
-							WebElement pageStr = webDriver.findElement(By.xpath("//*[text()='页: ']/following-sibling::span/value"));
-							String[] strPageArray = pageStr.getText().split("-");
-							Result[25] = strPageArray[0];
-							Result[26] = strPageArray[1];
-						} catch (Exception e) {
-							Result[25] = "";
-							Result[26] = "";
-						}						
+						Result[13] = matcher.replaceAll("");					
 						
 						// Open the detail record page
 						String detailrecord = titleItem.getAttribute("href");
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						Thread.sleep(3500);
-						try {
-							/*detailrecord = "http://apps.webofknowledge.com/full_record.do?product="
-									+ "WOS&search_mode=AdvancedSearch&qid=1&SID=5AxbrJCtMs9H36wPrP"
-									+ "a&page=1&doc=3&cacheurlFromRightClick=no";
-							*/
-							
+						try {						
 							executor.executeScript("window.open('" + detailrecord + "')");
+							Thread.sleep(1000);
 							getDetail(webDriver);
 						} catch (Exception e3) {
 							writrintExcel();
@@ -718,8 +687,35 @@ public class Main52 {
 			}
 			authorFullName = authorFullName.substring(1).replaceAll("\\(|\\)", "");
 			authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");
-			Result[1] = authorShortName;
-			Result[2] = authorFullName;
+			Result[1] = authorShortName.replace('\n',' ');;
+			Result[2] = authorFullName.replace('\n',' ');;
+			
+			// Get Volume
+			try {
+				WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷:']/following-sibling::value"));
+				Result[23] = volumeStr.getText();
+			} catch (Exception e) {
+				Result[23] = " ";
+			}
+			
+			// Get phase
+			try {
+				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));
+				Result[24] = phaseStr.getText();
+			} catch (Exception e) {
+				Result[24] = " ";
+			}
+			 
+			// Get page
+			try {
+				WebElement pageStr = webDriver.findElement(By.xpath("//*[text()='页:']/following-sibling::value"));
+				String[] strPageArray = pageStr.getText().split("-");
+				Result[25] = strPageArray[0];
+				Result[26] = strPageArray[1];
+			} catch (Exception e) {
+				Result[25] = "";
+				Result[26] = "";
+			}	
 			
 			// Get the all being cite
 			try {
@@ -767,7 +763,7 @@ public class Main52 {
 				keywordsPlusStr = "";
 			}
 			Result[7] = keywordsStr + ";" + keywordsPlusStr;
-			Result[7] = Result[7].substring(1);
+			Result[7] = Result[7].substring(1).replace('\n',' ');;
 			
 			// Get the corresponding address
 			try {
@@ -786,16 +782,7 @@ public class Main52 {
 				Result[8] = "";
 				Result[9] = "";
 			}
-			Result[8] = Result[8].substring(2);
-			
-			// scroll to the element of "address" title
-			try {
-				String js3 = "arguments[0].scrollIntoView();";
-				WebElement element = webDriver.findElement(By.xpath("//*[text()='地址:\r\n" + 
-						"        ']"));
-				((JavascriptExecutor) webDriver).executeScript(js3, element);
-			} catch (Exception e) {
-			}
+			Result[8] = Result[8].substring(2).replace('\n',' ');;
 			
 			/*
 			// Get the  address
@@ -880,7 +867,7 @@ public class Main52 {
 			}
 			     
 			if (Result[11].length()>0)
-			Result[11] = Result[11] .substring(2);   
+			Result[11] = Result[11].substring(2);   
 			Result[11] = Result[11].replace('\n',' ');;
 			
 			// scroll to the element of fund assistant information
@@ -921,64 +908,64 @@ public class Main52 {
 			
 			// Get the research direction 
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='研究方向:']/.."));
-				Result[29] = tl.get(0).getText().substring(5);
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='研究方向:']/.."));
+				Result[29] = tl.getText().substring(5);
 			} catch (Exception e) {
 				Result[29] = "";
 			}
 			
 			// Get the Web of Science category 
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='Web of Science 类别:']/.."));
-				Result[28] = tl.get(0).getText().substring(18);
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='Web of Science 类别:']/.."));
+				Result[28] = tl.getText().substring(18);
 			} catch (Exception e) {
 				Result[28] = "";
 			}
 			
 			// Get language
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='语言:']/.."));
-				Result[5] = tl.get(0).getText().substring(3);
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='语言:']/.."));
+				Result[5] = tl.getText().substring(3);
 			} catch (Exception e) {
 				Result[5] = "";
 			}
 			
 			// Get ru zang number
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='入藏号:']/.."));;
-				Result[31] = tl.get(0).getText().substring(4);
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='入藏号:']/.."));;
+				Result[31] = tl.getText().substring(4);
 			} catch (Exception e) {
 				Result[31] = "";
 			}
 			
 			// Get IDS number
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='IDS 号:']/following-sibling::value"));
-				Result[30] = tl.get(0).getText();
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='IDS 号:']/following-sibling::value"));
+				Result[30] = tl.getText();
 			} catch (Exception e) {
 				Result[30] = "";
 			}
 			
 			// Get PubMed ID
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='PubMed ID:']/following-sibling::value"));
-				Result[32] = tl.get(0).getText();
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='PubMed ID:']/following-sibling::value"));
+				Result[32] = tl.getText();
 			} catch (Exception e) {
 				Result[32] = "";
 			}
 			
 			// Get ISSN:
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='ISSN:']/following-sibling::value"));
-				Result[17] = tl.get(0).getText();
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='ISSN:']/following-sibling::value"));
+				Result[17] = tl.getText();
 			} catch (Exception e) {
 				Result[17] = "";
 			}
 			
 			// Get eISSN
 			try {
-				List<WebElement> tl = webDriver.findElements(By.xpath("//*[text()='eISSN:']/following-sibling::value"));
-				Result[18] = tl.get(0).getText();
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='eISSN:']/following-sibling::value"));
+				Result[18] = tl.getText();
 			} catch (Exception e) {
 				Result[18] = "";
 			}
@@ -1167,27 +1154,27 @@ public class Main52 {
 			cell21 = sheet.getCell(20, rowid);
 
 			if ("".equals(cell1.getContents()) != true) {				
-				source_ID = cell1.getContents().replace('\n',' ');;
-				source_NameCN = cell2.getContents().replace('\n',' ');;
-				source_LstName = cell3.getContents().replace('\n',' ');;
-				source_FstName = cell4.getContents().replace('\n',' ');;
-				source_DissYear = cell5.getContents().replace('\n',' ');;
-				source_DissInst = cell6.getContents().replace('\n',' ');;
-				source_DissIntstWOS = cell7.getContents().replace('\n',' ');;
-				source_CurAffi = cell8.getContents().replace('\n',' ');;
-				source_CurAffiWOS = cell9.getContents().replace('\n',' ');;
-				source_ProgYear = cell10.getContents().replace('\n',' ');;
-				source_ProgAffi = cell11.getContents().replace('\n',' ');;
-				source_ProgAffiWOS = cell12.getContents().replace('\n',' ');;
-				source_SearchArry[0]  = cell13.getContents().replace('\n',' ');;
-				source_SearchYearFromArry[0]   = cell14.getContents().replace('\n',' ');;
-				source_SearchYearToArry[0] = cell15.getContents().replace('\n',' ');;
-				source_SearchArry[1] = cell16.getContents().replace('\n',' ');;
-				source_SearchYearFromArry[1] = cell17.getContents().replace('\n',' ');;
-				source_SearchYearToArry[1] = cell18.getContents().replace('\n',' ');;
-				source_SearchArry[2] = cell19.getContents().replace('\n',' ');;
-				source_SearchYearFromArry[2] = cell20.getContents().replace('\n',' ');;
-				source_SearchYearToArry[2] = cell21.getContents().replace('\n',' ');;
+				source_ID = cell1.getContents().replace('\n',' ');
+				source_NameCN = cell2.getContents().replace('\n',' ');
+				source_LstName = cell3.getContents().replace('\n',' ');
+				source_FstName = cell4.getContents().replace('\n',' ');
+				source_DissYear = cell5.getContents().replace('\n',' ');
+				source_DissInst = cell6.getContents().replace('\n',' ');
+				source_DissIntstWOS = cell7.getContents().replace('\n',' ');
+				source_CurAffi = cell8.getContents().replace('\n',' ');
+				source_CurAffiWOS = cell9.getContents().replace('\n',' ');
+				source_ProgYear = cell10.getContents().replace('\n',' ');
+				source_ProgAffi = cell11.getContents().replace('\n',' ');
+				source_ProgAffiWOS = cell12.getContents().replace('\n',' ');
+				source_SearchArry[0]  = cell13.getContents().replace('\n',' ');
+				source_SearchYearFromArry[0]   = cell14.getContents().replace('\n',' ');
+				source_SearchYearToArry[0] = cell15.getContents().replace('\n',' ');
+				source_SearchArry[1] = cell16.getContents().replace('\n',' ');
+				source_SearchYearFromArry[1] = cell17.getContents().replace('\n',' ');
+				source_SearchYearToArry[1] = cell18.getContents().replace('\n',' ');
+				source_SearchArry[2] = cell19.getContents().replace('\n',' ');
+				source_SearchYearFromArry[2] = cell20.getContents().replace('\n',' ');
+				source_SearchYearToArry[2] = cell21.getContents().replace('\n',' ');
 			}
 		} catch (Exception e) {
 		}
