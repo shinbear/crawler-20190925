@@ -79,12 +79,23 @@ public class Main37_w1 {
 	private static int page=0;
 	private static int row=0;
 	private static int sim_row = 0;
-	public static String cliuid_2 = "";
-	public static String unedname = "";
-	public static String fname = "";
-	public static String lname = "";
-	public static String labname = "";
-	public static String year = "";
+	public static String PID = "";
+	public static String name = "";
+	public static String lastname = "";
+	public static String firstname = "";
+	public static String midname = "";
+	public static String phdu = "";
+	public static String phd_country = "";
+	public static String phdyr = "";
+	public static String advisor = "";
+	public static String advisor1 = "";
+	public static String advisor1_lastname = "";
+	public static String advisor1_firstname = "";
+	public static String advisor1_midname = "";
+	public static String advisor2 = "";
+	public static String advisor2_lastname = "";
+	public static String advisor2_firstname = "";
+	public static String advisor2_midname = "";
 	public static int rawID = 1;
 	public static int rawID_Total = 0;
 	public static int exceptionCode = 0;
@@ -206,7 +217,8 @@ public class Main37_w1 {
 			}
 			
 			// write the excel the top item
-			String toptitle = "cliuid_2\tunedname\tfname\tmname\tlname\tyear\tAbstract\tSubject\tClassification\tIdentifier&keyword\tTitle\tAuthor\tNumber of pages\tPublication year\tDegree date\tSchool code\tSource\tPlace of publication\tCountry of publication\tISBN\tAdvisor\tCommittee member\tUniversity/institution\tDepartment\tUniversity location\tDegree\tSource type\tLanguage\tDocument type\tDissertation thesis number\tProQuest document ID\tDocument URL\tCopyright\tDatabase";
+			String toptitle = "PID\tname\tlastname\tfirstname\tmidname\tphdu\tphd_country\tphdyr\tadvisor\tadvisor1\tadvisor1_lastname"
+					+ "\tadvisor1_firstname\tadvisor1_midname\tadvisor2\tadvisor2_lastname\tadvisor2_firstname\tadvisor2_midname";
 			writer.println(toptitle);
 
 			// Read the unedname from exccel sheet
@@ -245,14 +257,16 @@ public class Main37_w1 {
 					tabs = null;
 					
 					// Input the query condition
-					searchName(webDriver, unedname);
+					searchName(webDriver);
 					if (!webDriver.getPageSource().contains("found 0 results")) {
 						// Get the result of dissertation
 						getAName(webDriver);
 					} else {
 						// If no result, write into a blank record
-						writer.println(cliuid_2 + "\t" + unedname + "\t" + fname + "\t" + lname + "\t" + labname + "\t"
-								+ year);
+						writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
+								+ "\t" + phd_country + "\t" + phdyr + "\t" + advisor + "\t" + advisor1 + "\t"
+								+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
+								+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname);
 						Thread.sleep(20000);
 					}	
 
@@ -272,8 +286,10 @@ public class Main37_w1 {
 				} catch (Exception e3) {
 					// e3.printStackTrace();
 					// If in exception
-					writer.println(cliuid_2 + "\t" + unedname + "\t" + fname + "\t" + lname + "\t" + labname + "\t"
-							+ year + "\tError");
+					writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
+							+ "\t" + phd_country + "\t" + phdyr + "\t" + advisor + "\t" + advisor1 + "\t"
+							+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
+							+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname + "\tError");
 					Thread.sleep(30000);
 					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -300,7 +316,7 @@ public class Main37_w1 {
 		System.exit(0);
 	}
 
-	public static void searchName(WebDriver webDriver, String unedname) throws IOException {
+	public static void searchName(WebDriver webDriver) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
@@ -313,7 +329,7 @@ public class Main37_w1 {
 			// Input the year
 			WebElement year_input = webDriver.findElement(By.xpath("//*[@id='textfield']"));
 			year_input.clear();
-			year_input.sendKeys(year);	
+			year_input.sendKeys(phdyr);	
 			
 			// Select the language
 			if (!webDriver.findElement(By.xpath("//*[@id='Language_ENG']")).isSelected()) {
@@ -517,12 +533,15 @@ public class Main37_w1 {
 						continue;
 					}
 					// write into excel
-					writer.println(cliuid_2 + "\t" + unedname + "\t" + fname + "\t" + lname + "\t" + labname + "\t"
-							+ year + "\t" + "-" + "\t" + dissertation_content[1] + "\t" + dissertation_content[2] + "\t"
-							+ dissertation_content[3] + "\t" + dissertation_content[4] + "\t" + dissertation_content[5]
-							+ "\t" + dissertation_content[6] + "\t" + dissertation_content[7] + "\t"
-							+ dissertation_content[8] + "\t" + dissertation_content[9] + "\t" + dissertation_content[10]
-							+ "\t" + dissertation_content[11] + "\t" + dissertation_content[12] + "\t"
+					writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
+							+ "\t" + phd_country + "\t" + phdyr + "\t" + advisor + "\t" + advisor1 + "\t"
+							+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
+							+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname + "\t"
+							+ dissertation_content[1] + "\t" + dissertation_content[2] + "\t" + dissertation_content[3]
+							+ "\t" + dissertation_content[4] + "\t" + dissertation_content[5] + "\t"
+							+ dissertation_content[6] + "\t" + dissertation_content[7] + "\t" + dissertation_content[8]
+							+ "\t" + dissertation_content[9] + "\t" + dissertation_content[10] + "\t"
+							+ dissertation_content[11] + "\t" + dissertation_content[12] + "\t"
 							+ dissertation_content[13] + "\t" + dissertation_content[14] + "\t"
 							+ dissertation_content[15] + "\t" + dissertation_content[16] + "\t"
 							+ dissertation_content[17] + "\t" + dissertation_content[18] + "\t"
@@ -677,7 +696,7 @@ public class Main37_w1 {
 	}
 	
 	public static void readExcel(Sheet sheet, int rawID) {
-		Cell cell1, cell2, cell3, cell4, cell5, cell6;
+		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10, cell11, cell12, cell13, cell14, cell15, cell16, cell17, cell18;
 		try {
 			cell1 = sheet.getCell(0, rawID);
 			cell2 = sheet.getCell(1, rawID);
@@ -685,14 +704,132 @@ public class Main37_w1 {
 			cell4 = sheet.getCell(3, rawID);
 			cell5 = sheet.getCell(4, rawID);
 			cell6 = sheet.getCell(5, rawID);
+			cell7 = sheet.getCell(6, rawID);
+			cell8 = sheet.getCell(7, rawID);
+			cell9 = sheet.getCell(8, rawID);
+			cell10 = sheet.getCell(9, rawID);
+			cell11 = sheet.getCell(10, rawID);
+			cell12 = sheet.getCell(11, rawID);
+			cell13 = sheet.getCell(12, rawID);
+			cell14 = sheet.getCell(13, rawID);
+			cell15 = sheet.getCell(14, rawID);
+			cell16 = sheet.getCell(15, rawID);
+			cell17 = sheet.getCell(16, rawID);
+
+			PID = "";
+			name = "";
+			lastname = "";
+			firstname = "";
+			midname = "";
+			phdu = "";
+			phd_country = "";
+			phdyr = "";
+			advisor = "";
+			advisor1 = "";
+			advisor1_lastname = "";
+			advisor1_firstname = "";
+			advisor1_midname = "";
+			advisor2 = "";
+			advisor2_lastname = "";
+			advisor2_firstname = "";
+			advisor2_midname = "";	
 
 			if ("".equals(cell1.getContents()) != true) {
-				cliuid_2 = cell1.getContents();
-				unedname = cell2.getContents();
-				fname = cell3.getContents();
-				lname = cell4.getContents();
-				labname = cell5.getContents();
-				year = cell6.getContents();
+				PID =cell1.getContents();
+				name =cell2.getContents();
+				lastname =cell3.getContents();
+				firstname =cell4.getContents();
+				try {
+					midname =cell5.getContents();
+				} catch (Exception e) {
+					midname ="";
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					phdu =cell6.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					phdu = "";
+					e.printStackTrace();
+				}
+				try {
+					phd_country =cell7.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					phd_country = "";
+					e.printStackTrace();
+				}
+				try {
+					phdyr =cell8.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					phdyr = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor =cell9.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor1 =cell10.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor1 = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor1_lastname =cell11.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor1_lastname = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor1_firstname =cell12.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor1_firstname = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor1_midname =cell13.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor1_midname = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor2 =cell14.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor2 = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor2_lastname =cell15.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor2_lastname = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor2_firstname =cell16.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor2_firstname = "";
+					e.printStackTrace();
+				}
+				try {
+					advisor2_midname =cell17.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					advisor2_midname = "";
+					e.printStackTrace();
+				}
 
 				System.out.println(rawID + " " + cell1.getContents() + " " + cell2.getContents());
 			}
