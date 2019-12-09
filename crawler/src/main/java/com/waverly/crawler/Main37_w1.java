@@ -346,8 +346,13 @@ public class Main37_w1 {
 			WebElement author_input = webDriver.findElement(By.id("author"));
 			author_input.clear();
 			author_input.sendKeys(name);
+
+			// Input the name into the university box
+			WebElement school_input = webDriver.findElement(By.id("schoolName"));
+			school_input.clear();
+			school_input.sendKeys(phdu);
 			
-			// Input the name into the author box
+			// Input the name into the advisor box
 			WebElement advisor_input = webDriver.findElement(By.id("advisor"));
 			advisor_input.clear();
 			advisor_input.sendKeys(advisor1);
