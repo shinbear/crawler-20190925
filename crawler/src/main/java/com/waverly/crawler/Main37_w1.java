@@ -164,7 +164,7 @@ public class Main37_w1 {
 			sheet = book.getSheet(0);
 			rawID_Total = sheet.getRows(); 
 
-			URL = "https://www.lib.umd.edu/dbfinder/id/UMD07254";
+			// URL = "https://www.lib.umd.edu/dbfinder/id/UMD07254";
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
@@ -172,9 +172,10 @@ public class Main37_w1 {
 			options.addArguments("--lang=en");
 			WebDriver webDriver = new ChromeDriver(options);
 			webDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-			webDriver.get(URL);		
+			/* webDriver.get(URL);		
 			WebElement focus_element = webDriver.findElement(By.cssSelector(".col-lg-10"));
 			focus_element.click();
+			*/
 			Thread.sleep(3000);
 
 			// Get the handle of current page
@@ -341,10 +342,15 @@ public class Main37_w1 {
 				webDriver.findElement(By.xpath("//*[@id='ManuscriptType_doctoral_diss']")).click();
 			}
 
-			// Input the unedname into the author box
+			// Input the name into the author box
 			WebElement author_input = webDriver.findElement(By.id("author"));
 			author_input.clear();
-			author_input.sendKeys(unedname);
+			author_input.sendKeys(name);
+			
+			// Input the name into the author box
+			WebElement advisor_input = webDriver.findElement(By.id("advisor"));
+			advisor_input.clear();
+			advisor_input.sendKeys(advisor1);
 			
 			//Click the search button
 			WebElement searchButton = webDriver.findElement(By.id("searchToResultPage"));
