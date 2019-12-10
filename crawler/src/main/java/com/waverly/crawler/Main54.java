@@ -196,7 +196,7 @@ public class Main54 {
 				endRow = Integer.parseInt(recordTo.getText())+1;
 			}
 
-			// Read the unedname from exccel sheet
+			// Read the name from exccel sheet
 			for (int i = startRow; i < endRow; i++) {
 				try {
 					sim_row = i;
@@ -252,7 +252,7 @@ public class Main54 {
 							getAName(webDriver);
 						}
 					} catch (Exception e1) {
-						Thread.sleep(3000);
+						Thread.sleep(300000);
 						writrintExcel();
 					}
 
@@ -336,8 +336,7 @@ public class Main54 {
 			yearTo.sendKeys(source_SearchYearToArry[searchNo]);	
 			yearTo.sendKeys(Keys.ENTER);
 			Thread.sleep(200);
-			
-			
+						
 			if (isFirstSearch) {
 				try {
 					Thread.sleep(3000);
@@ -562,7 +561,7 @@ public class Main54 {
 						Result[13] = matcher.replaceAll("");					
 						
 						// Open the detail record page
-						String detailrecord = titleItem.getAttribute("href");
+						String detailrecord = titleItem.getAttribute("href");												
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						Thread.sleep(3500);
 						try {						
@@ -662,40 +661,48 @@ public class Main54 {
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
-			// Get the author‘s short & full names
-			String authorCombine = "";
-			String authorShortName = "";
-			String authorFullName = "";
-			WebElement authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
-			authorCombine = authorItem.getText();
-			/*
-			for (WebElement tAu : authorItem) {
-				if (!tAu.getText().substring(0, 1).equals("["))
-					authorCombine = authorCombine + tAu.getText();
+			// Gether FR_label
+			List<WebElement> FRLabel =  webDriver.findElements(By.cssSelector(".FR_label"));
+			ArrayList<String> FRLabelStr = new ArrayList<String>();
+			for (WebElement FRLabellist : FRLabel) {
+				FRLabelStr.add(FRLabellist.getText());
 			}
-			// remove the content in th [..]
-			Pattern pattern = Pattern.compile("\\[.*?\\]");
-			Matcher matcher = pattern.matcher(authorCombine);
-			authorCombine = matcher.replaceAll("");
-			authorCombine = authorCombine.substring(3);
-			*/
-			// get the full & short names
-			Pattern pattern = Pattern.compile("\\(.*?\\)|\\[.*?\\]");
-			Matcher matcher = pattern.matcher(authorCombine);
 			
-			while (matcher.find()) {
-				for (int i = 0; i <= matcher.groupCount(); i++) {
-					if (matcher.group(i).subSequence(0, 1).equals("[")) {
-						authorFullName = authorFullName + " " + matcher.group(i);
-					} else {
-						authorFullName = authorFullName + ";" + matcher.group(i);
+			try {
+				// Get the author‘s short & full names
+				String authorCombine = "";
+				String authorShortName = "";
+				String authorFullName = "";
+				WebElement authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
+				authorCombine = authorItem.getText();
+				
+				// get the full & short names
+				Pattern pattern = Pattern.compile("\\(.*?\\)|\\[.*?\\]");
+				Matcher matcher = pattern.matcher(authorCombine);
+				
+				while (matcher.find()) {
+					for (int i = 0; i <= matcher.groupCount(); i++) {
+						if (matcher.group(i).subSequence(0, 1).equals("[")) {
+							authorFullName = authorFullName + " " + matcher.group(i);
+						} else {
+							authorFullName = authorFullName + ";" + matcher.group(i);
+						}
 					}
 				}
+				authorFullName = authorFullName.substring(1).replaceAll("\\(|\\)", "");
+				authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");				
+				if (FRLabelStr.contains("团体作者:")) {
+					WebElement authorGroupItem = webDriver.findElement(By.xpath("//*[text()='团体作者:']/.."));
+					authorFullName = authorFullName + "||" + authorGroupItem.getText();
+				}				
+				Result[1] = authorShortName.replace('\n', ' ').replace("作者:", "");
+				Result[2] = authorFullName.replace('\n', ' ');
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+				Result[1] = "";
+				Result[2] = "";
 			}
-			authorFullName = authorFullName.substring(1).replaceAll("\\(|\\)", "");
-			authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");
-			Result[1] = authorShortName.replace('\n', ' ').replace("作者:", "");
-			Result[2] = authorFullName.replace('\n', ' ');
 			
 			// see more
 			try {
@@ -705,12 +712,7 @@ public class Main54 {
 				e1.printStackTrace();
 			}
 			
-			// Gether FR_label
-			List<WebElement> FRLabel =  webDriver.findElements(By.cssSelector(".FR_label"));
-			ArrayList<String> FRLabelStr = new ArrayList<String>();
-			for (WebElement FRLabellist : FRLabel) {
-				FRLabelStr.add(FRLabellist.getText());
-			}
+
 
 					
 			// Get Volume
@@ -808,13 +810,14 @@ public class Main54 {
 						Result[9] = tkk3.getText();
 					}
 				}
+				Result[8] = Result[8].substring(2).replace('\n',' ');;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Result[8] = "";
 				Result[9] = "";
 			}
-			Result[8] = Result[8].substring(2).replace('\n',' ');;
+
 			
 			// scroll to the element of "email address" title
 			try {
@@ -858,8 +861,6 @@ public class Main54 {
 				title3Str.add(title3list.getText());
 			}
 			
-			int aa= 0;
-			
 			if (title3Str.contains("基金资助致谢")) {
 				try {
 					List<WebElement> tfd = webDriver
@@ -887,15 +888,17 @@ public class Main54 {
 							break;
 						}
 					}
+					if (Result[11].length() > 0)
+						Result[11] = Result[11].substring(2);
+					Result[11] = Result[11].replace('\n', ' ');
+					;
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 			     
-			if (Result[11].length()>0)
-			Result[11] = Result[11].substring(2);   
-			Result[11] = Result[11].replace('\n',' ');;
+
 			
 			// scroll to the element of fund assistant information
 			if (title3Str.contains("基金资助致谢")) {
@@ -914,12 +917,11 @@ public class Main54 {
 					WebElement fdi = webDriver.findElement(By.xpath("//*[text()='基金资助致谢']/.."));
 
 					Result[12] = fdi.findElement(By.cssSelector("#show_fund_blurb")).getText();
+					Result[12] = Result[12].replace('\n', ' ');
 				} catch (Exception e) {
 					Result[12] = "";
 				}
 			}
-			Result[12] = Result[12].replace('\n', ' ');
-			;
 			
 			// scroll to the element of "类别 / 分类" 
 			if (title3Str.contains("类别 / 分类")) {
@@ -1008,29 +1010,7 @@ public class Main54 {
 				} catch (Exception e) {
 					Result[18] = "";
 				}
-			}
-							
-			// Impact factors
-			/*
-			try {
-				WebElement journalItem = webDriver.findElement(By.xpath("//*[contains(text(), '查看期刊影响力')]"));
-				journalItem.click();
-				Thread.sleep(1500);
-				List<WebElement> impactFrItem = webDriver.findElements(
-						By.xpath("//span[contains(text(), 'impact factor')]/../following-sibling::table/tbody/tr/td"));
-				Result[8] = impactFrItem.get(0).getText();
-				Result[9] = impactFrItem.get(1).getText();
-
-				// Close the impact factor window
-				Thread.sleep(1500);
-				webDriver.findElement(By.xpath("//*[contains(text(), '关闭窗口')]")).click();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Result[8] = "";
-				Result[9] = "";
-			}
-			*/					
+			}				
 		} catch (Exception e) {
 			return;
 		}

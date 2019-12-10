@@ -99,6 +99,7 @@ public class Main37_w1 {
 	public static int rawID = 1;
 	public static int rawID_Total = 0;
 	public static int exceptionCode = 0;
+	public static int fisrtFlag = 0;
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -111,6 +112,8 @@ public class Main37_w1 {
 
 	public static void main(String[] args) throws IOException {
 		try {
+			System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
+
 			input();
 			q = "q-" + searchstring.getText();
 			if (location.getText() == null || location.getText().equals("")) {
@@ -189,6 +192,8 @@ public class Main37_w1 {
 					webDriver.switchTo().window(handles);
 				}
 			}
+			
+			
 
 			// Show the dialog to wait
 			int res = JOptionPane.showConfirmDialog(null, "Waiting for you sign in proquest", " ",
@@ -201,6 +206,13 @@ public class Main37_w1 {
 				System.exit(0);
 				return;
 			}
+	
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			webDriver.switchTo().window(tabs.get(0));
+			webDriver.close();
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			webDriver.switchTo().window(tabs.get(0));
 
 			// Display data extract progress
 			dataProgress = new ReadProgress();
@@ -209,6 +221,7 @@ public class Main37_w1 {
 			thread1.start();
 			
 			String URL_search = "https://search.proquest.com/pqdtglobal/advanced?accountid=14696";
+			webDriver.get(URL_search);
 			try {
 				writer = new PrintWriter(filename.getText() + "_0" + ".xls", "UTF-8");
 			} catch (Exception e1) {
@@ -218,8 +231,13 @@ public class Main37_w1 {
 			}
 			
 			// write the excel the top item
-			String toptitle = "PID\tname\tlastname\tfirstname\tmidname\tphdu\tphd_country\tphdyr\tadvisor\tadvisor1\tadvisor1_lastname"
-					+ "\tadvisor1_firstname\tadvisor1_midname\tadvisor2\tadvisor2_lastname\tadvisor2_firstname\tadvisor2_midname";
+			String toptitle = "PID\tname\tlastname\tfirstname\tmidname\tphdu\tphdyr\tphd_country\tadvisor\tadvisor1\tadvisor1_lastname"
+					+ "\tadvisor1_firstname\tadvisor1_midname\tadvisor2\tadvisor2_lastname\tadvisor2_firstname\tadvisor2_midname"
+					+ "\tSubject\tClassification\tIdentifier&keyword\tTitle\tAuthor\tNumber of pages\tPublication year"
+					+ "\tDegree date\tSchool code\tSource\tPlace of publication\tCountry of publication\tISBN\tAdvisor"
+					+ "\tCommittee member\tUniversity/institution\tDepartment\tUniversity location\tDegree\tSource type"
+					+ "\tLanguage\tDocument type\tDissertation thesis number\tProQuest document ID\tDocument URL\tCopyright"
+					+ "\tDatabase";
 			writer.println(toptitle);
 
 			// Read the unedname from exccel sheet
@@ -229,7 +247,6 @@ public class Main37_w1 {
 					dataProgress.setPanel(total, page, row, sim_row);
 					rawID = i;
 					readExcel(sheet, rawID);
-					exceptionCode=0;
 					// Split the result file
 					if (i % 200 == 0) {
 						writer.close();
@@ -244,8 +261,7 @@ public class Main37_w1 {
 						// write the excel the top item
 						writer.println(toptitle);
 					}
-
-					ArrayList<String> tabs;
+	
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -265,7 +281,7 @@ public class Main37_w1 {
 					} else {
 						// If no result, write into a blank record
 						writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
-								+ "\t" + phd_country + "\t" + phdyr + "\t" + advisor + "\t" + advisor1 + "\t"
+								+ "\t" + phdyr + "\t" + phd_country + "\t" + advisor + "\t" + advisor1 + "\t"
 								+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
 								+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname);
 						Thread.sleep(20000);
@@ -288,11 +304,10 @@ public class Main37_w1 {
 					// e3.printStackTrace();
 					// If in exception
 					writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
-							+ "\t" + phd_country + "\t" + phdyr + "\t" + advisor + "\t" + advisor1 + "\t"
+							+ "\t" + phdyr + "\t" + phd_country + "\t" + advisor + "\t" + advisor1 + "\t"
 							+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
 							+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname + "\tError");
 					Thread.sleep(30000);
-					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -321,16 +336,22 @@ public class Main37_w1 {
 		try {
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id='Language_ENG']")));
+			//wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id='Language_ENG']")));
 			
 			//select the period 
 			Select periodBox = new Select (webDriver.findElement(By.xpath("//*[@id='select_yearMultiDateRange']")) );
-			periodBox.selectByIndex(6);
+			periodBox.selectByIndex(7);
 			
 			// Input the year
-			WebElement year_input = webDriver.findElement(By.xpath("//*[@id='textfield']"));
-			year_input.clear();
-			year_input.sendKeys(phdyr);	
+			String yearEnd = String.valueOf(Integer.parseInt(phdyr) + 1);
+			WebElement tStartYr = webDriver.findElement(By.xpath("//*[text()='Start ']/.."));
+			WebElement yearStart_input = tStartYr.findElement(By.xpath("//*[@id='textfield']"));
+			WebElement tEndYr = webDriver.findElement(By.xpath("//*[text()='End ']/.."));
+			WebElement yearEnd_input = tEndYr.findElement(By.xpath("//*[@id='textfield_0']"));
+			yearStart_input.clear();
+			yearStart_input.sendKeys(phdyr);
+			yearEnd_input.clear();
+			yearEnd_input.sendKeys(yearEnd);
 			
 			// Select the language
 			if (!webDriver.findElement(By.xpath("//*[@id='Language_ENG']")).isSelected()) {
@@ -545,7 +566,7 @@ public class Main37_w1 {
 					}
 					// write into excel
 					writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
-							+ "\t" + phd_country + "\t" + phdyr + "\t" + advisor + "\t" + advisor1 + "\t"
+							+ "\t" + phdyr + "\t" + phd_country + "\t" + advisor + "\t" + advisor1 + "\t"
 							+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
 							+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname + "\t"
 							+ dissertation_content[1] + "\t" + dissertation_content[2] + "\t" + dissertation_content[3]
@@ -751,7 +772,7 @@ public class Main37_w1 {
 				lastname =cell3.getContents();
 				firstname =cell4.getContents();
 				try {
-					midname =cell5.getContents();
+					midname =cell5.getContents().replace(' ',' ');
 				} catch (Exception e) {
 					midname ="";
 					// TODO Auto-generated catch block
@@ -765,17 +786,17 @@ public class Main37_w1 {
 					e.printStackTrace();
 				}
 				try {
-					phd_country =cell7.getContents();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					phd_country = "";
-					e.printStackTrace();
-				}
-				try {
-					phdyr =cell8.getContents();
+					phdyr =cell7.getContents();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					phdyr = "";
+					e.printStackTrace();
+				}
+				try {
+					phd_country =cell8.getContents();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					phd_country = "";
 					e.printStackTrace();
 				}
 				try {
@@ -814,28 +835,28 @@ public class Main37_w1 {
 					e.printStackTrace();
 				}
 				try {
-					advisor2 =cell14.getContents();
+					advisor2 =cell14.getContents().replace(' ',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2 = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor2_lastname =cell15.getContents();
+					advisor2_lastname =cell15.getContents().replace(' ',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2_lastname = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor2_firstname =cell16.getContents();
+					advisor2_firstname =cell16.getContents().replace(' ',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2_firstname = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor2_midname =cell17.getContents();
+					advisor2_midname =cell17.getContents().replace(' ',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2_midname = "";

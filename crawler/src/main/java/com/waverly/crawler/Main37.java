@@ -232,6 +232,18 @@ public class Main37 {
 						writer.println(toptitle);
 					}
 
+					ArrayList<String> tabs;
+					tabs = new ArrayList<String>(webDriver.getWindowHandles());
+					if (tabs.size() > 1) {
+						for (int a = tabs.size(); a > 1; a--) {
+							webDriver.switchTo().window(tabs.get(a - 1));
+							Thread.sleep(500);
+							webDriver.close();
+						}
+						webDriver.switchTo().window(tabs.get(0));
+					}
+					tabs = null;
+					
 					// Input the query condition
 					searchName(webDriver, unedname);
 					if (!webDriver.getPageSource().contains("found 0 results")) {
@@ -243,7 +255,7 @@ public class Main37 {
 								+ year);
 						Thread.sleep(20000);
 					}	
-					ArrayList<String> tabs;
+
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
