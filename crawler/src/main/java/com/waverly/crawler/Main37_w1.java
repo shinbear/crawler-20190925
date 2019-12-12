@@ -100,6 +100,7 @@ public class Main37_w1 {
 	public static int rawID_Total = 0;
 	public static int exceptionCode = 0;
 	public static int fisrtFlag = 0;
+	public static String ID = "";
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -231,7 +232,7 @@ public class Main37_w1 {
 			}
 			
 			// write the excel the top item
-			String toptitle = "PID\tname\tlastname\tfirstname\tmidname\tphdu\tphdyr\tphd_country\tadvisor\tadvisor1\tadvisor1_lastname"
+			String toptitle = "ID\tPID\tname\tlastname\tfirstname\tmidname\tphdu\tphdyr\tphd_country\tadvisor\tadvisor1\tadvisor1_lastname"
 					+ "\tadvisor1_firstname\tadvisor1_midname\tadvisor2\tadvisor2_lastname\tadvisor2_firstname\tadvisor2_midname"
 					+ "\tSubject\tClassification\tIdentifier&keyword\tTitle\tAuthor\tNumber of pages\tPublication year"
 					+ "\tDegree date\tSchool code\tSource\tPlace of publication\tCountry of publication\tISBN\tAdvisor"
@@ -248,7 +249,7 @@ public class Main37_w1 {
 					rawID = i;
 					readExcel(sheet, rawID);
 					// Split the result file
-					if (i % 200 == 0) {
+					if (i % 500 == 0) {
 						writer.close();
 						int t = i / 200;
 						try {
@@ -280,7 +281,7 @@ public class Main37_w1 {
 						getAName(webDriver);
 					} else {
 						// If no result, write into a blank record
-						writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
+						writer.println(ID + "\t" + PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
 								+ "\t" + phdyr + "\t" + phd_country + "\t" + advisor + "\t" + advisor1 + "\t"
 								+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
 								+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname);
@@ -303,7 +304,7 @@ public class Main37_w1 {
 				} catch (Exception e3) {
 					// e3.printStackTrace();
 					// If in exception
-					writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
+					writer.println(ID + "\t" + PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
 							+ "\t" + phdyr + "\t" + phd_country + "\t" + advisor + "\t" + advisor1 + "\t"
 							+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
 							+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname + "\tError");
@@ -565,15 +566,15 @@ public class Main37_w1 {
 						continue;
 					}
 					// write into excel
-					writer.println(PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
+					writer.println(ID + "\t" + PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t" + phdu
 							+ "\t" + phdyr + "\t" + phd_country + "\t" + advisor + "\t" + advisor1 + "\t"
 							+ advisor1_lastname + "\t" + advisor1_firstname + "\t" + advisor1_midname + "\t" + advisor2
-							+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname + "\t"
-							+ dissertation_content[1] + "\t" + dissertation_content[2] + "\t" + dissertation_content[3]
-							+ "\t" + dissertation_content[4] + "\t" + dissertation_content[5] + "\t"
-							+ dissertation_content[6] + "\t" + dissertation_content[7] + "\t" + dissertation_content[8]
-							+ "\t" + dissertation_content[9] + "\t" + dissertation_content[10] + "\t"
-							+ dissertation_content[11] + "\t" + dissertation_content[12] + "\t"
+							+ "\t" + advisor2_lastname + "\t" + advisor2_firstname + "\t" + advisor2_midname
+							+ "\t" + dissertation_content[1] + "\t" + dissertation_content[2] + "\t"
+							+ dissertation_content[3] + "\t" + dissertation_content[4] + "\t" + dissertation_content[5]
+							+ "\t" + dissertation_content[6] + "\t" + dissertation_content[7] + "\t"
+							+ dissertation_content[8] + "\t" + dissertation_content[9] + "\t" + dissertation_content[10]
+							+ "\t" + dissertation_content[11] + "\t" + dissertation_content[12] + "\t"
 							+ dissertation_content[13] + "\t" + dissertation_content[14] + "\t"
 							+ dissertation_content[15] + "\t" + dissertation_content[16] + "\t"
 							+ dissertation_content[17] + "\t" + dissertation_content[18] + "\t"
@@ -747,6 +748,7 @@ public class Main37_w1 {
 			cell15 = sheet.getCell(14, rawID);
 			cell16 = sheet.getCell(15, rawID);
 			cell17 = sheet.getCell(16, rawID);
+			cell18 = sheet.getCell(17, rawID);
 
 			PID = "";
 			name = "";
@@ -765,103 +767,105 @@ public class Main37_w1 {
 			advisor2_lastname = "";
 			advisor2_firstname = "";
 			advisor2_midname = "";	
+			ID = "";
 
 			if ("".equals(cell1.getContents()) != true) {
-				PID =cell1.getContents();
-				name =cell2.getContents();
-				lastname =cell3.getContents();
-				firstname =cell4.getContents();
+				PID ="PID||" + cell1.getContents().replace('\n',' ');
+				name =cell2.getContents().replace('\n',' ');
+				lastname =cell3.getContents().replace('\n',' ');
+				firstname =cell4.getContents().replace('\n',' ');
 				try {
-					midname =cell5.getContents().replace(' ',' ');
+					midname =cell5.getContents().replace(' ',' ').replace('\n',' ');
 				} catch (Exception e) {
 					midname ="";
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
-					phdu =cell6.getContents();
+					phdu =cell6.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					phdu = "";
 					e.printStackTrace();
 				}
 				try {
-					phdyr =cell7.getContents();
+					phdyr =cell7.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					phdyr = "";
 					e.printStackTrace();
 				}
 				try {
-					phd_country =cell8.getContents();
+					phd_country =cell8.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					phd_country = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor =cell9.getContents();
+					advisor =cell9.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor1 =cell10.getContents();
+					advisor1 =cell10.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor1 = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor1_lastname =cell11.getContents();
+					advisor1_lastname =cell11.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor1_lastname = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor1_firstname =cell12.getContents();
+					advisor1_firstname =cell12.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor1_firstname = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor1_midname =cell13.getContents();
+					advisor1_midname =cell13.getContents().replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor1_midname = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor2 =cell14.getContents().replace(' ',' ');
+					advisor2 =cell14.getContents().replace(' ',' ').replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2 = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor2_lastname =cell15.getContents().replace(' ',' ');
+					advisor2_lastname =cell15.getContents().replace(' ',' ').replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2_lastname = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor2_firstname =cell16.getContents().replace(' ',' ');
+					advisor2_firstname =cell16.getContents().replace(' ',' ').replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2_firstname = "";
 					e.printStackTrace();
 				}
 				try {
-					advisor2_midname =cell17.getContents().replace(' ',' ');
+					advisor2_midname =cell17.getContents().replace(' ',' ').replace('\n',' ');
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					advisor2_midname = "";
 					e.printStackTrace();
 				}
+				ID =cell18.getContents().replace(' ',' ');
 
 				System.out.println(rawID + " " + cell1.getContents() + " " + cell2.getContents());
 			}
