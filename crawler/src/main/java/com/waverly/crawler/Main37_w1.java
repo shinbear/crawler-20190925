@@ -16,11 +16,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.Jsoup;
@@ -54,9 +56,13 @@ public class Main37_w1 {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
+	public static JTextField filename = new JTextField("E:/Jobs");	
 	public static JTextField searchstring = new JTextField();
-	public static JTextField location = new JTextField();
-	public static JTextField filename = new JTextField("E:/Jobs");
+	public static JRadioButton jRadio1 = new JRadioButton("Run all records",true);
+	public static JRadioButton jRadio2 = new JRadioButton("Run the specific records from- to");
+	public static ButtonGroup jRadioGroup = new ButtonGroup();
+	public static JTextField recordFrom = new JTextField("");
+	public static JTextField recordTo = new JTextField("");
 	public static String URL = "";
 	public static String q;
 	public static String dcs;
@@ -114,45 +120,8 @@ public class Main37_w1 {
 	public static void main(String[] args) throws IOException {
 		try {
 			System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
-
 			input();
-			q = "q-" + searchstring.getText();
-			if (location.getText() == null || location.getText().equals("")) {
-				l = "";
-			} else {
-				l = "-l-" + location.getText();
-			}
-			if (combo1.getSelectedItem().toString() == null || combo1.getSelectedItem().toString().equals("")
-					|| combo1.getSelectedItem().toString() == "None") {
-				jtype = "";
-			} else {
-				jtype = "-jtype-" + combo1.getSelectedItem().toString();
-			}
-			if (combo2.getSelectedItem().toString() == null || combo2.getSelectedItem().toString().equals("")
-					|| combo2.getSelectedItem().toString() == "None") {
-				dcs = "";
-			} else {
-				dcs = "-dcs-" + combo2.getSelectedItem().toString();
-			}
-			if (comborad.getSelectedItem().toString() == null || comborad.getSelectedItem().toString().equals("")
-					|| comborad.getSelectedItem().toString() == "None") {
-				radius = "";
-			} else {
-				radius = "-radius-" + comborad.getSelectedItem().toString();
-			}
 
-			String q1 = q.replace(" ", "_");
-			String l1 = l.replace(" ", "_");
-			String jtype1 = jtype.replace(" ", "_");
-			String dcs1 = dcs.replace(" ", "_");
-			String radius1 = radius.replace(" ", "_");
-
-			if (l.isEmpty())
-				l1 = "";
-			if (dcs.equalsIgnoreCase("None"))
-				dcs1 = "";
-			if (jtype.equalsIgnoreCase("None"))
-				jtype1 = "";
 			if (filename.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Please enter the file path.");
 				filename.requestFocusInWindow();
@@ -240,9 +209,28 @@ public class Main37_w1 {
 					+ "\tLanguage\tDocument type\tDissertation thesis number\tProQuest document ID\tDocument URL\tCopyright"
 					+ "\tDatabase";
 			writer.println(toptitle);
+			
+			int startRow, endRow;
+			if (jRadio1.isSelected()) {
+				startRow = 1;
+				endRow = rawID_Total;
+			} else {
+				startRow = Integer.parseInt(recordFrom.getText());
+				if (!recordFrom.getText().equals("")) {
+					startRow = Integer.parseInt(recordFrom.getText());
+				} else {
+					startRow = 1;
+				}
+
+				if (!recordTo.getText().equals("")) {
+					endRow = Integer.parseInt(recordTo.getText()) + 1;
+				} else {
+					endRow = rawID_Total;
+				}
+			}
 
 			// Read the unedname from exccel sheet
-			for (int i = 1; i < rawID_Total; i++) {
+			for (int i = startRow; i < endRow; i++) {
 				try {
 					sim_row = i;
 					dataProgress.setPanel(total, page, row, sim_row);
@@ -321,7 +309,6 @@ public class Main37_w1 {
 					tabs = null;
 					continue;
 				}
-
 			}
 			writer.close();
 			JOptionPane.showMessageDialog(frame, "Downloading over. Data ready in " + filename.getText() + ".xls");
@@ -629,8 +616,18 @@ public class Main37_w1 {
 		JPanel panel = new JPanel(new GridLayout(0, 1));
 		panel.add(new JLabel("File path to store results (without extention):"));
 		panel.add(filename);
-
-		int result = JOptionPane.showConfirmDialog(null, panel, "Dice.com - Search Criteria", 2, -1);
+		
+		panel.add(new JLabel("Author name:"));
+		panel.add(jRadio1);
+		panel.add(jRadio2);
+		jRadioGroup.add(jRadio1);
+		jRadioGroup.add(jRadio2);
+		panel.add(new JLabel("From:"));
+		panel.add(recordFrom);
+		panel.add(new JLabel("To:"));
+		panel.add(recordTo);
+		
+		int result = JOptionPane.showConfirmDialog(null, panel, "Proquest - Search Criteria", 2, -1);
 		if (result == 0) {
 			return;
 		}
