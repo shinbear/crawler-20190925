@@ -193,7 +193,17 @@ public class Main54 {
 				endRow = rowid_Total;
 			} else {
 				startRow = Integer.parseInt(recordFrom.getText());
-				endRow = Integer.parseInt(recordTo.getText())+1;
+				if (!recordFrom.getText().equals("")) {
+					startRow = Integer.parseInt(recordFrom.getText());
+				} else {
+					startRow = 1;
+				}
+
+				if (!recordTo.getText().equals("")) {
+					endRow = Integer.parseInt(recordTo.getText()) + 1;
+				} else {
+					endRow = rowid_Total;
+				}
 			}
 
 			// Read the name from exccel sheet
