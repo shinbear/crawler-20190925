@@ -698,10 +698,7 @@ public class Main54_W {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-
-
-					
+								
 			// Get Volume
 			try {
 				WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷:']/following-sibling::value"));
@@ -804,7 +801,6 @@ public class Main54_W {
 				Result[8] = "";
 				Result[9] = "";
 			}
-
 			
 			// scroll to the element of "email address" title
 			try {
@@ -827,8 +823,7 @@ public class Main54_W {
 					
 			// Get the being cite 180days&since 2013
 			WebElement sideBar = webDriver.findElement(By.cssSelector("#sidebar-container"));
-			
-			
+						
 			try {
 				List<WebElement> tbs = sideBar.findElements(
 						By.xpath("//*[text()='在 Web of Science 中 使用次数']/../following-sibling::div/div"));
@@ -884,9 +879,7 @@ public class Main54_W {
 					e1.printStackTrace();
 				}
 			}
-			     
-
-			
+			     		
 			// scroll to the element of fund assistant information
 			if (title3Str.contains("基金资助致谢")) {
 				try {
@@ -1006,7 +999,7 @@ public class Main54_W {
 	public static void writrintExcel() throws IOException {
 		// write into excel
 		writer.println(Stkcd + "\t" + year + "\t" + Name_cn + "\t" + PersonID + "\t" + university_cn + "\t"
-				+ firstname_en + "\t" + lastname_en + "\t" + name_en + "\t" + university_en + "\t" + Result[0] + "\t"
+				+ firstname_en + "\t" + lastname_en + "\t" + name_en + "\t" + university_en + "\t" + "-" + "\t"+ Result[0] + "\t"
 				+ Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t"
 				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
 				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t"
@@ -1032,7 +1025,6 @@ public class Main54_W {
 		panel.add(new JLabel("To:"));
 		panel.add(recordTo);
 		
-
 		int result = JOptionPane.showConfirmDialog(null, panel, "web of science - Search Criteria", 2, -1);
 		if (result == 0) {
 			return;
@@ -1063,47 +1055,6 @@ public class Main54_W {
 		 */
 		Document doc = Jsoup.parse(responseBody);// 获取html文档
 		webDriver.close();
-		return doc;
-	}
-
-	public static Document getPageDocByHtmlunit(String URL) {
-		System.out.print("read page:" + page + " row:" + row + " sim_row:" + row);
-		final WebClient webClient = new WebClient(BrowserVersion.CHROME);// 新建一个模拟谷歌Chrome浏览器的浏览器客户端对象
-		webClient.getOptions().setThrowExceptionOnScriptError(false);// 当JS执行出错的时候是否抛出异常,
-																		// //
-																		// 这里选择不需要
-		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);// 当HTTP的状态非200时是否抛出异常,
-																			// //
-																			// 这里选择不需要
-		webClient.getOptions().setActiveXNative(false);
-		webClient.getOptions().setCssEnabled(false);// 是否启用CSS, 因为不需要展现页面,
-		webClient.getOptions().setJavaScriptEnabled(true); // 很重要，启用JS
-		webClient.setAjaxController(new NicelyResynchronizingAjaxController());// 很重要，设置支持AJAX
-		// webClient.waitForBackgroundJavaScript(10 * 1000);
-		webClient.getOptions().setTimeout(5 * 1000);
-		// webClient.setJavaScriptTimeout(5 * 1000);
-		// webClient.getOptions().setTimeout(5000);
-
-		HtmlPage page = null;
-		try {
-			page = webClient.getPage(URL);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Document doc = Jsoup.parse(" ");
-			System.out.print("read FAIL on the page:" + page + " row:" + row + " sim_row:" + row);
-			return doc;
-		} finally {
-			webClient.close();
-		}
-
-		// webClient.waitForBackgroundJavaScript(10000);
-		// 异步JS执行需要耗时,所以这里线程要阻塞30秒,等待异步JS执行结束
-		String pageXml = page.asXml();// 直接将加载完成的页面转换成xml格式的字符串
-
-		// File file = new File("e:\\log.txt");
-		// String pageXml = txt2String(file);
-
-		Document doc = Jsoup.parse(pageXml);// 获取html文档
 		return doc;
 	}
 
