@@ -46,7 +46,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-public class Main54 {
+public class Main54_W {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
@@ -73,24 +73,16 @@ public class Main54 {
 	private static int sim_row = 0;
 	public static String auadQuery = "";
 	//The content read from Excel
-	public static String source_ID = "";
-	public static String source_NameCN = "";
-	public static String source_LstName = "";
-	public static String source_FstName = "";
-	public static String source_DissYear = "";
-	public static String source_DissInst = "";
-	public static String source_DissIntstWOS = "";
-	public static String source_CurAffi = "";
-	public static String source_CurAffiWOS = "";
-	public static String source_ProgYear = "";
-	public static String source_ProgAffi = "";
-	public static String source_ProgAffiWOS = "";
-	public static String[] source_SearchArry = new String[3];
-	public static String[] source_SearchYearFromArry = new String[3];
-	public static String[] source_SearchYearToArry = new String[3];
-	public static String source_Search = "";
-	public static String source_SearchYearFrom = "";
-	public static String source_SearchYearTo = "";	
+	public static String  ID= "";
+	public static String  Stkcd= "";
+	public static String  year= "";
+	public static String  Name_cn= "";
+	public static String  PersonID= "";
+	public static String  university_cn= "";
+	public static String  firstname_en= "";
+	public static String  lastname_en= "";
+	public static String  name_en= "";
+	public static String  university_en="";
 
 	public static String author = "";
 	public static String authorOrg = "";
@@ -135,7 +127,7 @@ public class Main54 {
 			sheet = book.getSheet(0);
 			rowid_Total = sheet.getRows();
 
-			URL = "http://apps.webofknowledge.com/WOS_AdvancedSearch_input.do?SID=8DEJ9qRQSdW6p6ieIOa&product=WOS&search_mode=AdvancedSearch";
+			URL = "https://www.lib.umd.edu/dbfinder/id/UMD04150";
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 			//modify the download path	
@@ -147,7 +139,10 @@ public class Main54 {
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			// lanunch the webdriver 
-			// webDriver.get(URL);
+			webDriver.get(URL);		
+			WebElement focus_element = webDriver.findElement(By.linkText("Web of Science Core Collection"));
+			focus_element.click();
+			Thread.sleep(3000);
 			
 			// Show the dialog to wait
 			int res = JOptionPane.showConfirmDialog(null, "Waiting for you access the advanced search page", " ",
@@ -160,6 +155,12 @@ public class Main54 {
 				System.exit(0);
 				return;
 			}
+
+			// Input the query condition
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			webDriver.switchTo().window(tabs.get(0));
+			tabs = null;
 			
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
@@ -180,10 +181,9 @@ public class Main54 {
 			}
 
 			// write the excel the top item
-			String toptitle = "ID\tName\tLast Name\tFirst Name\tDissertation Year\tDissertation Institution\t"
-					+ "Dissertation Institution(WOS)\tCurrent Affilication\tCurrent Affilication(WOS)\t"
-					+ "Program Year\tProgram Affication\tProgram Affication(WOS)\tSearch keywords\t"
-					+ "Year From\tYear To\tPT\tAU\tAF\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tTC\tZ9\tU1\tU2\tSN\t"
+			String toptitle = "ID\tStkcd\tyear\tName_cn\tPersonID\tuniversity_cn\t"
+					+ "firstname_en\tlastname_en\tname_en\tuniversity_en\tPT\tAU\tAF"
+					+ "\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tTC\tZ9\tU1\tU2\tSN\t"
 					+ "EI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA\tUT\tPM";
 			writer.println(toptitle);
 			
@@ -229,7 +229,6 @@ public class Main54 {
 					}
 
 					//Remain the search page
-					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -240,31 +239,10 @@ public class Main54 {
 						webDriver.switchTo().window(tabs.get(0));
 					}
 					tabs = null;
-					
-					try {
-						for (int k = 0; k < 3; k++) {
-							// Input the query condition
-							source_Search = source_SearchArry[k];
-							source_SearchYearFrom = source_SearchYearFromArry[0];
-							source_SearchYearTo = source_SearchYearToArry[0];
-							tabs = new ArrayList<String>(webDriver.getWindowHandles());
-							if (tabs.size() > 1) {
-								for (int a = tabs.size(); a > 1; a--) {
-									webDriver.switchTo().window(tabs.get(a - 1));
-									Thread.sleep(500);
-									webDriver.close();
-								}
-								webDriver.switchTo().window(tabs.get(0));
-							}
-							tabs = null;
-							searchName(webDriver, k);
-							// Get the item name
-							getAName(webDriver);
-						}
-					} catch (Exception e1) {
-						Thread.sleep(300000);
-						writrintExcel();
-					}
+
+					searchName(webDriver);
+					// Get the item name
+					getAName(webDriver);
 
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -282,7 +260,6 @@ public class Main54 {
 					// If in exception
 					writrintExcel();
 					Thread.sleep(30000);
-					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -306,16 +283,17 @@ public class Main54 {
 		System.exit(0);
 	}
 
-	public static void searchName(WebDriver webDriver, int searchNo) throws IOException {
+	public static void searchName(WebDriver webDriver) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Input the author
+			String searchQuery = "AU=" + name_en + " AND AD=" + university_en;
 			WebElement author_input = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
-			author_input.clear();	
-			author_input.sendKeys(source_SearchArry[searchNo]);
+			author_input.clear();
+			author_input.sendKeys(searchQuery);
 			
 			//scroll to the element
 			String js3 = "arguments[0].scrollIntoView();";
@@ -329,24 +307,23 @@ public class Main54 {
 				Thread.sleep(1000);
 				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));				
 				yearRange.selectByIndex(6);
+				WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
+				List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
+				tss.get(0).click();
+				Thread.sleep(500);
+				WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
+				yearFrom.clear();
+				yearFrom.sendKeys("2009");
+				yearFrom.sendKeys(Keys.ENTER);
+				tss.get(1).click();
+				Thread.sleep(500);
+				WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
+				yearTo.clear();
+				yearTo.sendKeys("2019");	
+				yearTo.sendKeys(Keys.ENTER);
+				Thread.sleep(200);
 			}
-		
-			WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
-			List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
-			tss.get(0).click();
-			Thread.sleep(500);
-			WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
-			yearFrom.clear();
-			yearFrom.sendKeys(source_SearchYearFromArry[searchNo]);
-			yearFrom.sendKeys(Keys.ENTER);
-			tss.get(1).click();
-			Thread.sleep(500);
-			WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
-			yearTo.clear();
-			yearTo.sendKeys(source_SearchYearToArry[searchNo]);	
-			yearTo.sendKeys(Keys.ENTER);
-			Thread.sleep(200);
-						
+								
 			if (isFirstSearch) {
 				try {
 					Thread.sleep(3000);
@@ -1028,10 +1005,8 @@ public class Main54 {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(source_ID + "\t" + source_NameCN + "\t" + source_LstName + "\t" + source_FstName + "\t"
-				+ source_DissYear + "\t" + source_DissInst + "\t" + source_DissIntstWOS + "\t" + source_CurAffi + "\t"
-				+ source_CurAffiWOS + "\t" + source_ProgYear + "\t" + source_ProgAffi + "\t" + source_ProgAffiWOS + "\t"
-				+ source_Search + "\t" + source_SearchYearFrom + "\t" + source_SearchYearTo + "\t" + Result[0] + "\t"
+		writer.println(Stkcd + "\t" + year + "\t" + Name_cn + "\t" + PersonID + "\t" + university_cn + "\t"
+				+ firstname_en + "\t" + lastname_en + "\t" + name_en + "\t" + university_en + "\t" + Result[0] + "\t"
 				+ Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t"
 				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
 				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t"
@@ -1158,8 +1133,7 @@ public class Main54 {
 	}
 
 	public static void readExcel(Sheet sheet, int rowid) {
-		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10, cell11, cell12, cell13, cell14,
-				cell15, cell16, cell17, cell18, cell19, cell20, cell21;
+		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10;
 		try {
 			cell1 = sheet.getCell(0, rowid);
 			cell2 = sheet.getCell(1, rowid);
@@ -1171,40 +1145,18 @@ public class Main54 {
 			cell8 = sheet.getCell(7, rowid);
 			cell9 = sheet.getCell(8, rowid);
 			cell10 = sheet.getCell(9, rowid);
-			cell11 = sheet.getCell(10, rowid);
-			cell12 = sheet.getCell(11, rowid);
-			cell13 = sheet.getCell(12, rowid);
-			cell14 = sheet.getCell(13, rowid);
-			cell15 = sheet.getCell(14, rowid);
-			cell16 = sheet.getCell(15, rowid);
-			cell17 = sheet.getCell(16, rowid);
-			cell18 = sheet.getCell(17, rowid);
-			cell19 = sheet.getCell(18, rowid);
-			cell20 = sheet.getCell(19, rowid);
-			cell21 = sheet.getCell(20, rowid);
 
-			if ("".equals(cell1.getContents()) != true) {				
-				source_ID = cell1.getContents().replace('\n',' ');
-				source_NameCN = cell2.getContents().replace('\n',' ');
-				source_LstName = cell3.getContents().replace('\n',' ');
-				source_FstName = cell4.getContents().replace('\n',' ');
-				source_DissYear = cell5.getContents().replace('\n',' ');
-				source_DissInst = cell6.getContents().replace('\n',' ');
-				source_DissIntstWOS = cell7.getContents().replace('\n',' ');
-				source_CurAffi = cell8.getContents().replace('\n',' ');
-				source_CurAffiWOS = cell9.getContents().replace('\n',' ');
-				source_ProgYear = cell10.getContents().replace('\n',' ');
-				source_ProgAffi = cell11.getContents().replace('\n',' ');
-				source_ProgAffiWOS = cell12.getContents().replace('\n',' ');
-				source_SearchArry[0]  = cell13.getContents().replace('\n',' ');
-				source_SearchYearFromArry[0]   = cell14.getContents().replace('\n',' ');
-				source_SearchYearToArry[0] = cell15.getContents().replace('\n',' ');
-				source_SearchArry[1] = cell16.getContents().replace('\n',' ');
-				source_SearchYearFromArry[1] = cell17.getContents().replace('\n',' ');
-				source_SearchYearToArry[1] = cell18.getContents().replace('\n',' ');
-				source_SearchArry[2] = cell19.getContents().replace('\n',' ');
-				source_SearchYearFromArry[2] = cell20.getContents().replace('\n',' ');
-				source_SearchYearToArry[2] = cell21.getContents().replace('\n',' ');
+			if ("".equals(cell1.getContents()) != true) {
+				ID = cell1.getContents().replace('\n', ' ');
+				Stkcd = cell2.getContents().replace('\n', ' ');
+				year = cell3.getContents().replace('\n', ' ');
+				Name_cn = cell4.getContents().replace('\n', ' ');
+				PersonID = cell5.getContents().replace('\n', ' ');
+				university_cn = cell6.getContents().replace('\n', ' ');
+				firstname_en = cell7.getContents().replace('\n', ' ');
+				lastname_en = cell8.getContents().replace('\n', ' ');
+				name_en = cell9.getContents().replace('\n', ' ');
+				university_en = cell10.getContents().replace('\n', ' ');
 			}
 		} catch (Exception e) {
 		}
