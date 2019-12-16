@@ -175,7 +175,7 @@ public class Main54_W {
 			thread1.start();
 
 			try {
-				writer = new PrintWriter(filename.getText() + "_0" + ".xls", "GB2312");
+				writer = new PrintWriter(filename.getText() + "_0" + ".xls", "UTF-8");
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(null,
 						"File already open with same path & file name. Please close it & re-run the application");
