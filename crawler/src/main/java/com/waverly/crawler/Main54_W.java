@@ -1106,9 +1106,7 @@ public class Main54_W {
 				Stkcd = cell2.getContents().replace('\n', ' ');
 				year = cell3.getContents().replace('\n', ' ');
 				Name_cn = cell4.getContents().replace('\n', ' ');
-				PersonID = cell5.getContents().replace('\n', ' ');
-				PersonID = URLEncoder.encode(PersonID, "UTF-8");
-				
+				PersonID = cell5.getContents().replace('\n', ' ');			
 				university_cn = cell6.getContents().replace('\n', ' ');
 				firstname_en = cell7.getContents().replace('\n', ' ');
 				lastname_en = cell8.getContents().replace('\n', ' ');
