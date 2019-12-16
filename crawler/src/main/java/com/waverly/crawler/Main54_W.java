@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +112,7 @@ public class Main54_W {
 
 	public static void main(String[] args) throws IOException {
 		try {		
+			System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
 			input();
 			if (filename.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Please enter the file path.");
@@ -709,8 +711,10 @@ public class Main54_W {
 			
 			// Get phase
 			try {
-				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));
+				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));			
 				Result[24] = "期: " + phaseStr.getText();
+				Result[24] = URLEncoder.encode(Result[24], "UTF-8"); 
+				
 			} catch (Exception e) {
 				Result[24] = " ";
 			}
@@ -998,8 +1002,8 @@ public class Main54_W {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(Stkcd + "\t" + year + "\t" + Name_cn + "\t" + PersonID + "\t" + university_cn + "\t"
-				+ firstname_en + "\t" + lastname_en + "\t" + name_en + "\t" + university_en + "\t" + "-" + "\t"+ Result[0] + "\t"
+		writer.println(ID + "\t" + Stkcd + "\t" + year + "\t" + Name_cn + "\t" + PersonID + "\t" + university_cn + "\t"
+				+ firstname_en + "\t" + lastname_en + "\t" + name_en + "\t" + university_en + "\t" + Result[0] + "\t"
 				+ Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t"
 				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
 				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t"
@@ -1103,6 +1107,8 @@ public class Main54_W {
 				year = cell3.getContents().replace('\n', ' ');
 				Name_cn = cell4.getContents().replace('\n', ' ');
 				PersonID = cell5.getContents().replace('\n', ' ');
+				PersonID = URLEncoder.encode(PersonID, "UTF-8");
+				
 				university_cn = cell6.getContents().replace('\n', ' ');
 				firstname_en = cell7.getContents().replace('\n', ' ');
 				lastname_en = cell8.getContents().replace('\n', ' ');

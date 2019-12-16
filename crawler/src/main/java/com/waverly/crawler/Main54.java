@@ -119,6 +119,7 @@ public class Main54 {
 
 	public static void main(String[] args) throws IOException {
 		try {		
+			System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
 			input();
 			if (filename.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Please enter the file path.");
@@ -1031,14 +1032,13 @@ public class Main54 {
 		writer.println(source_ID + "\t" + source_NameCN + "\t" + source_LstName + "\t" + source_FstName + "\t"
 				+ source_DissYear + "\t" + source_DissInst + "\t" + source_DissIntstWOS + "\t" + source_CurAffi + "\t"
 				+ source_CurAffiWOS + "\t" + source_ProgYear + "\t" + source_ProgAffi + "\t" + source_ProgAffiWOS + "\t"
-				+ source_Search + "\t" + source_SearchYearFrom + "\t" + source_SearchYearTo + "\t" + "-" + "\t"
-				+ Result[0] + "\t" + Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t"
-				+ Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t"
-				+ Result[10] + "\t" + Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t"
-				+ Result[15] + "\t" + Result[16] + "\t" + Result[17] + "\t" + Result[18] + "\t" + Result[19] + "\t"
-				+ Result[20] + "\t" + Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t"
-				+ Result[25] + "\t" + Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t"
-				+ Result[30] + "\t"
+				+ source_Search + "\t" + source_SearchYearFrom + "\t" + source_SearchYearTo + "\t" + Result[0] + "\t"
+				+ Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t"
+				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
+				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t"
+				+ Result[16] + "\t" + Result[17] + "\t" + Result[18] + "\t" + Result[19] + "\t" + Result[20] + "\t"
+				+ Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t" + Result[25] + "\t"
+				+ Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t" + Result[30] + "\t"
 				+ Result[31] + "\t" + Result[32] + "\t" + Result[33]);
 		writer.flush();
 	}
