@@ -650,6 +650,14 @@ public class Main54_W {
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
+			// see more
+			try {
+				webDriver.findElement(By.linkText("查看更多数据字段")).click();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			// Gether FR_label
 			List<WebElement> FRLabel =  webDriver.findElements(By.cssSelector(".FR_label"));
 			ArrayList<String> FRLabelStr = new ArrayList<String>();
@@ -691,14 +699,6 @@ public class Main54_W {
 				e2.printStackTrace();
 				Result[1] = "";
 				Result[2] = "";
-			}
-			
-			// see more
-			try {
-				webDriver.findElement(By.linkText("查看更多数据字段")).click();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
 			}
 								
 			// Get Volume
