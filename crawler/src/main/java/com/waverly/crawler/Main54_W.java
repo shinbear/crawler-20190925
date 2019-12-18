@@ -175,7 +175,7 @@ public class Main54_W {
 			thread1.start();
 
 			try {
-				writer = new PrintWriter(filename.getText() + "_0" + ".xls", "UTF-8");
+				writer = new PrintWriter(filename.getText() + "_0" + ".xls", "GB2312");
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(null,
 						"File already open with same path & file name. Please close it & re-run the application");
@@ -220,7 +220,7 @@ public class Main54_W {
 						writer.close();
 						int t = i / 500;
 						try {
-							writer = new PrintWriter(filename.getText() + "_" + t + ".xls", "UTF-8");
+							writer = new PrintWriter(filename.getText() + "_" + t + ".xls", "GB2312");
 						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(null,
 									"File already open with same path & file name. Please close it & re-run the application");
@@ -712,9 +712,7 @@ public class Main54_W {
 			// Get phase
 			try {
 				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));			
-				Result[24] = "期: " + phaseStr.getText();
-				Result[24] = URLEncoder.encode(Result[24], "UTF-8"); 
-				
+				Result[24] = "*" + phaseStr.getText();
 			} catch (Exception e) {
 				Result[24] = " ";
 			}
