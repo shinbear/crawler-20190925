@@ -650,12 +650,14 @@ public class Main55_W {
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
-			// see more
-			try {
-				webDriver.findElement(By.linkText("查看更多数据字段")).click();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if (webDriver.findElement(By.cssSelector("#hidden_section_label")).getText().contains("查看更多数据字段")) {
+				// see more
+				try {
+					webDriver.findElement(By.linkText("查看更多数据字段")).click();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			
 			// Gether FR_label
