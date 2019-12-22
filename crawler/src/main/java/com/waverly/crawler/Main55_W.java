@@ -333,7 +333,7 @@ public class Main55_W {
 					Select select_language = new Select(webDriver.findElement(By.xpath("//*[@id='value(input2)']")));
 					// deselect all option
 					select_language.deselectAll();
-					select_language.selectByIndex(1);
+					select_language.selectByIndex(0);
 
 					// Input the article
 					Select select_article = new Select(webDriver.findElement(By.xpath("//*[@id='value(input3)']")));
