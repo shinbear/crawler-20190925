@@ -668,7 +668,7 @@ public class Main48_W {
 
 											WebDriverWait wait = new WebDriverWait(webDriver, 10);
 											wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-													By.xpath("/html/body/div[7]/div[1]/div/h2")));
+													By.cssSelector("h2.name")));
 
 											// Get the author name in the person
 											// page
@@ -679,9 +679,7 @@ public class Main48_W {
 											}
 
 											// Get the organization
-											orgName_Str = webDriver
-													.findElement(By.xpath("/html/body/div[7]/div/div/p[1]/a"))
-													.getText();
+											orgName_Str = webDriver.findElement(By.cssSelector("p.orgn")).getText();
 
 											auStr = auStr + ";" + auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
 											auStrSingle = auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
@@ -965,8 +963,8 @@ public class Main48_W {
 			List<WebElement> tk2 = webDriver
 					.findElements(By.cssSelector("#mainArea > div.wxmain > div.wxInfo > div.wxsour > div.sourinfo >p"));
 			for (WebElement tdk2 : tk2) {
-				if (tdk2.getText().substring(0, 4).equals("ISSN")) {
-					issnStr = tdk2.getText().substring(5);
+				if (tdk2.getText().contains("ISSN")) {
+					issnStr = tdk2.getText().substring(tdk2.getText().indexOf("ISSN") + 5);
 				}
 			}
 		} catch (Exception e1) {
