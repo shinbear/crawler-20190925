@@ -614,6 +614,7 @@ public class Main48_W {
 								String auStrSingle = "";
 								int identicalFlag = 0;
 								for (WebElement tAu_link : tAu2) {
+									orgName_Str = "unknown";
 									try {
 										Thread.sleep(1000);
 										identicalFlag = 0;
@@ -645,18 +646,6 @@ public class Main48_W {
 											if (e.nextElement().toString().equals(auName_Str)) {
 												if (!AuthorMaptable.get(auName_Str).contains("unknown")) {
 													auStrSingle = AuthorMaptable.get(auName_Str);
-													/*
-													String auCodeCompare = auStrSingle.substring(0,
-															auStrSingle.lastIndexOf("+"));
-													if (auCodeCompare.equals(auName_Str + "+" + tAu_Code_Str)) {
-														auStr = auStr + ";" + auStrSingle;
-														identicalFlag = 1;
-														if (auStr.substring(0, 1).equals(";")) {
-															auStr = auStr.substring(1);
-														}
-														break;
-													}
-													*/
 													auStr = auStr + ";" + auStrSingle;
 													if (auStr.substring(0, 1).equals(";")) {
 														auStr = auStr.substring(1);
@@ -673,40 +662,42 @@ public class Main48_W {
 											tAu_Code_Str = tAu_link_Str
 													.substring(tAu_link_Str.lastIndexOf(("code=")) + 5);
 											try {
-												// enter author info page
-												tAu_link.click();
-												Thread.sleep(4000);
-												clickCount++;
-												if (clickCount == 30) {
-													Thread.sleep(30000);
-													clickCount = 0;
+												// if it is the author name, then enter info page
+												if (tAu_link.getText().equals(Name_cn)) {
+													// enter author info page
+													tAu_link.click();
+													Thread.sleep(4000);
+													clickCount++;
+													if (clickCount == 30) {
+														Thread.sleep(30000);
+														clickCount = 0;
+													}
 												}
+												// Switch to author page;
+												tabs = new ArrayList<String>(webDriver.getWindowHandles());
+												// switches to new tab
+												webDriver.switchTo().window(tabs.get(1));
+												tabs = null;
+
+												WebDriverWait wait = new WebDriverWait(webDriver, 10);
+												wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+														By.cssSelector("h2.name")));
+
+												// Get the author name in the person
+												// page
+												if (auName_Str.equals("")) {
+													auName_Str = webDriver
+															.findElement(By.xpath("/html/body/div[7]/div[1]/div/h2"))
+															.getText();
+												}
+
+												// Get the organization
+												orgName_Str = webDriver.findElement(By.cssSelector("p.orgn")).getText();
 											} catch (Exception e1) {
 												// TODO Auto-generated catch
 												// block
 												e1.printStackTrace();
 											}
-
-											// Switch to author page;
-											tabs = new ArrayList<String>(webDriver.getWindowHandles());
-											// switches to new tab
-											webDriver.switchTo().window(tabs.get(1));
-											tabs = null;
-
-											WebDriverWait wait = new WebDriverWait(webDriver, 10);
-											wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-													By.cssSelector("h2.name")));
-
-											// Get the author name in the person
-											// page
-											if (auName_Str.equals("")) {
-												auName_Str = webDriver
-														.findElement(By.xpath("/html/body/div[7]/div[1]/div/h2"))
-														.getText();
-											}
-
-											// Get the organization
-											orgName_Str = webDriver.findElement(By.cssSelector("p.orgn")).getText();
 
 											auStr = auStr + ";" + auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
 											auStrSingle = auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
