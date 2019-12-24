@@ -18,12 +18,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -51,6 +53,12 @@ public class Main48 {
 	public static JTextField searchstring = new JTextField();
 	public static JTextField location = new JTextField();
 	public static JTextField filename = new JTextField("E:/Jobs");
+	public static JRadioButton jRadio1 = new JRadioButton("Run all records",true);
+	public static JRadioButton jRadio2 = new JRadioButton("Run the specific records from- to");
+	public static ButtonGroup jRadioGroup = new ButtonGroup();
+	public static JTextField recordFrom = new JTextField("");
+	public static JTextField recordTo = new JTextField("");
+	
 	public static String URL = "";
 	public static String q;
 	public static String dcs;
@@ -96,8 +104,8 @@ public class Main48 {
 	public static String projectYear = "";
 	public static String author = "";
 	public static String authorOrg = "";
-	public static int rawID = 1;
-	public static int rawID_Total = 0;
+	public static int rowID = 1;
+	public static int rowID_Total = 0;
 	public static int exceptionCode = 0;
 	public static int clickCount = 0;
 	public static int searchCount = 0;
@@ -202,7 +210,7 @@ public class Main48 {
 			// book = Workbook.getWorkbook(new File(filename_sheet.getText()));
 			book = Workbook.getWorkbook(new File("postdoc_list.xls"));
 			sheet = book.getSheet(0);
-			rawID_Total = sheet.getRows();
+			rowID_Total = sheet.getRows();
 
 			// URL =
 			// "http://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=CCJD,CPFD,IPFD,CDFD,CMFD,SCOD,CJRF,CJFQ,CJFN";
@@ -241,14 +249,33 @@ public class Main48 {
 					+ "\t阅读\t关键词\t基金\t分类号\tISSN\tDOI\t专利申请号\t专利申请日\t专利公开号\t专利公开日"
 					+ "\t专利申请人\t专利地址\t专利发明人\t专利代理机构\t专利代理人\t专利主分类号\t专利分类号\t国省代码";
 			writer.println(toptitle);
+			
+			int startRow, endRow;
+			if (jRadio1.isSelected()) {
+				startRow = 1;
+				endRow = rowID_Total;
+			} else {
+				startRow = Integer.parseInt(recordFrom.getText());
+				if (!recordFrom.getText().equals("")) {
+					startRow = Integer.parseInt(recordFrom.getText());
+				} else {
+					startRow = 1;
+				}
+
+				if (!recordTo.getText().equals("")) {
+					endRow = Integer.parseInt(recordTo.getText()) + 1;
+				} else {
+					endRow = rowID_Total;
+				}
+			}
 
 			// Read the unedname from exccel sheet
-			for (int i = 1; i < rawID_Total; i++) {
+			for (int i = startRow; i < endRow; i++)  {
 				try {
 					sim_row = i;
 					dataProgress.setPanel(total, page, row, sim_row);
-					rawID = i;
-					readExcel(sheet, rawID);
+					rowID = i;
+					readExcel(sheet, rowID);
 					exceptionCode = 0;
 					// Split the result file
 					if (i % 500 == 0) {
@@ -1119,6 +1146,14 @@ public class Main48 {
 		panel.add(filename);
 		panel.add(new JLabel("Author name:"));
 		panel.add(combo1);
+		panel.add(jRadio1);
+		panel.add(jRadio2);
+		jRadioGroup.add(jRadio1);
+		jRadioGroup.add(jRadio2);
+		panel.add(new JLabel("From:"));
+		panel.add(recordFrom);
+		panel.add(new JLabel("To:"));
+		panel.add(recordTo);
 		panel.add(new JLabel("Organization:"));
 		panel.add(combo2);
 		panel.add(new JLabel("year?:"));
@@ -1232,17 +1267,17 @@ public class Main48 {
 		return result.toString();
 	}
 
-	public static void readExcel(Sheet sheet, int rawID) {
+	public static void readExcel(Sheet sheet, int rowID) {
 		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8;
 		try {
-			cell1 = sheet.getCell(0, rawID);
-			cell2 = sheet.getCell(1, rawID);
-			cell3 = sheet.getCell(2, rawID);
-			cell4 = sheet.getCell(3, rawID);
-			cell5 = sheet.getCell(4, rawID);
-			cell6 = sheet.getCell(5, rawID);
-			cell7 = sheet.getCell(6, rawID);
-			cell8 = sheet.getCell(7, rawID);
+			cell1 = sheet.getCell(0, rowID);
+			cell2 = sheet.getCell(1, rowID);
+			cell3 = sheet.getCell(2, rowID);
+			cell4 = sheet.getCell(3, rowID);
+			cell5 = sheet.getCell(4, rowID);
+			cell6 = sheet.getCell(5, rowID);
+			cell7 = sheet.getCell(6, rowID);
+			cell8 = sheet.getCell(7, rowID);
 
 			if ("".equals(cell1.getContents()) != true) {
 				projectNo = cell1.getContents();
@@ -1253,7 +1288,7 @@ public class Main48 {
 				approvedAmount = cell6.getContents();
 				projectStartEnd = cell7.getContents();
 				projectYear = cell8.getContents();
-				System.out.println(rawID + " " + cell1.getContents() + " " + cell2.getContents());
+				System.out.println(rowID + " " + cell1.getContents() + " " + cell2.getContents());
 			}
 		} catch (Exception e) {
 		}
