@@ -900,6 +900,27 @@ public class Main48_W {
 					}
 				}
 
+				ArrayList<String> tabs;
+				tabs = new ArrayList<String>(webDriver.getWindowHandles());
+				if (tabs.size() > 1) {
+					for (int a = tabs.size(); a > 1; a--) {
+						webDriver.switchTo().window(tabs.get(a - 1));
+						Thread.sleep(500);
+						webDriver.close();
+					}
+					webDriver.switchTo().window(tabs.get(0));
+				}
+				tabs.clear();
+				now_handle = webDriver.getWindowHandle();
+				all_handles = webDriver.getWindowHandles();
+				// 判断窗口是否一致
+				for (String handle : all_handles) {
+					if (handle != now_handle) {
+						webDriver.switchTo().window(handle);
+						((ChromeDriver) webDriver).switchTo().frame(iframe);
+					}
+				}
+				
 				// get the next page
 				List<WebElement> tk = webDriver
 						.findElements(By.xpath("//*[@id=\"ctl00\"]/table/tbody/tr[3]/td/table/tbody/tr/td/div/a"));
@@ -907,7 +928,7 @@ public class Main48_W {
 					if (t.getText().equals("下一页")) {
 						try {
 							t.click();
-						} catch (Exception e3) {
+						} catch (Exception e3) {							
 						}
 
 					}
