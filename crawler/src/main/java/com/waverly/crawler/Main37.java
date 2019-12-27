@@ -56,7 +56,7 @@ public class Main37 {
 	public static int pages = 0;
 	public static JTextField searchstring = new JTextField();
 	public static JTextField location = new JTextField();
-	public static JTextField filename = new JTextField("E:/Jobs");
+	public static JTextField filename = new JTextField("Jobs");
 	public static String URL = "";
 	public static String q;
 	public static String dcs;

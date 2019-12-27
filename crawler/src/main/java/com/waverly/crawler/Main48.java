@@ -52,7 +52,7 @@ public class Main48 {
 	public static int pages = 0;
 	public static JTextField searchstring = new JTextField();
 	public static JTextField location = new JTextField();
-	public static JTextField filename = new JTextField("E:/Jobs");
+	public static JTextField filename = new JTextField("Jobs");
 	public static JRadioButton jRadio1 = new JRadioButton("Run all records",true);
 	public static JRadioButton jRadio2 = new JRadioButton("Run the specific records from- to");
 	public static ButtonGroup jRadioGroup = new ButtonGroup();
@@ -134,6 +134,7 @@ public class Main48 {
 
 	public static void main(String[] args) throws IOException {
 		try {
+			System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
 			input();
 			q = "q-" + searchstring.getText();
 			String q1 = q.replace(" ", "_");
@@ -141,7 +142,7 @@ public class Main48 {
 			if (filename.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Please enter the file path.");
 				filename.requestFocusInWindow();
-				filename.setText("E:/jobs");
+				filename.setText("jobs");
 				input();
 			}
 
