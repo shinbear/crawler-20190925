@@ -56,7 +56,7 @@ public class Main37_w1 {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
-	public static JTextField filename = new JTextField("E:/Jobs");	
+	public static JTextField filename = new JTextField("Jobs");	
 	public static JTextField searchstring = new JTextField();
 	public static JRadioButton jRadio1 = new JRadioButton("Run all records",true);
 	public static JRadioButton jRadio2 = new JRadioButton("Run the specific records from- to");
@@ -125,7 +125,7 @@ public class Main37_w1 {
 			if (filename.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Please enter the file path.");
 				filename.requestFocusInWindow();
-				filename.setText("E:/jobs");
+				filename.setText("jobs");
 				input();
 			}
 
