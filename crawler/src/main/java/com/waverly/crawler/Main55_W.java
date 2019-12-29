@@ -302,7 +302,6 @@ public class Main55_W {
 			WebElement element = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
 			((JavascriptExecutor) webDriver).executeScript(js3, element);
 
-			
 			Thread.sleep(1000);
 			// Year range from to
 			if (isFirstSearch) {
