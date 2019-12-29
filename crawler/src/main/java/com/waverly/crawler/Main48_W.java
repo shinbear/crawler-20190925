@@ -284,7 +284,7 @@ public class Main48_W {
 			}
 
 			// Read the unedname from exccel sheet
-			for (int i = startRow; i < endRow; i++) {
+			for (int i = startRow; i <= endRow; i++) {
 				try {
 					sim_row = i;
 					dataProgress.setPanel(total, page, row, sim_row);
