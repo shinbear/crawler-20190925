@@ -209,7 +209,7 @@ public class Main55_W {
 			}
 
 			// Read the name from exccel sheet
-			for (int i = startRow; i < endRow; i++) {
+			for (int i = startRow; i <= endRow; i++) {
 				try {
 					sim_row = i;
 					dataProgress.setPanel(total, page, row, sim_row);
@@ -302,7 +302,6 @@ public class Main55_W {
 			WebElement element = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
 			((JavascriptExecutor) webDriver).executeScript(js3, element);
 
-			
 			Thread.sleep(1000);
 			// Year range from to
 			if (isFirstSearch) {
