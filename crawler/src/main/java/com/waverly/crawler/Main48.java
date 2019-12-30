@@ -1022,6 +1022,10 @@ public class Main48 {
 			for (WebElement tdk3 : tk3) {
 				DOIStr = DOIStr + tdk3.getText().substring(4);
 			}
+			if (DOIStr.equals(""))
+			{
+				DOIStr= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
+			}
 		} catch (Exception e1) {
 		}
 

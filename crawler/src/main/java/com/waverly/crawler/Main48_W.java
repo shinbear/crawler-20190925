@@ -368,14 +368,16 @@ public class Main48_W {
 			WebElement author_input = webDriver.findElement(By.xpath("//*[@id='au_1_value1']"));
 			author_input.clear();
 			if (auhorParamState) {
-				author_input.sendKeys(Name_cn);
+				//author_input.sendKeys(Name_cn);
+				author_input.sendKeys("高文");
 			}
 
 			// Input the author organization
 			WebElement authorOrg_input = webDriver.findElement(By.xpath("//*[@id='au_1_value2']"));
 			authorOrg_input.clear();
 			if (organizationParamState) {
-				authorOrg_input.sendKeys(university_cn);
+				// authorOrg_input.sendKeys(university_cn);
+				authorOrg_input.sendKeys("中国科学院");
 			}
 
 			// input the project duration from - to
@@ -1015,6 +1017,10 @@ public class Main48_W {
 			List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
 			for (WebElement tdk3 : tk3) {
 				DOIStr = DOIStr + tdk3.getText().substring(4);
+			}
+			if (DOIStr.equals(""))
+			{
+				DOIStr= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
 			}
 		} catch (Exception e1) {
 		}
