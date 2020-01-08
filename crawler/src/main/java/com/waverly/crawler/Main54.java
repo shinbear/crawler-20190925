@@ -162,6 +162,12 @@ public class Main54 {
 				return;
 			}
 			
+			// Input the query condition
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			webDriver.switchTo().window(tabs.get(0));
+			tabs = null;
+			
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
@@ -230,7 +236,6 @@ public class Main54 {
 					}
 
 					//Remain the search page
-					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -283,7 +288,6 @@ public class Main54 {
 					// If in exception
 					writrintExcel();
 					Thread.sleep(30000);
-					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
