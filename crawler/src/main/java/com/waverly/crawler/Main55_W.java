@@ -242,9 +242,14 @@ public class Main55_W {
 					}
 					tabs = null;
 
-					searchName(webDriver);
-					// Get the item name
-					getAName(webDriver);
+					int status = searchName(webDriver);
+					if (status == 1) {
+						// Get the item name
+						getAName(webDriver);
+					} else {
+						webDriver.navigate().refresh();
+						continue;
+					}
 
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -285,7 +290,7 @@ public class Main55_W {
 		System.exit(0);
 	}
 
-	public static void searchName(WebDriver webDriver) throws IOException {
+	public static int searchName(WebDriver webDriver) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
@@ -374,9 +379,11 @@ public class Main55_W {
 				executor.executeScript("window.open('" + searchlink + "')");	
 				Thread.sleep(3000);
 				break;
-			}						
+			}		
+			return 1;
 		} catch (Exception e2) {
 			System.out.print(e2);
+			return 0;
 		}
 	}
 
