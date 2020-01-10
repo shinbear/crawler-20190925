@@ -248,9 +248,14 @@ public class Main55_W {
 						getAName(webDriver);
 					} else {
 						webDriver.navigate().refresh();
-						continue;
+						status = searchName(webDriver);
+						if (status == 1) {
+							getAName(webDriver);
+						} else {
+							throw new Exception("throw error");
+						}
 					}
-
+					
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {

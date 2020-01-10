@@ -306,12 +306,20 @@ public class Main48_W {
 						writer.println(toptitle);
 					}
 
+					int status = searchName(webDriver, author, authorOrg);
 					try {
-						// Input the query condition
-						searchName(webDriver, author, authorOrg);
-
-						// Get the item name
-						getAName(webDriver);
+						if (status == 1) {
+							// Get the item name
+							getAName(webDriver);
+						} else {
+							webDriver.navigate().refresh();
+							status = searchName(webDriver, author, authorOrg);
+							if (status == 1) {
+								getAName(webDriver);
+							} else {
+								throw new Exception("throw error");
+							}
+						}
 					} catch (Exception e1) {
 						Thread.sleep(3000);
 						writrintExcel();
@@ -358,7 +366,7 @@ public class Main48_W {
 		System.exit(0);
 	}
 
-	public static void searchName(WebDriver webDriver, String author, String authorOrg) throws IOException {
+	public static int searchName(WebDriver webDriver, String author, String authorOrg) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
@@ -391,8 +399,10 @@ public class Main48_W {
 			// Click "search" button
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='ddSubmit']/b").click();
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='btnSearch']").click();
+			return 1;
 		} catch (Exception e2) {
 			System.out.print(e2);
+			return 0;
 		}
 	}
 
@@ -838,9 +848,17 @@ public class Main48_W {
 
 								}
 
+								int status = getDetail(webDriver);
 								try {
-									getDetail(webDriver);
-								} catch (Exception e3) {
+									if (status == 0) {
+										// Get the item name
+										status = getDetail(webDriver);
+										if (status == 0) {
+											throw new Exception("throw error");
+										}
+									}
+								} catch (Exception e1) {
+									Thread.sleep(3000);
 									writrintExcel();
 									continue;
 								}
@@ -943,93 +961,100 @@ public class Main48_W {
 		}
 	}
 
-	public static void getDetail(WebDriver webDriver) throws IOException {
-		// Switch to detail page
-		ArrayList<String> tabs;
-		tabs = new ArrayList<String>(webDriver.getWindowHandles());
-		// switches to new tab
-		webDriver.switchTo().window(tabs.get(1));
-		tabs = null;
-
+	public static int getDetail(WebDriver webDriver) throws IOException {
 		try {
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#catalog_Ptitle")));
-			isPatentPage = false;
+			// Switch to detail page
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			// switches to new tab
+			webDriver.switchTo().window(tabs.get(1));
+			tabs = null;
+
+			try {
+				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#catalog_Ptitle")));
+				isPatentPage = false;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Result[10] = "";
+				Result[11] = "";
+				Result[12] = "";
+				Result[13] = "";
+				Result[14] = "";
+				e.printStackTrace();
+				isPatentPage = true;
+				return 0;
+			}
+
+			// keywords
+			String keywordStr = "";
+			String fundStr = "";
+			String categoryStr = "";
+			String issnStr = "";
+			String DOIStr = "";
+			try {
+				// keywords
+				List<WebElement> tu = webDriver.findElements(By.cssSelector("#catalog_KEYWORD~a"));
+				for (WebElement tds : tu) {
+					keywordStr = keywordStr + tds.getText();
+				}
+			} catch (Exception e1) {
+			}
+
+			try {
+				// Funds
+				List<WebElement> tk = webDriver.findElements(By.cssSelector("#catalog_FUND~a"));
+				for (WebElement tdk : tk) {
+					fundStr = fundStr + tdk.getText();
+				}
+			} catch (Exception e1) {
+			}
+
+			try {
+				// category no
+				List<WebElement> tk1 = webDriver.findElements(By.xpath("//*[@id='catalog_ZTCLS']/.."));
+				for (WebElement tdk1 : tk1) {
+					categoryStr = categoryStr + tdk1.getText().substring(4);
+				}
+			} catch (Exception e1) {
+			}
+
+			try {
+				// ISSN
+				List<WebElement> tk2 = webDriver
+						.findElements(By.cssSelector("#mainArea > div.wxmain > div.wxInfo > div.wxsour > div.sourinfo >p"));
+				for (WebElement tdk2 : tk2) {
+					if (tdk2.getText().contains("ISSN")) {
+						issnStr = tdk2.getText().substring(tdk2.getText().indexOf("ISSN") + 5);
+					}
+				}
+			} catch (Exception e1) {
+			}
+
+			try {
+				// DOI
+				List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
+				for (WebElement tdk3 : tk3) {
+					DOIStr = DOIStr + tdk3.getText().substring(4);
+				}
+				if (DOIStr.equals(""))
+				{
+					DOIStr= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
+				}
+			} catch (Exception e1) {
+			}
+
+			Result[10] = keywordStr;
+			Result[11] = fundStr;
+			Result[12] = categoryStr;
+			Result[13] = issnStr;
+			Result[14] = DOIStr;
+			return 1;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Result[10] = "";
-			Result[11] = "";
-			Result[12] = "";
-			Result[13] = "";
-			Result[14] = "";
 			e.printStackTrace();
-			isPatentPage = true;
-			return;
+			return 0;
 		}
-
-		// keywords
-		String keywordStr = "";
-		String fundStr = "";
-		String categoryStr = "";
-		String issnStr = "";
-		String DOIStr = "";
-		try {
-			// keywords
-			List<WebElement> tu = webDriver.findElements(By.cssSelector("#catalog_KEYWORD~a"));
-			for (WebElement tds : tu) {
-				keywordStr = keywordStr + tds.getText();
-			}
-		} catch (Exception e1) {
-		}
-
-		try {
-			// Funds
-			List<WebElement> tk = webDriver.findElements(By.cssSelector("#catalog_FUND~a"));
-			for (WebElement tdk : tk) {
-				fundStr = fundStr + tdk.getText();
-			}
-		} catch (Exception e1) {
-		}
-
-		try {
-			// category no
-			List<WebElement> tk1 = webDriver.findElements(By.xpath("//*[@id='catalog_ZTCLS']/.."));
-			for (WebElement tdk1 : tk1) {
-				categoryStr = categoryStr + tdk1.getText().substring(4);
-			}
-		} catch (Exception e1) {
-		}
-
-		try {
-			// ISSN
-			List<WebElement> tk2 = webDriver
-					.findElements(By.cssSelector("#mainArea > div.wxmain > div.wxInfo > div.wxsour > div.sourinfo >p"));
-			for (WebElement tdk2 : tk2) {
-				if (tdk2.getText().contains("ISSN")) {
-					issnStr = tdk2.getText().substring(tdk2.getText().indexOf("ISSN") + 5);
-				}
-			}
-		} catch (Exception e1) {
-		}
-
-		try {
-			// DOI
-			List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
-			for (WebElement tdk3 : tk3) {
-				DOIStr = DOIStr + tdk3.getText().substring(4);
-			}
-			if (DOIStr.equals(""))
-			{
-				DOIStr= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
-			}
-		} catch (Exception e1) {
-		}
-
-		Result[10] = keywordStr;
-		Result[11] = fundStr;
-		Result[12] = categoryStr;
-		Result[13] = issnStr;
-		Result[14] = DOIStr;
 	}
 
 	public static void getDetailPatent(WebDriver webDriver) throws IOException {

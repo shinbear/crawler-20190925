@@ -251,8 +251,8 @@ public class Main54 {
 						for (int k = 0; k < 3; k++) {
 							// Input the query condition
 							source_Search = source_SearchArry[k];
-							source_SearchYearFrom = source_SearchYearFromArry[0];
-							source_SearchYearTo = source_SearchYearToArry[0];
+							source_SearchYearFrom = source_SearchYearFromArry[k];
+							source_SearchYearTo = source_SearchYearToArry[k];
 							tabs = new ArrayList<String>(webDriver.getWindowHandles());
 							if (tabs.size() > 1) {
 								for (int a = tabs.size(); a > 1; a--) {
@@ -269,8 +269,13 @@ public class Main54 {
 								getAName(webDriver);
 							} else {
 								webDriver.navigate().refresh();
-								continue;
-							}
+								status = searchName(webDriver, k);
+								if (status == 1) {
+									getAName(webDriver);
+								} else {
+									throw new Exception("throw error");
+								}
+							}														
 						}
 					} catch (Exception e1) {
 						Thread.sleep(300000);
