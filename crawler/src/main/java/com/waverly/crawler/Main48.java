@@ -94,6 +94,8 @@ public class Main48 {
 	private static int page = 0;
 	private static int row = 0;
 	private static int sim_row = 0;
+	
+	public static String ID = "";
 	public static String projectNo = "";
 	public static String appCode = "";
 	public static String projectName = "";
@@ -246,7 +248,7 @@ public class Main48 {
 
 			// write the excel the top item
 
-			String toptitle = "项目批准号\t申请代码\t项目名称\t项目负责人\t依托单位\t批准金额\t项目起止年月\t年份" + "\t标题\t作者code\t发表时间\t数据库\t被引\t下载"
+			String toptitle = "ID\t项目批准号\t申请代码\t项目名称\t项目负责人\t依托单位\t批准金额\t项目起止年月\t年份" + "\t标题\t作者code\t发表时间\t数据库\t被引\t下载"
 					+ "\t阅读\t关键词\t基金\t分类号\tISSN\tDOI\t专利申请号\t专利申请日\t专利公开号\t专利公开日"
 					+ "\t专利申请人\t专利地址\t专利发明人\t专利代理机构\t专利代理人\t专利主分类号\t专利分类号\t国省代码";
 			writer.println(toptitle);
@@ -1169,7 +1171,7 @@ public class Main48 {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(projectNo + "\t" + appCode + "\t" + projectName + "\t" + ProjectLeaderName + "\t" + projectOrg
+		writer.println(ID + "\t" + projectNo + "\t" + appCode + "\t" + projectName + "\t" + ProjectLeaderName + "\t" + projectOrg
 				+ "\t" + approvedAmount + "\t" + projectStartEnd + "\t" + projectYear + "\t" + Result[0] + "\t"
 				+ Result[1] + "\t" + Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t"
 				+ Result[9] + "\t" + Result[10] + "\t" + Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t"
@@ -1307,18 +1309,20 @@ public class Main48 {
 	}
 
 	public static void readExcel(Sheet sheet, int rowID) {
-		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8;
+		Cell cell0, cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8;
 		try {
-			cell1 = sheet.getCell(0, rowID);
-			cell2 = sheet.getCell(1, rowID);
-			cell3 = sheet.getCell(2, rowID);
-			cell4 = sheet.getCell(3, rowID);
-			cell5 = sheet.getCell(4, rowID);
-			cell6 = sheet.getCell(5, rowID);
-			cell7 = sheet.getCell(6, rowID);
-			cell8 = sheet.getCell(7, rowID);
+			cell0 = sheet.getCell(0, rowID);
+			cell1 = sheet.getCell(1, rowID);
+			cell2 = sheet.getCell(2, rowID);
+			cell3 = sheet.getCell(3, rowID);
+			cell4 = sheet.getCell(4, rowID);
+			cell5 = sheet.getCell(5, rowID);
+			cell6 = sheet.getCell(6, rowID);
+			cell7 = sheet.getCell(7, rowID);
+			cell8 = sheet.getCell(8, rowID);
 
 			if ("".equals(cell1.getContents()) != true) {
+				ID = cell0.getContents();
 				projectNo = cell1.getContents();
 				appCode = cell2.getContents();
 				projectName = cell3.getContents();
