@@ -867,15 +867,16 @@ public class Main48 {
 									continue;
 								}
 
+								/*
 								if (isPatentPage == true) {
 									try {
 										getDetailPatent(webDriver);
 									} catch (Exception e3) {
 										writrintExcel();
-										continue;
 									}
 								}
 								isPatentPage = false;
+								*/
 
 								// Write the data into excel
 								writrintExcel();
@@ -884,7 +885,6 @@ public class Main48 {
 								for (i = 0; i < 40; i++) {
 									Result[i] = "";
 								}
-								int aaa=0;
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -980,14 +980,19 @@ public class Main48 {
 				isPatentPage = false;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				Result[10] = "";
-				Result[11] = "";
-				Result[12] = "";
-				Result[13] = "";
-				Result[14] = "";
-				e.printStackTrace();
-				isPatentPage = true;
-				return 0;
+				try {
+					Result[10] = "";
+					Result[11] = "";
+					Result[12] = "";
+					Result[13] = "";
+					Result[14] = "";
+					getDetailPatent(webDriver);
+					isPatentPage = true;
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					return 0;
+				}
 			}
 
 			// keywords
@@ -996,29 +1001,43 @@ public class Main48 {
 			String categoryStr = "";
 			String issnStr = "";
 			String DOIStr = "";
+			
+			// Gether label
+			List<WebElement> catalog_Label =  webDriver.findElements(By.cssSelector("p > label"));
+			ArrayList<String> catalog_LabelStr = new ArrayList<String>();
+			for (WebElement catalog_Labellist : catalog_Label) {
+				catalog_LabelStr.add(catalog_Labellist.getText());
+			}
+			
 			try {
-				// keywords
-				List<WebElement> tu = webDriver.findElements(By.cssSelector("#catalog_KEYWORD~a"));
-				for (WebElement tds : tu) {
-					keywordStr = keywordStr + tds.getText();
+				if (catalog_LabelStr.contains("关键词：")) {
+					// keywords
+					List<WebElement> tu = webDriver.findElements(By.cssSelector("#catalog_KEYWORD~a"));
+					for (WebElement tds : tu) {
+						keywordStr = keywordStr + tds.getText();
+					}
 				}
 			} catch (Exception e1) {
 			}
 
 			try {
 				// Funds
+				if (catalog_LabelStr.contains("基金：")) {
 				List<WebElement> tk = webDriver.findElements(By.cssSelector("#catalog_FUND~a"));
 				for (WebElement tdk : tk) {
 					fundStr = fundStr + tdk.getText();
+					}
 				}
 			} catch (Exception e1) {
 			}
 
 			try {
 				// category no
+				if (catalog_LabelStr.contains("分类号：")) {
 				List<WebElement> tk1 = webDriver.findElements(By.xpath("//*[@id='catalog_ZTCLS']/.."));
 				for (WebElement tdk1 : tk1) {
 					categoryStr = categoryStr + tdk1.getText().substring(4);
+					}
 				}
 			} catch (Exception e1) {
 			}
@@ -1037,13 +1056,14 @@ public class Main48 {
 
 			try {
 				// DOI
+				if (catalog_LabelStr.contains("DOI：")) {
 				List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
 				for (WebElement tdk3 : tk3) {
 					DOIStr = DOIStr + tdk3.getText().substring(4);
-				}
-				if (DOIStr.equals(""))
-				{
+					}
+				if (DOIStr.equals("")){
 					DOIStr= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
+					}
 				}
 			} catch (Exception e1) {
 			}

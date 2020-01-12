@@ -863,15 +863,16 @@ public class Main48_W {
 									continue;
 								}
 
+								/*
 								if (isPatentPage == true) {
 									try {
 										getDetailPatent(webDriver);
 									} catch (Exception e3) {
 										writrintExcel();
-										continue;
 									}
 								}
 								isPatentPage = false;
+								*/
 
 								// Write the data into excel
 								writrintExcel();
@@ -880,7 +881,6 @@ public class Main48_W {
 								for (i = 0; i < 40; i++) {
 									Result[i] = "";
 								}
-								int aaa=0;
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -976,14 +976,19 @@ public class Main48_W {
 				isPatentPage = false;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				Result[10] = "";
-				Result[11] = "";
-				Result[12] = "";
-				Result[13] = "";
-				Result[14] = "";
-				e.printStackTrace();
-				isPatentPage = true;
-				return 0;
+				try {
+					Result[10] = "";
+					Result[11] = "";
+					Result[12] = "";
+					Result[13] = "";
+					Result[14] = "";
+					getDetailPatent(webDriver);
+					isPatentPage = true;
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					return 0;
+				}
 			}
 
 			// keywords
