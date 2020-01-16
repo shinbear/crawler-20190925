@@ -401,6 +401,7 @@ public class Main48_W {
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='btnSearch']").click();
 			return 1;
 		} catch (Exception e2) {
+			writrintExcel();
 			System.out.print(e2);
 			return 0;
 		}
