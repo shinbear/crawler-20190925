@@ -387,6 +387,7 @@ public class Main55_W {
 			}		
 			return 1;
 		} catch (Exception e2) {
+			writrintExcel();
 			System.out.print(e2);
 			return 0;
 		}
