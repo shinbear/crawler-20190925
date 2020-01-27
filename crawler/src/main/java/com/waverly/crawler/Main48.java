@@ -1011,7 +1011,7 @@ public class Main48 {
 			}
 			
 			try {
-				if (catalog_LabelStr.contains("关键词：")) {
+				if ((catalog_LabelStr.contains("关键词：")) || (catalog_LabelStr.contains("KEYWORDS:"))) {
 					// keywords
 					List<WebElement> tu = webDriver.findElements(By.cssSelector("#catalog_KEYWORD~a"));
 					for (WebElement tds : tu) {
@@ -1023,7 +1023,7 @@ public class Main48 {
 
 			try {
 				// Funds
-				if (catalog_LabelStr.contains("基金：")) {
+				if ((catalog_LabelStr.contains("基金：")) || (catalog_LabelStr.contains("FUND:"))) {
 				List<WebElement> tk = webDriver.findElements(By.cssSelector("#catalog_FUND~a"));
 				for (WebElement tdk : tk) {
 					fundStr = fundStr + tdk.getText();
@@ -1057,7 +1057,7 @@ public class Main48 {
 
 			try {
 				// DOI
-				if (catalog_LabelStr.contains("DOI：")) {
+				if ((catalog_LabelStr.contains("DOI：")) || (catalog_LabelStr.contains("DOI:"))) {
 				List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
 				for (WebElement tdk3 : tk3) {
 					DOIStr = DOIStr + tdk3.getText().substring(4);
