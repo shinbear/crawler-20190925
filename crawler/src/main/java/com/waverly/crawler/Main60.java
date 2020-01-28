@@ -96,17 +96,17 @@ public class Main60 {
 	private static int row = 0;
 	private static int sim_row = 0;
 	
+	public static String FileID = "";
 	public static String ID = "";
-	public static String projectNo = "";
-	public static String appCode = "";
-	public static String projectName = "";
-	public static String ProjectLeaderName = "";
-	public static String projectOrg = "";
-	public static String approvedAmount = "";
-	public static String projectStartEnd = "";
-	public static String projectYear = "";
-	public static String author = "";
-	public static String authorOrg = "";
+	public static String authorName = "";
+	public static String phdUniversity = "";
+	public static String phdYear = "";
+	public static String dissertationAdvisor = "";
+	public static String advisor1 = "";
+	public static String advisor2= "";
+
+
+	
 	public static int rowID = 1;
 	public static int rowID_Total = 0;
 	public static int exceptionCode = 0;
@@ -208,10 +208,9 @@ public class Main60 {
 			}
 
 			// write the excel the top item
-
-			String toptitle = "ID\t项目批准号\t申请代码\t项目名称\t项目负责人\t依托单位\t批准金额\t项目起止年月\t年份" + "\t标题\t作者code\t发表时间\t数据库\t被引\t下载"
-					+ "\t阅读\t关键词\t基金\t分类号\tISSN\tDOI\t专利申请号\t专利申请日\t专利公开号\t专利公开日"
-					+ "\t专利申请人\t专利地址\t专利发明人\t专利代理机构\t专利代理人\t专利主分类号\t专利分类号\t国省代码";
+			String toptitle = "FileID\\tID\t姓名\tPhD univ\tPhD year\tDissertation advisor\tadvisor 1\tadvisor 2\t题目 Title\t关键词（Key Words）\t作者（Author）"
+					+ "\t学位授予单位（University）\t授予学位（Degree）\t学科专业（major）\t导师（advisor）\t学位年度（Year）\t语种（language）"
+					+ "\t分类号";
 			writer.println(toptitle);
 			
 			int startRow, endRow;
@@ -262,40 +261,48 @@ public class Main60 {
 					//Click the libary check options
 					//Clear all the library 
 					WebElement removeLibrary = webDriver.findElement(By.cssSelector(".condtion_cz"));
-					removeLibrary.findElement(By.linkText("清除")).click();
-					
+					webDriver.manage().window().maximize();
+					removeLibrary.findElement(By.linkText("清除")).click();					
 					WebElement libraryCondition = webDriver.findElement(By.cssSelector(".screen_condition"));
 					//期刊论文
-					if (QKLW.isSelected())
-						libraryCondition.findElement(By.xpath("//*[text()='期刊论文']")).click();
-					
+					if (QKLW.isSelected()) {
+						libraryCondition.findElement(By.xpath("//*[text()='期刊论文']")).click();						
+					}
+		
 					//学位论文
-					if (XWLW.isSelected())
+					if (XWLW.isSelected()){
 						libraryCondition.findElement(By.xpath("//*[text()='学位论文']")).click();
-					
+					}
+	
 					//会议论文
-					if (HYLW.isSelected())
-						libraryCondition.findElement(By.xpath("//*[text()='会议论文']")).click();
+					if (HYLW.isSelected()) {
+						libraryCondition.findElement(By.xpath("//*[text()='会议论文']")).click();					
+					}
 					
 					//专利
-					if (ZL.isSelected())
+					if (ZL.isSelected()) {
 						libraryCondition.findElement(By.xpath("//*[text()='专利']")).click();
+					}
 					
 					//中外标准
-					if (ZWBZ.isSelected())
+					if (ZWBZ.isSelected()) {
 						libraryCondition.findElement(By.xpath("//*[text()='中外标准']")).click();
+					}
 					
 					//科技成果
-					if (ZWBZ.isSelected())
+					if (ZWBZ.isSelected()) {
 						libraryCondition.findElement(By.xpath("//*[text()='科技成果']")).click();
+					}
 					
 					//法律法规
-					if (FLFG.isSelected())
+					if (FLFG.isSelected()) {
 						libraryCondition.findElement(By.xpath("//*[text()='法律法规']")).click();
+					}
 					
 					//科技报告
-					if (KJBG.isSelected())
+					if (KJBG.isSelected()) {
 						libraryCondition.findElement(By.xpath("//*[text()='科技报告']")).click();
+					}
 					
 					/*
 					//检索信息选项
@@ -310,14 +317,14 @@ public class Main60 {
 					gaoji.selectByIndex(6);
 					*/
 										
-					int status = searchName(webDriver, author, authorOrg);
+					int status = searchName(webDriver, authorName, phdUniversity);
 					try {
 						if (status == 1) {
 							// Get the item name
 							getAName(webDriver);
 						} else {
 							webDriver.navigate().refresh();
-							status = searchName(webDriver, author, authorOrg);
+							status = searchName(webDriver, authorName, phdUniversity);
 							if (status == 1) {
 								getAName(webDriver);
 							} else {
@@ -383,37 +390,34 @@ public class Main60 {
 			WebElement author_input = searchCondition.get(2).findElement(By.cssSelector("#ddd"));
 			author_input.clear();
 			if (auhorParamState) {
-				author_input.sendKeys(ProjectLeaderName);
+				author_input.sendKeys(authorName);
 			}
 
 			// Input the author organization
 			WebElement authorOrg_input = searchCondition.get(3).findElement(By.cssSelector("#ddd"));
 			authorOrg_input.clear();
 			if (organizationParamState) {
-				authorOrg_input.sendKeys(projectOrg);
+				authorOrg_input.sendKeys(phdUniversity);
 			}
 			
 			// input the project duration from - to
-			WebElement yearParamfrom = webDriver.findElement(By.xpath("//*[@id='publishdate_from']"));
-			yearParamfrom.clear();
-			WebElement yearParamto = webDriver.findElement(By.xpath("//*[@id='publishdate_to']"));
-			yearParamto.clear();
+			Select yearParamfrom = new Select(webDriver.findElement(By.cssSelector("#advanced_search_publshdate_start")));			
+			Select yearParamto = new Select(webDriver.findElement(By.cssSelector("#advanced_search_publshdate_end")));
 			if (yearParamState)
 			{			
-				publishdate_from = projectStartEnd.substring(0,4);
-				publishdate_to = projectStartEnd.substring(projectStartEnd.indexOf("至")+1 , projectStartEnd.indexOf("至")+5);
+				/*
 				publishdate_from = String.valueOf((Integer.parseInt(publishdate_from)-1)) + "-01-01";
-				publishdate_to = String.valueOf((Integer.parseInt(publishdate_to)+1)) + "-12-31";
+				publishdate_to = String.valueOf(Integer.parseInt(phdYear)+1);
+				*/
+				publishdate_from = phdYear+"年";
+				publishdate_to = String.valueOf(Integer.parseInt(phdYear)+1)+"年";
 				
-				//publishdate_from = projectYear + "-01-01";
-				//publishdate_to = projectYear + "-12-31";
-				yearParamfrom.sendKeys(publishdate_from);
-				yearParamto.sendKeys(publishdate_to);
+				yearParamfrom.selectByVisibleText(publishdate_from);
+				yearParamto.selectByVisibleText(publishdate_to);
 			}
 		
 			// Click "search" button
-			((ChromeDriver) webDriver).findElementByXPath("//*[@id='ddSubmit']/b").click();
-			((ChromeDriver) webDriver).findElementByXPath("//*[@id='btnSearch']").click();
+			webDriver.findElement(By.cssSelector("#set_advanced_search_btn")).click();
 			return 1;
 		} catch (Exception e2) {
 			System.out.print(e2);
@@ -427,31 +431,34 @@ public class Main60 {
 			int pages;
 
 			// Get iframe
-			WebElement iframe = webDriver.findElement(By.id("iframeResult"));
+			// WebElement iframe = webDriver.findElement(By.id("iframeResult"));
 
 			// Create a map to store the author info in case of
 			// identical author name in one search
 			Hashtable<String, String> AuthorMaptable = new Hashtable<String, String>();
 
+			/*
 			String now_handle = webDriver.getWindowHandle();
 			Set<String> all_handles = webDriver.getWindowHandles();
 			// identify if the windows is correct
+			/*
 			for (String handle : all_handles) {
 				if (handle != now_handle) {
 					webDriver.switchTo().window(handle);
 					((ChromeDriver) webDriver).switchTo().frame(iframe);
 				}
 			}
+			*/
 			try {
 				webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 				// Waiting for element for 10 seconds
 				WebDriverWait wait = new WebDriverWait(webDriver, 10);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-						By.xpath("//*[@id='J_ORDER']/tbody/tr[2]/td/table/tbody/tr/td[2]/div/div")));
+						By.cssSelector(".result_stati")));
 				// Get the result number
 				String pc_string = webDriver
-						.findElement(By.xpath("//*[@id='J_ORDER']/tbody/tr[2]/td/table/tbody/tr/td[2]/div/div"))
-						.getText().substring(2);
+						.findElement(By.cssSelector(".result_stati > strong"))
+						.getText();
 				// Remove the characters
 				Pattern pattern = Pattern.compile("[^0-9]");
 				Matcher matcher = pattern.matcher(pc_string);
@@ -496,42 +503,15 @@ public class Main60 {
 			total = pages;
 			dataProgress.setPanel(total, page, row, sim_row);
 
-			now_handle = webDriver.getWindowHandle();
-			all_handles = webDriver.getWindowHandles();
-			// 判断窗口是否一致
-			for (String handle : all_handles) {
-				if (handle != now_handle) {
-					webDriver.switchTo().window(handle);
-					((ChromeDriver) webDriver).switchTo().frame(iframe);
-				}
-			}
-
 			// Initialize the flag of page
 			isFirstPage = true;
 			for (int k = 0; k < pages; k++) {
 				page++;
 				// Get Window
-				now_handle = webDriver.getWindowHandle();
-				all_handles = webDriver.getWindowHandles();
-				// Identify if the window is correct
-				for (String handle : all_handles) {
-					if (handle != now_handle) {
-						webDriver.switchTo().window(handle);
-						((ChromeDriver) webDriver).switchTo().frame(iframe);
-					}
-				}
-
-				// Select the grid area with 10 items
-				if (isFirstPage) {
-					WebElement btn = ((ChromeDriver) webDriver)
-							.findElementByXPath("//*[@id=\"id_grid_display_num\"]/a[2]");
-					btn.click();
-					isFirstPage = false;
-				}
-
 				Thread.sleep(4000);
-				// Get the element tr in this iframe
-				List<WebElement> tb = webDriver.findElements(By.xpath("//*[@id=\"ctl00\"]/table/tbody/tr[2]"));
+				
+				WebElement resultContent = webDriver.findElement(By.cssSelector(".BatchOper + div"));			
+				List<WebElement> tb = resultContent.findElements(By.cssSelector(".ResultCont"));
 				
 				//Get row loop
 				for (WebElement t : tb) {
@@ -548,19 +528,10 @@ public class Main60 {
 						webDriver.switchTo().window(tabs.get(0));
 					}
 					tabs.clear();
-
-					// Get iframe
-					// iframe = webDriver.findElement(By.id("iframeResult"));				
-					now_handle = webDriver.getWindowHandle();
-					all_handles = webDriver.getWindowHandles();
-					// identify if the windows is
-					// correct
-					for (String handle2 : all_handles) {
-						if (handle2 != now_handle) {
-							webDriver.switchTo().window(handle2);
-							((ChromeDriver) webDriver).switchTo().frame(iframe);
-						}
-					}
+					
+					// Get the title
+					String title = t.findElement(By.cssSelector(".title > a")).getText();
+					
 					
 					List<WebElement> tbod = t.findElements(By.tagName("tbody"));
 					for (WebElement tr : tbod) {
@@ -587,19 +558,6 @@ public class Main60 {
 									webDriver.switchTo().window(tabs.get(0));
 								}
 								tabs.clear();
-								
-								// Get iframe
-								// iframe = webDriver.findElement(By.id("iframeResult"));				
-								now_handle = webDriver.getWindowHandle();
-								all_handles = webDriver.getWindowHandles();
-								// identify if the windows is
-								// correct
-								for (String handle2 : all_handles) {
-									if (handle2 != now_handle) {
-										webDriver.switchTo().window(handle2);
-										((ChromeDriver) webDriver).switchTo().frame(iframe);
-									}
-								}
 								
 								List<WebElement> tdss = tds.findElements(By.tagName("td"));
 
@@ -764,19 +722,6 @@ public class Main60 {
 									}
 										webDriver.switchTo().window(tabs.get(0));
 										tabs.clear();
-
-										// Get iframe
-										iframe = webDriver.findElement(By.id("iframeResult"));
-										now_handle = webDriver.getWindowHandle();
-										all_handles = webDriver.getWindowHandles();
-										// identify if the windows is
-										// correct
-										for (String handle2 : all_handles) {
-											if (handle2 != now_handle) {
-												webDriver.switchTo().window(handle2);
-												((ChromeDriver) webDriver).switchTo().frame(iframe);
-											}
-										}
 									}
 								
 								// process the author name without link
@@ -843,17 +788,6 @@ public class Main60 {
 									webDriver.switchTo().window(tabs.get(0));
 								}
 								tabs.clear();
-
-								now_handle = webDriver.getWindowHandle();
-								all_handles = webDriver.getWindowHandles();
-								// identify if the windows is
-								// correct
-								for (String handle2 : all_handles) {
-									if (handle2 != now_handle) {
-										webDriver.switchTo().window(handle2);
-										((ChromeDriver) webDriver).switchTo().frame(iframe);
-									}
-								}
 
 								// Open the detail page
 								try {
@@ -926,17 +860,6 @@ public class Main60 {
 									webDriver.switchTo().window(tabs.get(0));
 								}
 								tabs.clear();
-
-								now_handle = webDriver.getWindowHandle();
-								all_handles = webDriver.getWindowHandles();
-								// identify if the windows is
-								// correct
-								for (String handle2 : all_handles) {
-									if (handle2 != now_handle) {
-										webDriver.switchTo().window(handle2);
-										((ChromeDriver) webDriver).switchTo().frame(iframe);
-									}
-								}
 								continue;
 							}
 						}
@@ -954,15 +877,6 @@ public class Main60 {
 					webDriver.switchTo().window(tabs.get(0));
 				}
 				tabs.clear();
-				now_handle = webDriver.getWindowHandle();
-				all_handles = webDriver.getWindowHandles();
-				// 判断窗口是否一致
-				for (String handle : all_handles) {
-					if (handle != now_handle) {
-						webDriver.switchTo().window(handle);
-						((ChromeDriver) webDriver).switchTo().frame(iframe);
-					}
-				}
 				
 				// get the next page
 				List<WebElement> tk = webDriver
@@ -1209,13 +1123,13 @@ public class Main60 {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(ID + "\t" + projectNo + "\t" + appCode + "\t" + projectName + "\t" + ProjectLeaderName + "\t" + projectOrg
-				+ "\t" + approvedAmount + "\t" + projectStartEnd + "\t" + projectYear + "\t" + Result[0] + "\t"
-				+ Result[1] + "\t" + Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t"
-				+ Result[9] + "\t" + Result[10] + "\t" + Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t"
-				+ Result[14] + "\t" + Result[20] + "\t" + Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t"
-				+ Result[24] + "\t" + Result[25] + "\t" + Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t"
-				+ Result[29] + "\t" + Result[30] + "\t" + Result[31]);
+		writer.println(ID + "\t" + authorName + "\t" + phdUniversity + "\t" + phdYear + "\t" + dissertationAdvisor
+				+ "\t" + advisor1 + "\t" + advisor2 + "\t" + Result[0] + "\t" + Result[1] + "\t" + Result[5] + "\t"
+				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
+				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[20] + "\t"
+				+ Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t" + Result[25] + "\t"
+				+ Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t" + Result[30] + "\t"
+				+ Result[31]);
 		writer.flush();
 	}
 
@@ -1347,7 +1261,7 @@ public class Main60 {
 	}
 
 	public static void readExcel(Sheet sheet, int rowID) {
-		Cell cell0, cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8;
+		Cell cell0, cell1, cell2, cell3, cell4, cell5, cell6, cell7;
 		try {
 			cell0 = sheet.getCell(0, rowID);
 			cell1 = sheet.getCell(1, rowID);
@@ -1357,18 +1271,17 @@ public class Main60 {
 			cell5 = sheet.getCell(5, rowID);
 			cell6 = sheet.getCell(6, rowID);
 			cell7 = sheet.getCell(7, rowID);
-			cell8 = sheet.getCell(8, rowID);
+
 
 			if ("".equals(cell1.getContents()) != true) {
-				ID = cell0.getContents();
-				projectNo = cell1.getContents();
-				appCode = cell2.getContents();
-				projectName = cell3.getContents();
-				ProjectLeaderName = cell4.getContents();
-				projectOrg = cell5.getContents();
-				approvedAmount = cell6.getContents();
-				projectStartEnd = cell7.getContents();
-				projectYear = cell8.getContents();
+				FileID = cell0.getContents();
+				ID = cell1.getContents();
+				authorName = cell2.getContents();
+				phdUniversity = cell3.getContents();
+				phdYear = cell4.getContents();
+				dissertationAdvisor = cell5.getContents();
+				advisor1 = cell6.getContents();
+				advisor2 = cell7.getContents();
 				System.out.println(rowID + " " + cell1.getContents() + " " + cell2.getContents());
 			}
 		} catch (Exception e) {
