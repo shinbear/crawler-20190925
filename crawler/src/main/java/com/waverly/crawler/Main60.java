@@ -208,7 +208,7 @@ public class Main60 {
 			}
 
 			// write the excel the top item
-			String toptitle = "FileID\\tID\t姓名\tPhD univ\tPhD year\tDissertation advisor\tadvisor 1\tadvisor 2\t题目 Title\t关键词（Key Words）\t作者（Author）"
+			String toptitle = "FileID\tID\t姓名\tPhD univ\tPhD year\tDissertation advisor\tadvisor 1\tadvisor 2\t题目 Title\t关键词（Key Words）\t作者（Author）"
 					+ "\t学位授予单位（University）\t授予学位（Degree）\t学科专业（major）\t导师（advisor）\t学位年度（Year）\t语种（language）"
 					+ "\t分类号";
 			writer.println(toptitle);
@@ -232,6 +232,67 @@ public class Main60 {
 				}
 			}
 
+			// Waiting for element for 10 seconds
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".screen_title")));
+			
+			//Click the libary check options
+			//Clear all the library 
+			WebElement removeLibrary = webDriver.findElement(By.cssSelector(".condtion_cz"));
+			webDriver.manage().window().maximize();
+			removeLibrary.findElement(By.linkText("清除")).click();					
+			WebElement libraryCondition = webDriver.findElement(By.cssSelector(".screen_condition"));
+			//期刊论文
+			if (QKLW.isSelected()) {
+				libraryCondition.findElement(By.xpath("//*[text()='期刊论文']")).click();						
+			}
+
+			//学位论文
+			if (XWLW.isSelected()){
+				libraryCondition.findElement(By.xpath("//*[text()='学位论文']")).click();
+			}
+
+			//会议论文
+			if (HYLW.isSelected()) {
+				libraryCondition.findElement(By.xpath("//*[text()='会议论文']")).click();					
+			}
+			
+			//专利
+			if (ZL.isSelected()) {
+				libraryCondition.findElement(By.xpath("//*[text()='专利']")).click();
+			}
+			
+			//中外标准
+			if (ZWBZ.isSelected()) {
+				libraryCondition.findElement(By.xpath("//*[text()='中外标准']")).click();
+			}
+			
+			//科技成果
+			if (ZWBZ.isSelected()) {
+				libraryCondition.findElement(By.xpath("//*[text()='科技成果']")).click();
+			}
+			
+			//法律法规
+			if (FLFG.isSelected()) {
+				libraryCondition.findElement(By.xpath("//*[text()='法律法规']")).click();
+			}
+			
+			//科技报告
+			if (KJBG.isSelected()) {
+				libraryCondition.findElement(By.xpath("//*[text()='科技报告']")).click();
+			}
+			/*
+			//检索信息选项
+			List<WebElement> searchCondition = webDriver.findElements(By.cssSelector(".condition"));				
+			Select gaoji = new Select(webDriver.findElement(By.cssSelector("#gaoji")));
+			gaoji.selectByIndex(1);
+			
+			Select gaoji1 = new Select(webDriver.findElement(By.cssSelector("#gaoji1")));
+			gaoji.selectByIndex(7);
+			
+			Select gaoji2 = new Select(webDriver.findElement(By.cssSelector("#gaoji2")));
+			gaoji.selectByIndex(6);
+			*/
+			
 			// Read the unedname from exccel sheet
 			for (int i = startRow; i <= endRow; i++)  {
 				try {
@@ -254,69 +315,64 @@ public class Main60 {
 						// write the excel the top item
 						writer.println(toptitle);
 					}
-
-					// Waiting for element for 10 seconds
-					wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".screen_title")));
 					
 					//Click the libary check options
 					//Clear all the library 
-					WebElement removeLibrary = webDriver.findElement(By.cssSelector(".condtion_cz"));
 					webDriver.manage().window().maximize();
-					removeLibrary.findElement(By.linkText("清除")).click();					
-					WebElement libraryCondition = webDriver.findElement(By.cssSelector(".screen_condition"));
+					ArrayList<String> tabs;
+					tabs = new ArrayList<String>(webDriver.getWindowHandles());
+					if (tabs.size() > 1) {
+						for (int a = tabs.size(); a > 1; a--) {
+							webDriver.switchTo().window(tabs.get(a - 1));
+							Thread.sleep(500);
+							webDriver.close();
+						}
+						webDriver.switchTo().window(tabs.get(0));
+					}
+					tabs = null;
+					WebElement removeLibrary2 = webDriver.findElement(By.cssSelector(".condtion_cz"));
+					removeLibrary2.findElement(By.linkText("清除")).click();		
+					WebElement libraryCondition2 = webDriver.findElement(By.cssSelector(".screen_condition"));
 					//期刊论文
 					if (QKLW.isSelected()) {
-						libraryCondition.findElement(By.xpath("//*[text()='期刊论文']")).click();						
+						libraryCondition2.findElement(By.xpath("//*[text()='期刊论文']")).click();						
 					}
-		
+
 					//学位论文
 					if (XWLW.isSelected()){
-						libraryCondition.findElement(By.xpath("//*[text()='学位论文']")).click();
+						libraryCondition2.findElement(By.xpath("//*[text()='学位论文']")).click();
 					}
-	
+
 					//会议论文
 					if (HYLW.isSelected()) {
-						libraryCondition.findElement(By.xpath("//*[text()='会议论文']")).click();					
+						libraryCondition2.findElement(By.xpath("//*[text()='会议论文']")).click();					
 					}
 					
 					//专利
 					if (ZL.isSelected()) {
-						libraryCondition.findElement(By.xpath("//*[text()='专利']")).click();
+						libraryCondition2.findElement(By.xpath("//*[text()='专利']")).click();
 					}
 					
 					//中外标准
 					if (ZWBZ.isSelected()) {
-						libraryCondition.findElement(By.xpath("//*[text()='中外标准']")).click();
+						libraryCondition2.findElement(By.xpath("//*[text()='中外标准']")).click();
 					}
 					
 					//科技成果
 					if (ZWBZ.isSelected()) {
-						libraryCondition.findElement(By.xpath("//*[text()='科技成果']")).click();
+						libraryCondition2.findElement(By.xpath("//*[text()='科技成果']")).click();
 					}
 					
 					//法律法规
 					if (FLFG.isSelected()) {
-						libraryCondition.findElement(By.xpath("//*[text()='法律法规']")).click();
+						libraryCondition2.findElement(By.xpath("//*[text()='法律法规']")).click();
 					}
 					
 					//科技报告
 					if (KJBG.isSelected()) {
-						libraryCondition.findElement(By.xpath("//*[text()='科技报告']")).click();
+						libraryCondition2.findElement(By.xpath("//*[text()='科技报告']")).click();
 					}
-					
-					/*
-					//检索信息选项
-					List<WebElement> searchCondition = webDriver.findElements(By.cssSelector(".condition"));				
-					Select gaoji = new Select(webDriver.findElement(By.cssSelector("#gaoji")));
-					gaoji.selectByIndex(1);
-					
-					Select gaoji1 = new Select(webDriver.findElement(By.cssSelector("#gaoji1")));
-					gaoji.selectByIndex(7);
-					
-					Select gaoji2 = new Select(webDriver.findElement(By.cssSelector("#gaoji2")));
-					gaoji.selectByIndex(6);
-					*/
-										
+				
 					int status = searchName(webDriver, authorName, phdUniversity);
 					try {
 						if (status == 1) {
@@ -336,7 +392,6 @@ public class Main60 {
 						writrintExcel();
 					}
 					
-					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -364,6 +419,7 @@ public class Main60 {
 						webDriver.switchTo().window(tabs.get(0));
 					}
 					tabs = null;
+					webDriver.get(URL);
 					continue;
 				}
 			}
@@ -430,25 +486,10 @@ public class Main60 {
 			// Get the page number
 			int pages;
 
-			// Get iframe
-			// WebElement iframe = webDriver.findElement(By.id("iframeResult"));
-
 			// Create a map to store the author info in case of
 			// identical author name in one search
 			Hashtable<String, String> AuthorMaptable = new Hashtable<String, String>();
 
-			/*
-			String now_handle = webDriver.getWindowHandle();
-			Set<String> all_handles = webDriver.getWindowHandles();
-			// identify if the windows is correct
-			/*
-			for (String handle : all_handles) {
-				if (handle != now_handle) {
-					webDriver.switchTo().window(handle);
-					((ChromeDriver) webDriver).switchTo().frame(iframe);
-				}
-			}
-			*/
 			try {
 				webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 				// Waiting for element for 10 seconds
@@ -516,353 +557,95 @@ public class Main60 {
 				//Get row loop
 				for (WebElement t : tb) {
 					// Close the detail page and return the list
-					// page
+										// page
 					ArrayList<String> tabs;
-					tabs = new ArrayList<String>(webDriver.getWindowHandles());
-					if (tabs.size() > 1) {
-						for (int a = tabs.size(); a > 1; a--) {
-							webDriver.switchTo().window(tabs.get(a - 1));
-							Thread.sleep(500);
-							webDriver.close();
-						}
-						webDriver.switchTo().window(tabs.get(0));
-					}
-					tabs.clear();
-					
-					// Get the title
-					String title = t.findElement(By.cssSelector(".title > a")).getText();
-					
-					
-					List<WebElement> tbod = t.findElements(By.tagName("tbody"));
-					for (WebElement tr : tbod) {
+					try {
 						row++;
-						List<WebElement> td = tr.findElements(By.tagName("tr"));
-						td.remove(0);
+						total = pages;
+						dataProgress.setPanel(total, page, row, sim_row);
+						
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								webDriver.switchTo().window(tabs.get(a - 1));
+								Thread.sleep(500);
+								webDriver.close();
+							}
+							webDriver.switchTo().window(tabs.get(0));
+						}
+						tabs.clear();
+						
+						// result array clear
+						for (i = 0; i < 12; i++) {
+							Result[i] = "";
+						}
+						
+						// Get the title
+						String title = t.findElement(By.cssSelector(".title > a")).getText();
+						Result[0] = title;
+						
+						// Open the detail record page
+						String detailrecord = t.findElement(By.cssSelector(".title > a")).getAttribute("href");												
+						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
+						
+						Thread.sleep(2000);						
+						// Open the detail page
+						try {
+							executor.executeScript("window.open('" + detailrecord + "')");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							writrintExcel();
+							// result array clear
+							for (i = 0; i < 12; i++) {
+								Result[i] = "";
+							}
+							continue;
+						}
+
+						int status = getDetail(webDriver);
+						try {
+							if (status == 0) {
+								// Get the item name
+								status = getDetail(webDriver);
+								if (status == 0) {
+									throw new Exception("throw error");
+								}
+							}
+						} catch (Exception e1) {
+							Thread.sleep(3000);
+							writrintExcel();
+							continue;
+						}
+						
+						writrintExcel();
+						// result array clear
+						for (i = 0; i < 12; i++) {
+							Result[i] = "";
+						}
+					} catch (Exception e3) {
+						// TODO Auto-generated catch block
+						e3.printStackTrace();
+						// Write the data into excel
+						writrintExcel();
 
 						// result array clear
-						for (i = 0; i < 40; i++) {
+						for (i = 0; i < 12; i++) {
 							Result[i] = "";
 						}
 
-						for (WebElement tds : td) {
-							try {
-								// Close the detail page and return the list
-								// page
-								tabs = new ArrayList<String>(webDriver.getWindowHandles());
-								if (tabs.size() > 1) {
-									for (int a = tabs.size(); a > 1; a--) {
-										webDriver.switchTo().window(tabs.get(a - 1));
-										Thread.sleep(500);
-										webDriver.close();
-									}
-									webDriver.switchTo().window(tabs.get(0));
-								}
-								tabs.clear();
-								
-								List<WebElement> tdss = tds.findElements(By.tagName("td"));
-
-								// click the more authors
-								try {
-									WebElement tAuMore = tdss.get(2).findElement(By.cssSelector("[title='显示全部作者']"));
-									tAuMore.click();
-								} catch (Exception e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-
-								// Title
-								Result[0] = tdss.get(1).getText();
-
-								// Get the single author link
-								List<WebElement> tAu2 = tdss.get(2).findElements(By.cssSelector(".KnowledgeNetLink"));
-	
-								// Get all author name text including without author link
-								List<String> auStrallSingleArray=new ArrayList<String>();
-								List<String> auStrallSingleArray_temp=new ArrayList<String>();								
-								try {
-									Collections.addAll(auStrallSingleArray_temp, tdss.get(2).getText().split(";"));
-									for (String tt : auStrallSingleArray_temp) {
-										for (String tt2 : tt.split(",")) {
-											auStrallSingleArray.add(tt2);
-										}
-									}
-								} catch (Exception e4) {
-									// TODO Auto-generated catch block
-									e4.printStackTrace();
-								}
-								
-								String tAu_Code_Str = "unknown";
-								String auName_Str = "unknown";
-								String orgName_Str = "unknown";
-								String auStr = "";
-								String auStrSingle = "";
-								int identicalFlag = 0;
-								for (WebElement tAu_link : tAu2) {
-									try {
-										Thread.sleep(1000);
-										identicalFlag = 0;
-										try {
-											// Get the author name
-											auName_Str = tAu_link.getText();
-											// tAu_link.click();
-										} catch (Exception e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-
-										// put the author info into a hashtable
-										// to store
-										Enumeration e = AuthorMaptable.keys();
-
-										// Get the author code
-										String tAu_link_Str;
-										try {
-											tAu_link_Str = tAu_link.getAttribute("href");
-											tAu_Code_Str = tAu_link_Str.substring(tAu_link_Str.lastIndexOf(("code=")) + 5);
-										} catch (Exception e2) {
-											// TODO Auto-generated catch block
-											e2.printStackTrace();
-											tAu_Code_Str = " ";
-										}
-
-										while (e.hasMoreElements()) {
-											if (e.nextElement().toString().equals(auName_Str)) {
-												if (!AuthorMaptable.get(auName_Str).contains("unknown")) {
-													auStrSingle = AuthorMaptable.get(auName_Str);
-													/*
-													String auCodeCompare = auStrSingle.substring(0,
-															auStrSingle.lastIndexOf("+"));
-													if (auCodeCompare.equals(auName_Str + "+" + tAu_Code_Str)) {
-														auStr = auStr + ";" + auStrSingle;
-														identicalFlag = 1;
-														if (auStr.substring(0, 1).equals(";")) {
-															auStr = auStr.substring(1);
-														}
-														break;
-													}
-													*/
-													auStr = auStr + ";" + auStrSingle;
-													if (auStr.substring(0, 1).equals(";")) {
-														auStr = auStr.substring(1);
-													}
-													identicalFlag = 1;
-													break;
-												}
-											}
-										}
-
-										if (identicalFlag == 0) {
-											// Get the author code
-											tAu_link_Str = tAu_link.getAttribute("href");
-											tAu_Code_Str = tAu_link_Str
-													.substring(tAu_link_Str.lastIndexOf(("code=")) + 5);
-											try {
-												// enter author info page
-												tAu_link.click();
-												Thread.sleep(4000);
-												clickCount++;
-												if (clickCount == 30) {
-													Thread.sleep(30000);
-													clickCount = 0;
-												}
-											} catch (Exception e1) {
-												// TODO Auto-generated catch
-												// block
-												e1.printStackTrace();
-											}
-
-											// Switch to author page;
-											tabs = new ArrayList<String>(webDriver.getWindowHandles());
-											// switches to new tab
-											webDriver.switchTo().window(tabs.get(1));
-											tabs = null;
-
-											WebDriverWait wait = new WebDriverWait(webDriver, 10);
-											wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-													By.cssSelector("h2.name")));
-
-											// Get the author name in the person
-											// page
-											if (auName_Str.equals("")) {
-												auName_Str = webDriver
-														.findElement(By.xpath("/html/body/div[7]/div[1]/div/h2"))
-														.getText();
-											}
-
-											// Get the organization
-											orgName_Str = webDriver.findElement(By.cssSelector("p.orgn")).getText();
-
-											auStr = auStr + ";" + auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
-											auStrSingle = auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
-											if (auStr.substring(0, 1).equals(";")) {
-												auStr = auStr.substring(1);
-											}
-										}
-									} catch (Exception e2) {
-										// Get the author code,name,organization
-										auStr = auStr + ";" + auName_Str + "+" + tAu_Code_Str+ "+" + orgName_Str;
-										if (auStr.substring(0, 1).equals(";")) {
-											auStr = auStr.substring(1);
-										}
-										auStrSingle = auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
-									}
-
-									// store the author info into a map
-									AuthorMaptable.put(auName_Str, auStrSingle);
-									
-									// Close author page & return the list
-									// page
-									tabs = new ArrayList<String>(webDriver.getWindowHandles());
-									if (tabs.size() > 1) {
-										for (int a = tabs.size(); a > 1; a--) {
-											webDriver.switchTo().window(tabs.get(a - 1));
-											Thread.sleep(500);
-											webDriver.close();
-										}
-									}
-										webDriver.switchTo().window(tabs.get(0));
-										tabs.clear();
-									}
-								
-								// process the author name without link
-								for (String auStrallSingle : auStrallSingleArray) {
-									if (!auStr.contains(auStrallSingle.trim())) {
-										int flagTemp = 0;
-										Enumeration e2 = AuthorMaptable.keys();
-										while (e2.hasMoreElements()) {
-											if (e2.nextElement().toString().equals(auStrallSingle)) {
-												auStr = auStr + ";" + AuthorMaptable.get(auStrallSingle);
-												if (auStr.substring(0, 1).equals(";")) {
-													auStr = auStr.substring(1);
-												}
-												flagTemp = 1;
-												break;
-											}
-										}
-										if (flagTemp == 0) {
-											auStr = auStr + ";" + auStrallSingle + "+" +  "unknown" + "+" + "unknown";
-											if (auStr.substring(0, 1).equals(";")) {
-												auStr = auStr.substring(1);
-											}
-										}
-									}
-								}
-
-			
-								// author name+code+org
-								Result[1] = auStr;
-
-								// Publication year
-								Result[5] = tdss.get(4).getText();
-
-								// database
-								Result[6] = tdss.get(5).getText();
-
-								// Being refer number
-								Result[7] = tdss.get(6).getText();
-								if (Result[7] == null || Result[7].length() <= 0) {
-									Result[7] = "0";
-								}
-
-								// Being download number
-								Result[8] = tdss.get(7).getText();
-								if (Result[8] == null || Result[8].length() <= 0) {
-									Result[8] = "0";
-								}
-
-								// Being read number
-								Result[9] = tdss.get(8).getText();
-								if (Result[9] == null || Result[9].length() <= 0) {
-									Result[9] = "0";
-								}
-
-								// Close author page & return the list
-								// page
-								tabs = new ArrayList<String>(webDriver.getWindowHandles());
-								if (tabs.size() > 1) {
-									for (int a = tabs.size(); a > 1; a--) {
-										webDriver.switchTo().window(tabs.get(a - 1));
-										Thread.sleep(500);
-										webDriver.close();
-									}
-									webDriver.switchTo().window(tabs.get(0));
-								}
-								tabs.clear();
-
-								// Open the detail page
-								try {
-									tdss.get(1).findElement(By.cssSelector(".fz14")).click();
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-									writrintExcel();
-									// result array clear
-									for (i = 0; i < 40; i++) {
-										Result[i] = "";
-									}
-									continue;
-
-								}
-
-								int status = getDetail(webDriver);
-								try {
-									if (status == 0) {
-										// Get the item name
-										status = getDetail(webDriver);
-										if (status == 0) {
-											throw new Exception("throw error");
-										}
-									}
-								} catch (Exception e1) {
-									Thread.sleep(3000);
-									writrintExcel();
-									continue;
-								}
-
-								/*
-								if (isPatentPage == true) {
-									try {
-										getDetailPatent(webDriver);
-									} catch (Exception e3) {
-										writrintExcel();
-									}
-								}
-								isPatentPage = false;
-								*/
-
-								// Write the data into excel
-								writrintExcel();
-
-								// result array clear
-								for (i = 0; i < 40; i++) {
-									Result[i] = "";
-								}
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-								// Write the data into excel
-								writrintExcel();
-
-								// result array clear
-								for (i = 0; i < 40; i++) {
-									Result[i] = "";
-								}
-
-								// Close the detail page and return the list
-								// page
-								tabs = new ArrayList<String>(webDriver.getWindowHandles());
-								if (tabs.size() > 1) {
-									for (int a = tabs.size(); a > 1; a--) {
-										webDriver.switchTo().window(tabs.get(a - 1));
-										Thread.sleep(500);
-										webDriver.close();
-									}
-									webDriver.switchTo().window(tabs.get(0));
-								}
-								tabs.clear();
-								continue;
+						// Close detail page, return the list page
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								webDriver.switchTo().window(tabs.get(a - 1));
+								Thread.sleep(500);
+								webDriver.close();
 							}
+							webDriver.switchTo().window(tabs.get(0));
 						}
+						tabs.clear();
+						continue;
 					}
 				}
 
@@ -879,16 +662,18 @@ public class Main60 {
 				tabs.clear();
 				
 				// get the next page
-				List<WebElement> tk = webDriver
-						.findElements(By.xpath("//*[@id=\"ctl00\"]/table/tbody/tr[3]/td/table/tbody/tr/td/div/a"));
-				for (WebElement t : tk) {
-					if (t.getText().equals("下一页")) {
+				try {
+					WebElement tk = webDriver.findElement(By.cssSelector(".laypage_next"));
+					if (tk.getText().equals("下一页")) {
 						try {
-							t.click();
-						} catch (Exception e3) {							
+							tk.click();
+						} catch (Exception e3) {
 						}
-
 					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					break;
 				}
 			}
 			Thread.sleep(3000);
@@ -906,105 +691,163 @@ public class Main60 {
 			webDriver.switchTo().window(tabs.get(1));
 			tabs = null;
 
-			try {
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
-				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#catalog_Ptitle")));
+			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".crumbs")));
 				isPatentPage = false;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				try {
-					Result[10] = "";
-					Result[11] = "";
-					Result[12] = "";
-					Result[13] = "";
-					Result[14] = "";
-					getDetailPatent(webDriver);
-					isPatentPage = true;
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-					return 0;
-				}
-			}
 
 			// keywords
 			String keywordStr = "";
-			String fundStr = "";
-			String categoryStr = "";
-			String issnStr = "";
-			String DOIStr = "";
+			String author = "";
+			String university = "";
+			String degree = "";
+			String major = "";
+			String advisor = "";
+			String year = "";
+			String language = "";
+			String categoryNo = "";
 			
 			// Gether label
-			List<WebElement> catalog_Label =  webDriver.findElements(By.cssSelector("p > label"));
+			List<WebElement> catalog_Label =  webDriver.findElements(By.cssSelector(".info_left"));
 			ArrayList<String> catalog_LabelStr = new ArrayList<String>();
 			for (WebElement catalog_Labellist : catalog_Label) {
 				catalog_LabelStr.add(catalog_Labellist.getText());
 			}
-			
+
+			// keywords
 			try {
 				if (catalog_LabelStr.contains("关键词：")) {
 					// keywords
-					List<WebElement> tu = webDriver.findElements(By.cssSelector("#catalog_KEYWORD~a"));
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='关键词：']/following-sibling::div"));
 					for (WebElement tds : tu) {
-						keywordStr = keywordStr + tds.getText();
+						keywordStr = keywordStr + ";" + tds.getText();
 					}
+					keywordStr = keywordStr.substring(1);
+				}
+			} catch (Exception e1) {
+			}
+			
+			//author 
+			try {
+				if (catalog_LabelStr.contains("作者：")) {
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='作者：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						author = author + ";" + tds.getText();
+					}
+					author = author.substring(1);
+				}
+			} catch (Exception e1) {
+			}
+			
+			//university 
+			try {
+				if (catalog_LabelStr.contains("学位授予单位：")) {
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='学位授予单位：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						university = university + ";" + tds.getText();
+					}
+					university = university.substring(1);
+				}
+			} catch (Exception e1) {
+			}
+			
+			//degree 
+			try {
+				if (catalog_LabelStr.contains("授予学位：")) {
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='授予学位：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						degree = degree + ";" + tds.getText();
+					}
+					degree = degree.substring(1);
+				}
+			} catch (Exception e1) {
+			}
+			
+			//major 
+			try {
+				if (catalog_LabelStr.contains("学科专业：")) {
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='学科专业：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						major = major + ";" + tds.getText();
+					}
+					major = major.substring(1);
+				}
+			} catch (Exception e1) {
+			}
+			
+			//advisor 
+			try {
+				if (catalog_LabelStr.contains("导师姓名：")) {
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='导师姓名：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						advisor = advisor + ";" + tds.getText();
+					}
+					advisor = advisor.substring(1);
+				}
+			} catch (Exception e1) {
+			}
+			
+			//year 
+			try {
+				if (catalog_LabelStr.contains("学位年度：")) {
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='学位年度：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						year = year + ";" + tds.getText();
+					}
+					year = year.substring(1);
+				}
+			} catch (Exception e1) {
+			}
+			
+			//language 
+			try {
+				if (catalog_LabelStr.contains("语种：")) {
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='语种：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						language = language + ";" + tds.getText();
+					}
+					language = language.substring(1);
 				}
 			} catch (Exception e1) {
 			}
 
+			//categoryNo 
 			try {
-				// Funds
-				if (catalog_LabelStr.contains("基金：")) {
-				List<WebElement> tk = webDriver.findElements(By.cssSelector("#catalog_FUND~a"));
-				for (WebElement tdk : tk) {
-					fundStr = fundStr + tdk.getText();
-					}
-				}
-			} catch (Exception e1) {
-			}
-
-			try {
-				// category no
 				if (catalog_LabelStr.contains("分类号：")) {
-				List<WebElement> tk1 = webDriver.findElements(By.xpath("//*[@id='catalog_ZTCLS']/.."));
-				for (WebElement tdk1 : tk1) {
-					categoryStr = categoryStr + tdk1.getText().substring(4);
+					// keywords
+					List<WebElement> tu = webDriver
+							.findElements(By.xpath("//*[text()='分类号：']/following-sibling::div"));
+					for (WebElement tds : tu) {
+						categoryNo = categoryNo + ";" + tds.getText();
 					}
+					categoryNo = categoryNo.substring(1);
 				}
 			} catch (Exception e1) {
 			}
 
-			try {
-				// ISSN
-				List<WebElement> tk2 = webDriver
-						.findElements(By.cssSelector("#mainArea > div.wxmain > div.wxInfo > div.wxsour > div.sourinfo >p"));
-				for (WebElement tdk2 : tk2) {
-					if (tdk2.getText().contains("ISSN")) {
-						issnStr = tdk2.getText().substring(tdk2.getText().indexOf("ISSN") + 5);
-					}
-				}
-			} catch (Exception e1) {
-			}
-
-			try {
-				// DOI
-				if (catalog_LabelStr.contains("DOI：")) {
-				List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
-				for (WebElement tdk3 : tk3) {
-					DOIStr = DOIStr + tdk3.getText().substring(4);
-					}
-				if (DOIStr.equals("")){
-					DOIStr= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
-					}
-				}
-			} catch (Exception e1) {
-			}
-
-			Result[10] = keywordStr;
-			Result[11] = fundStr;
-			Result[12] = categoryStr;
-			Result[13] = issnStr;
-			Result[14] = DOIStr;
+			Result[1] = keywordStr;
+			Result[2] = author;
+			Result[3] = university;
+			Result[4] = degree;
+			Result[5] = major;
+			Result[6] = advisor;
+			Result[7] = year;
+			Result[8] = language;
+			Result[9] = categoryNo;
 			return 1;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1013,123 +856,11 @@ public class Main60 {
 		}
 	}
 
-	public static void getDetailPatent(WebDriver webDriver) throws IOException {
-		// Switch to detail page
-		ArrayList<String> tabs;
-		tabs = new ArrayList<String>(webDriver.getWindowHandles());
-		// switches to new tab
-		webDriver.switchTo().window(tabs.get(1));
-		tabs = null;
-
-		try {
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#userName")));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Result[20] = "";
-			Result[21] = "";
-			Result[22] = "";
-			Result[23] = "";
-			Result[24] = "";
-			Result[25] = "";
-			Result[25] = "";
-			Result[27] = "";
-			Result[28] = "";
-			Result[29] = "";
-			Result[30] = "";
-			Result[31] = "";
-			return;
-		}
-
-		// patent body
-		String applicationNo = "";
-		String applicationDate = "";
-		String publicationNo = "";
-		String publicationDate = "";
-		String applicant = "";
-		String address = "";
-		String inventor = "";
-		String patentAgentOrg = "";
-		String Agent = "";
-		String patentMainCategoryNo = "";
-		String patentCategoryNo = "";
-		String nationProvince = "";
-		try {
-			List<WebElement> tu = webDriver.findElements(By.cssSelector("#box > tbody > tr > td"));
-			for (WebElement tds : tu) {
-				if (tds.getText().contains("申请号")) {
-					applicationNo = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("申请日")) {
-					applicationDate = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("公开号")) {
-					publicationNo = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("公开日")) {
-					publicationDate = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("申请人")) {
-					applicant = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("地址")) {
-					address = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("发明人")) {
-					inventor = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("专利代理机构")) {
-					patentAgentOrg = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("代理人")) {
-					Agent = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("主分类号")) {
-					patentMainCategoryNo = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("专利分类号")) {
-					patentCategoryNo = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-
-				if (tds.getText().contains("国省代码")) {
-					nationProvince = tu.get(tu.indexOf(tds) + 1).getText();
-				}
-			}
-		} catch (Exception e1) {
-		}
-		Result[20] = applicationNo;
-		Result[21] = applicationDate;
-		Result[22] = publicationNo;
-		Result[23] = publicationDate;
-		Result[24] = applicant;
-		Result[25] = address;
-		Result[25] = inventor;
-		Result[27] = patentAgentOrg;
-		Result[28] = Agent;
-		Result[29] = patentMainCategoryNo;
-		Result[30] = patentCategoryNo;
-		Result[31] = nationProvince;
-	}
-
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(ID + "\t" + authorName + "\t" + phdUniversity + "\t" + phdYear + "\t" + dissertationAdvisor
-				+ "\t" + advisor1 + "\t" + advisor2 + "\t" + Result[0] + "\t" + Result[1] + "\t" + Result[5] + "\t"
-				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
-				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[20] + "\t"
-				+ Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t" + Result[25] + "\t"
-				+ Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t" + Result[30] + "\t"
-				+ Result[31]);
+		writer.println(FileID + "\t" + ID + "\t" + authorName + "\t" + phdUniversity + "\t" + phdYear + "\t"
+				+ dissertationAdvisor + "\t" + advisor1 + "\t" + advisor2 + "\t" + Result[0] + "\t" + Result[1] + "\t"
+				+ Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t" + Result[6]+ "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9]);
 		writer.flush();
 	}
 
@@ -1167,31 +898,6 @@ public class Main60 {
 		}
 		JOptionPane.showMessageDialog(frame, "Cancelled");
 		System.exit(0);
-	}
-
-	public static Document getPageDoc(String URL) {
-		// ChromeOptions options = new ChromeOptions();
-
-		WebDriver webDriver = new ChromeDriver();
-		webDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		String responseBody = "";
-		try {
-			webDriver.get(URL);
-		} catch (Exception e) {
-			webDriver.close();
-		}
-		if (webDriver.getPageSource() != null) {
-			responseBody = webDriver.getPageSource();
-		}
-
-		/*
-		 * File file = new File("E:/sistertask/2019-02-24/log.txt"); String
-		 * pageXml = txt2String(file); Document doc = Jsoup.parse(pageXml);//
-		 * 获取html文档
-		 */
-		Document doc = Jsoup.parse(responseBody);// 获取html文档
-		webDriver.close();
-		return doc;
 	}
 
 	public static Document getPageDocByHtmlunit(String URL) {
@@ -1275,7 +981,7 @@ public class Main60 {
 
 			if ("".equals(cell1.getContents()) != true) {
 				FileID = cell0.getContents();
-				ID = cell1.getContents();
+				ID = "ID: "+ cell1.getContents();
 				authorName = cell2.getContents();
 				phdUniversity = cell3.getContents();
 				phdYear = cell4.getContents();
