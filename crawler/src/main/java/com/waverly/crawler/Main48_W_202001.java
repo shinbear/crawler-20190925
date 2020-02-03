@@ -221,7 +221,7 @@ public class Main48_W_202001 {
 
 			// URL =
 			// "http://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=CCJD,CPFD,IPFD,CDFD,CMFD,SCOD,CJRF,CJFQ,CJFN";
-			URL = "http://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=" + libraryStr;
+			URL = "https://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=" + libraryStr;
 
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
