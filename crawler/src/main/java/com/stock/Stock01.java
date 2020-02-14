@@ -14,6 +14,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.stock.ReadProgress;
+
 import org.openqa.selenium.WebElement;
 
 public class Stock01 {
@@ -24,6 +27,7 @@ public class Stock01 {
 	public static ArrayList<String> uniquevalues = new ArrayList<String>();
 	public static String currStr = "";
 	public static String posStr = "";
+	private static ReadProgress dataProgress;
 
 	public static void main(String[] args) throws IOException {
 		System.out.println("用户的当前工作目录:" + System.getProperty("user.dir"));
@@ -33,16 +37,27 @@ public class Stock01 {
 		Date beginTime = null;
 		Date endTime = null;
 		Date today = null;
+		Date mailbeginTime = null;
+		Date mailendTime = null;
+		int mailflag=0;
+		
+		// Show the progress
+		dataProgress = new ReadProgress();
+		dataProgress.setVisible(true);
+		Thread thread1 = new Thread(dataProgress);
+		thread1.start();
+		
 		try {
 			now = df.parse(df.format(new Date()));
 			beginTime = df.parse("09:29");
-			endTime = df.parse("15:01");
+			endTime = df.parse("20:33");
+			mailbeginTime = df.parse("09:00");
+			mailendTime = df.parse("20:33");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		Boolean result = false;
-		int count = 0;
 		// Initialize the web browser
 		System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 		ChromeOptions options = new ChromeOptions();
@@ -60,10 +75,22 @@ public class Stock01 {
 				try {
 					now = df.parse(df.format(new Date()));
 					today = dayformat.parse(dayformat.format(new Date()));
+					dataProgress.setPanel();
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				// Send the stock system status at morning
+				if (belongCalendar(now, mailbeginTime, mailendTime) && (mailflag == 0)) {
+					TestEmail.sendmail("Stock system is OK at " + df.format(new Date()));
+					mailflag = 1;
+				} else if (belongCalendar(now, mailbeginTime, mailendTime)) {
+				} else {
+					mailflag = 0;
+				}
+				
+				// run in the during stock markret open 
 				if (belongCalendar(now, beginTime, endTime)) {
 					runStock(webDriver);
 					System.out.println(df.format(new Date()) + "  ----OK");
