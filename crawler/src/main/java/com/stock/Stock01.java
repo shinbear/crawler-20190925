@@ -16,16 +16,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.WebElement;
 
-public class Stock01 {	
-	public static ArrayList<String> currTrantd = new ArrayList<>(); 
-	public static ArrayList<String> hisTrantd = new ArrayList<>(); 
-	public static ArrayList<String> cuposTrantd= new ArrayList<>(); 
-	public static ArrayList<String> hisposTrantd= new ArrayList<>(); 
+public class Stock01 {
+	public static ArrayList<String> currTrantd = new ArrayList<>();
+	public static ArrayList<String> hisTrantd = new ArrayList<>();
+	public static ArrayList<String> cuposTrantd = new ArrayList<>();
+	public static ArrayList<String> hisposTrantd = new ArrayList<>();
 	public static ArrayList<String> uniquevalues = new ArrayList<String>();
 	public static String currStr = "";
 	public static String posStr = "";
+
 	public static void main(String[] args) throws IOException {
-		System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));	
+		System.out.println("用户的当前工作目录:" + System.getProperty("user.dir"));
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 		SimpleDateFormat dayformat = new SimpleDateFormat("dd");
 		Date now = null;
@@ -34,12 +35,12 @@ public class Stock01 {
 		Date today = null;
 		try {
 			now = df.parse(df.format(new Date()));
-			beginTime = df.parse("09:30");
-			endTime = df.parse("19:13");
+			beginTime = df.parse("09:29");
+			endTime = df.parse("15:01");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		Boolean result = false;
 		int count = 0;
 		// Initialize the web browser
@@ -53,7 +54,7 @@ public class Stock01 {
 		String URL_search = "https://www.joinquant.com/post/20355?f=sharelist&m=list";
 		webDriver.get(URL_search);
 		webDriver.manage().window().maximize();
-		
+
 		while (!result) {
 			try {
 				try {
@@ -75,7 +76,7 @@ public class Stock01 {
 			}
 		}
 	}
-	
+
 	public static int runStock(WebDriver webDriver) throws IOException {
 		try {
 			webDriver.navigate().refresh();
@@ -124,8 +125,8 @@ public class Stock01 {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Thread.sleep(3 * 1000); 
-			
+			Thread.sleep(3 * 1000);
+
 			// Get the transaction data
 			try {
 				WebElement trans = webDriver.findElement(By.cssSelector("#transaction-table"));
@@ -146,25 +147,31 @@ public class Stock01 {
 						uniquevalues.add(finalval);
 				}
 				// assemble the mail content
-				String mailContent = "";
+				String mailContent = "The transaction records------";
 				if (!uniquevalues.isEmpty()) {
 					// Assemble the mail content
+					// The transaction content
 					for (String mailStr : uniquevalues) {
 						mailContent = mailContent + "<br>" + mailStr;
 					}
+					
+					// The holding stock content
+					mailContent = mailContent + "<br><br>The holding stock------";
+					for (String mailposStr : cuposTrantd) {
+						mailContent = mailContent + "<br>" + mailposStr;
+					}			
 					System.out.println("The below transaction data----");
 					System.out.println(uniquevalues + "\n");
 					System.out.println("The below holding stocks -----");
 					System.out.println(cuposTrantd + "\n");
-					hisTrantd = (ArrayList<String>) currTrantd.clone();
 					TestEmail.sendmail(mailContent);
 				}
+				hisTrantd.clear();
+				hisTrantd = (ArrayList<String>) currTrantd.clone();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-
 			cuposTrantd.clear();
 			currTrantd.clear();
 			uniquevalues.clear();
@@ -176,7 +183,7 @@ public class Stock01 {
 		}
 
 	}
-	
+
 	/**
 	 * 判断时间是否在时间段内
 	 * 
@@ -185,21 +192,20 @@ public class Stock01 {
 	 * @param endTime
 	 * @return
 	 */
-	public static boolean belongCalendar(Date nowTime, Date beginTime,
-			Date endTime) {
+	public static boolean belongCalendar(Date nowTime, Date beginTime, Date endTime) {
 		Calendar date = Calendar.getInstance();
 		date.setTime(nowTime);
- 
+
 		Calendar begin = Calendar.getInstance();
 		begin.setTime(beginTime);
- 
+
 		Calendar end = Calendar.getInstance();
 		end.setTime(endTime);
- 
+
 		if (date.after(begin) && date.before(end)) {
 			return true;
 		} else {
 			return false;
-			}
 		}
 	}
+}
