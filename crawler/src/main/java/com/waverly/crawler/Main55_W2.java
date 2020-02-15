@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-public class Main54 {
+public class Main55_W2 {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
@@ -73,24 +74,16 @@ public class Main54 {
 	private static int sim_row = 0;
 	public static String auadQuery = "";
 	//The content read from Excel
-	public static String source_ID = "";
-	public static String source_NameCN = "";
-	public static String source_LstName = "";
-	public static String source_FstName = "";
-	public static String source_DissYear = "";
-	public static String source_DissInst = "";
-	public static String source_DissIntstWOS = "";
-	public static String source_CurAffi = "";
-	public static String source_CurAffiWOS = "";
-	public static String source_ProgYear = "";
-	public static String source_ProgAffi = "";
-	public static String source_ProgAffiWOS = "";
-	public static String[] source_SearchArry = new String[3];
-	public static String[] source_SearchYearFromArry = new String[3];
-	public static String[] source_SearchYearToArry = new String[3];
-	public static String source_Search = "";
-	public static String source_SearchYearFrom = "";
-	public static String source_SearchYearTo = "";	
+	public static String  ID= "";
+	public static String  Stkcd= "";
+	public static String  year= "";
+	public static String  Name_cn= "";
+	public static String  PersonID= "";
+	public static String  university_cn= "";
+	public static String  firstname_en= "";
+	public static String  lastname_en= "";
+	public static String  name_en= "";
+	public static String  university_en="";
 
 	public static String author = "";
 	public static String authorOrg = "";
@@ -136,7 +129,7 @@ public class Main54 {
 			sheet = book.getSheet(0);
 			rowid_Total = sheet.getRows();
 
-			URL = "http://apps.webofknowledge.com/WOS_AdvancedSearch_input.do?SID=8DEJ9qRQSdW6p6ieIOa&product=WOS&search_mode=AdvancedSearch";
+			URL = "https://www.lib.umd.edu/dbfinder/id/UMD04150";
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 			//modify the download path	
@@ -148,7 +141,10 @@ public class Main54 {
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			// lanunch the webdriver 
-			// webDriver.get(URL);
+			webDriver.get(URL);		
+			WebElement focus_element = webDriver.findElement(By.linkText("Web of Science Core Collection"));
+			focus_element.click();
+			Thread.sleep(3000);
 			
 			// Show the dialog to wait
 			int res = JOptionPane.showConfirmDialog(null, "Waiting for you access the advanced search page", " ",
@@ -161,7 +157,7 @@ public class Main54 {
 				System.exit(0);
 				return;
 			}
-			
+
 			// Input the query condition
 			ArrayList<String> tabs;
 			tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -187,10 +183,9 @@ public class Main54 {
 			}
 
 			// write the excel the top item
-			String toptitle = "ID\tName\tLast Name\tFirst Name\tDissertation Year\tDissertation Institution\t"
-					+ "Dissertation Institution(WOS)\tCurrent Affilication\tCurrent Affilication(WOS)\t"
-					+ "Program Year\tProgram Affication\tProgram Affication(WOS)\tSearch keywords\t"
-					+ "Year From\tYear To\tPT\tAU\tAF\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tTC\tZ9\tU1\tU2\tSN\t"
+			String toptitle = "ID\tStkcd\tyear\tName_cn\tPersonID\tuniversity_cn\t"
+					+ "firstname_en\tlastname_en\tname_en\tuniversity_en\tPT\tAU\tAF"
+					+ "\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tTC\tZ9\tU1\tU2\tSN\t"
 					+ "EI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA\tUT\tPM";
 			writer.println(toptitle);
 			
@@ -225,7 +220,7 @@ public class Main54 {
 						writer.close();
 						int t = i / 500;
 						try {
-							writer = new PrintWriter(filename.getText() + "_" + t + ".xls", "UTF-8");
+							writer = new PrintWriter(filename.getText() + "_" + t + ".xls", "GB2312");
 						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(null,
 									"File already open with same path & file name. Please close it & re-run the application");
@@ -246,42 +241,21 @@ public class Main54 {
 						webDriver.switchTo().window(tabs.get(0));
 					}
 					tabs = null;
-					
-					try {
-						for (int k = 0; k < 3; k++) {
-							// Input the query condition
-							source_Search = source_SearchArry[k];
-							source_SearchYearFrom = source_SearchYearFromArry[k];
-							source_SearchYearTo = source_SearchYearToArry[k];
-							tabs = new ArrayList<String>(webDriver.getWindowHandles());
-							if (tabs.size() > 1) {
-								for (int a = tabs.size(); a > 1; a--) {
-									webDriver.switchTo().window(tabs.get(a - 1));
-									Thread.sleep(500);
-									webDriver.close();
-								}
-								webDriver.switchTo().window(tabs.get(0));
-							}
-							tabs = null;
-							int status = searchName(webDriver, k);
-							if (status == 1) {
-								// Get the item name
-								getAName(webDriver);
-							} else {
-								webDriver.navigate().refresh();
-								status = searchName(webDriver, k);
-								if (status == 1) {
-									getAName(webDriver);
-								} else {
-									throw new Exception("throw error");
-								}
-							}														
-						}
-					} catch (Exception e1) {
-						Thread.sleep(300000);
-						writrintExcel();
-					}
 
+					int status = searchName(webDriver);
+					if (status == 1) {
+						// Get the item name
+						getAName(webDriver);
+					} else {
+						webDriver.navigate().refresh();
+						status = searchName(webDriver);
+						if (status == 1) {
+							getAName(webDriver);
+						} else {
+							throw new Exception("throw error");
+						}
+					}
+					
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -321,47 +295,46 @@ public class Main54 {
 		System.exit(0);
 	}
 
-	public static int searchName(WebDriver webDriver, int searchNo) throws IOException {
+	public static int searchName(WebDriver webDriver) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Input the author
+			String searchQuery = "AU=" + name_en + " AND AD=" + university_en;
 			WebElement author_input = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
-			author_input.clear();	
-			author_input.sendKeys(source_SearchArry[searchNo]);
+			author_input.clear();
+			author_input.sendKeys(searchQuery);
 			
 			//scroll to the element
 			String js3 = "arguments[0].scrollIntoView();";
 			WebElement element = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
 			((JavascriptExecutor) webDriver).executeScript(js3, element);
 
-			
 			Thread.sleep(1000);
 			// Year range from to
 			if (isFirstSearch) {
 				Thread.sleep(1000);
 				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));				
 				yearRange.selectByIndex(6);
+				WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
+				List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
+				tss.get(0).click();
+				Thread.sleep(500);
+				WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
+				yearFrom.clear();
+				yearFrom.sendKeys("2006");
+				yearFrom.sendKeys(Keys.ENTER);
+				tss.get(1).click();
+				Thread.sleep(500);
+				WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
+				yearTo.clear();
+				yearTo.sendKeys("2009");	
+				yearTo.sendKeys(Keys.ENTER);
+				Thread.sleep(200);
 			}
-		
-			WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
-			List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
-			tss.get(0).click();
-			Thread.sleep(500);
-			WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
-			yearFrom.clear();
-			yearFrom.sendKeys(source_SearchYearFromArry[searchNo]);
-			yearFrom.sendKeys(Keys.ENTER);
-			tss.get(1).click();
-			Thread.sleep(500);
-			WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
-			yearTo.clear();
-			yearTo.sendKeys(source_SearchYearToArry[searchNo]);	
-			yearTo.sendKeys(Keys.ENTER);
-			Thread.sleep(200);
-						
+								
 			if (isFirstSearch) {
 				try {
 					Thread.sleep(3000);
@@ -369,7 +342,7 @@ public class Main54 {
 					Select select_language = new Select(webDriver.findElement(By.xpath("//*[@id='value(input2)']")));
 					// deselect all option
 					select_language.deselectAll();
-					select_language.selectByIndex(1);
+					select_language.selectByIndex(0);
 
 					// Input the article
 					Select select_article = new Select(webDriver.findElement(By.xpath("//*[@id='value(input3)']")));
@@ -385,28 +358,33 @@ public class Main54 {
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='search-button']").click();
 			
 			// Waiting for the result for 10 seconds
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".historyResults")));
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("/html/body/div[13]/form/table/tbody/tr")));
 
-			// Get the link
-			// Close the detail page and return the list
-			// page
-			ArrayList<String> tabs;
-			tabs = new ArrayList<String>(webDriver.getWindowHandles());
-			if (tabs.size() > 1) {
-				for (int a = tabs.size(); a > 1; a--) {
-					webDriver.switchTo().window(tabs.get(a - 1));
-					Thread.sleep(1500);
-					webDriver.close();
+			//Get the link
+			List<WebElement> tb = webDriver.findElements(By.xpath("/html/body/div[13]/form/table/tbody/tr"));
+			tb.remove(0);
+			tb.remove(0);
+			for (WebElement t : tb) {
+				// Close the detail page and return the list
+				// page
+				ArrayList<String> tabs;
+				tabs = new ArrayList<String>(webDriver.getWindowHandles());
+				if (tabs.size() > 1) {
+					for (int a = tabs.size(); a > 1; a--) {
+						webDriver.switchTo().window(tabs.get(a - 1));
+						Thread.sleep(1500);
+						webDriver.close();
+					}
+					webDriver.switchTo().window(tabs.get(0));
 				}
-				webDriver.switchTo().window(tabs.get(0));
-			}
-			tabs.clear();
-
-			JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-			String searchlink = webDriver.findElements(By.cssSelector(".historyResults > a[href]")).get(0)
-					.getAttribute("href");
-			executor.executeScript("window.open('" + searchlink + "')");
-			Thread.sleep(3000);
+				tabs.clear();
+				
+				JavascriptExecutor executor = (JavascriptExecutor) webDriver;
+				String searchlink = t.findElements(By.cssSelector("a[href]")).get(0).getAttribute("href");
+				executor.executeScript("window.open('" + searchlink + "')");	
+				Thread.sleep(3000);
+				break;
+			}		
 			return 1;
 		} catch (Exception e2) {
 			writrintExcel();
@@ -684,6 +662,16 @@ public class Main54 {
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
+			if (webDriver.findElement(By.cssSelector("#hidden_section_label")).getText().contains("查看更多数据字段")) {
+				// see more
+				try {
+					webDriver.findElement(By.linkText("查看更多数据字段")).click();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
 			// Gether FR_label
 			List<WebElement> FRLabel =  webDriver.findElements(By.cssSelector(".FR_label"));
 			ArrayList<String> FRLabelStr = new ArrayList<String>();
@@ -726,18 +714,7 @@ public class Main54 {
 				Result[1] = "";
 				Result[2] = "";
 			}
-			
-			// see more
-			try {
-				webDriver.findElement(By.linkText("查看更多数据字段")).click();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-
-
-					
+								
 			// Get Volume
 			try {
 				WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷:']/following-sibling::value"));
@@ -748,8 +725,8 @@ public class Main54 {
 			
 			// Get phase
 			try {
-				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));
-				Result[24] = "期: " + phaseStr.getText();
+				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));			
+				Result[24] = "*" + phaseStr.getText();
 			} catch (Exception e) {
 				Result[24] = " ";
 			}
@@ -840,7 +817,6 @@ public class Main54 {
 				Result[8] = "";
 				Result[9] = "";
 			}
-
 			
 			// scroll to the element of "email address" title
 			try {
@@ -863,8 +839,7 @@ public class Main54 {
 					
 			// Get the being cite 180days&since 2013
 			WebElement sideBar = webDriver.findElement(By.cssSelector("#sidebar-container"));
-			
-			
+						
 			try {
 				List<WebElement> tbs = sideBar.findElements(
 						By.xpath("//*[text()='在 Web of Science 中 使用次数']/../following-sibling::div/div"));
@@ -920,9 +895,7 @@ public class Main54 {
 					e1.printStackTrace();
 				}
 			}
-			     
-
-			
+			     		
 			// scroll to the element of fund assistant information
 			if (title3Str.contains("基金资助致谢")) {
 				try {
@@ -1041,10 +1014,8 @@ public class Main54 {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(source_ID + "\t" + source_NameCN + "\t" + source_LstName + "\t" + source_FstName + "\t"
-				+ source_DissYear + "\t" + source_DissInst + "\t" + source_DissIntstWOS + "\t" + source_CurAffi + "\t"
-				+ source_CurAffiWOS + "\t" + source_ProgYear + "\t" + source_ProgAffi + "\t" + source_ProgAffiWOS + "\t"
-				+ source_Search + "\t" + source_SearchYearFrom + "\t" + source_SearchYearTo + "\t" + Result[0] + "\t"
+		writer.println(ID + "\t" + Stkcd + "\t" + year + "\t" + Name_cn + "\t" + PersonID + "\t" + university_cn + "\t"
+				+ firstname_en + "\t" + lastname_en + "\t" + name_en + "\t" + university_en + "\t" + Result[0] + "\t"
 				+ Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t"
 				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
 				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t"
@@ -1070,7 +1041,6 @@ public class Main54 {
 		panel.add(new JLabel("To:"));
 		panel.add(recordTo);
 		
-
 		int result = JOptionPane.showConfirmDialog(null, panel, "web of science - Search Criteria", 2, -1);
 		if (result == 0) {
 			return;
@@ -1104,47 +1074,6 @@ public class Main54 {
 		return doc;
 	}
 
-	public static Document getPageDocByHtmlunit(String URL) {
-		System.out.print("read page:" + page + " row:" + row + " sim_row:" + row);
-		final WebClient webClient = new WebClient(BrowserVersion.CHROME);// 新建一个模拟谷歌Chrome浏览器的浏览器客户端对象
-		webClient.getOptions().setThrowExceptionOnScriptError(false);// 当JS执行出错的时候是否抛出异常,
-																		// //
-																		// 这里选择不需要
-		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);// 当HTTP的状态非200时是否抛出异常,
-																			// //
-																			// 这里选择不需要
-		webClient.getOptions().setActiveXNative(false);
-		webClient.getOptions().setCssEnabled(false);// 是否启用CSS, 因为不需要展现页面,
-		webClient.getOptions().setJavaScriptEnabled(true); // 很重要，启用JS
-		webClient.setAjaxController(new NicelyResynchronizingAjaxController());// 很重要，设置支持AJAX
-		// webClient.waitForBackgroundJavaScript(10 * 1000);
-		webClient.getOptions().setTimeout(5 * 1000);
-		// webClient.setJavaScriptTimeout(5 * 1000);
-		// webClient.getOptions().setTimeout(5000);
-
-		HtmlPage page = null;
-		try {
-			page = webClient.getPage(URL);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Document doc = Jsoup.parse(" ");
-			System.out.print("read FAIL on the page:" + page + " row:" + row + " sim_row:" + row);
-			return doc;
-		} finally {
-			webClient.close();
-		}
-
-		// webClient.waitForBackgroundJavaScript(10000);
-		// 异步JS执行需要耗时,所以这里线程要阻塞30秒,等待异步JS执行结束
-		String pageXml = page.asXml();// 直接将加载完成的页面转换成xml格式的字符串
-
-		// File file = new File("e:\\log.txt");
-		// String pageXml = txt2String(file);
-
-		Document doc = Jsoup.parse(pageXml);// 获取html文档
-		return doc;
-	}
-
 	public static void contentToTxt(String filePath, String content) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File(filePath), true));
@@ -1171,8 +1100,7 @@ public class Main54 {
 	}
 
 	public static void readExcel(Sheet sheet, int rowid) {
-		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10, cell11, cell12, cell13, cell14,
-				cell15, cell16, cell17, cell18, cell19, cell20, cell21;
+		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10;
 		try {
 			cell1 = sheet.getCell(0, rowid);
 			cell2 = sheet.getCell(1, rowid);
@@ -1184,40 +1112,18 @@ public class Main54 {
 			cell8 = sheet.getCell(7, rowid);
 			cell9 = sheet.getCell(8, rowid);
 			cell10 = sheet.getCell(9, rowid);
-			cell11 = sheet.getCell(10, rowid);
-			cell12 = sheet.getCell(11, rowid);
-			cell13 = sheet.getCell(12, rowid);
-			cell14 = sheet.getCell(13, rowid);
-			cell15 = sheet.getCell(14, rowid);
-			cell16 = sheet.getCell(15, rowid);
-			cell17 = sheet.getCell(16, rowid);
-			cell18 = sheet.getCell(17, rowid);
-			cell19 = sheet.getCell(18, rowid);
-			cell20 = sheet.getCell(19, rowid);
-			cell21 = sheet.getCell(20, rowid);
 
-			if ("".equals(cell1.getContents()) != true) {				
-				source_ID = cell1.getContents().replace('\n',' ');
-				source_NameCN = cell2.getContents().replace('\n',' ');
-				source_LstName = cell3.getContents().replace('\n',' ');
-				source_FstName = cell4.getContents().replace('\n',' ');
-				source_DissYear = cell5.getContents().replace('\n',' ');
-				source_DissInst = cell6.getContents().replace('\n',' ');
-				source_DissIntstWOS = cell7.getContents().replace('\n',' ');
-				source_CurAffi = cell8.getContents().replace('\n',' ');
-				source_CurAffiWOS = cell9.getContents().replace('\n',' ');
-				source_ProgYear = cell10.getContents().replace('\n',' ');
-				source_ProgAffi = cell11.getContents().replace('\n',' ');
-				source_ProgAffiWOS = cell12.getContents().replace('\n',' ');
-				source_SearchArry[0]  = cell13.getContents().replace('\n',' ');
-				source_SearchYearFromArry[0]   = cell14.getContents().replace('\n',' ');
-				source_SearchYearToArry[0] = cell15.getContents().replace('\n',' ');
-				source_SearchArry[1] = cell16.getContents().replace('\n',' ');
-				source_SearchYearFromArry[1] = cell17.getContents().replace('\n',' ');
-				source_SearchYearToArry[1] = cell18.getContents().replace('\n',' ');
-				source_SearchArry[2] = cell19.getContents().replace('\n',' ');
-				source_SearchYearFromArry[2] = cell20.getContents().replace('\n',' ');
-				source_SearchYearToArry[2] = cell21.getContents().replace('\n',' ');
+			if ("".equals(cell1.getContents()) != true) {
+				ID = cell1.getContents().replace('\n', ' ');
+				Stkcd = cell2.getContents().replace('\n', ' ');
+				year = cell3.getContents().replace('\n', ' ');
+				Name_cn = cell4.getContents().replace('\n', ' ');
+				PersonID = cell5.getContents().replace('\n', ' ');			
+				university_cn = cell6.getContents().replace('\n', ' ');
+				firstname_en = cell7.getContents().replace('\n', ' ');
+				lastname_en = cell8.getContents().replace('\n', ' ');
+				name_en = cell9.getContents().replace('\n', ' ');
+				university_en = cell10.getContents().replace('\n', ' ');
 			}
 		} catch (Exception e) {
 		}

@@ -41,6 +41,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.collect.Lists;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -227,6 +228,20 @@ public class Main48_W_202001 {
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
 			ChromeOptions options = new ChromeOptions();
+			options.addArguments("--proxy-server=127.0.0.1:8080");        			
+			/*
+			// 关闭界面上的---Chrome正在受到自动软件的控制
+	        options.addArguments("--disable-infobars");
+	        // 允许重定向
+	        options.addArguments("--disable-web-security");
+	        // 最大化
+	        options.addArguments("--start-maximized");
+	        options.addArguments("--no-sandbox");
+	        List<String> excludeSwitches = Lists.newArrayList("enable-automation");
+	        options.setExperimentalOption("excludeSwitches", excludeSwitches);
+	        */
+		
+
 			// options.addArguments("--lang=zh-cn");
 			WebDriver webDriver = new ChromeDriver(options);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);

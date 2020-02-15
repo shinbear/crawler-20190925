@@ -324,13 +324,13 @@ public class Main55_W {
 				Thread.sleep(500);
 				WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
 				yearFrom.clear();
-				yearFrom.sendKeys("2009");
+				yearFrom.sendKeys("2006");
 				yearFrom.sendKeys(Keys.ENTER);
 				tss.get(1).click();
 				Thread.sleep(500);
 				WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
 				yearTo.clear();
-				yearTo.sendKeys("2019");	
+				yearTo.sendKeys("2009");	
 				yearTo.sendKeys(Keys.ENTER);
 				Thread.sleep(200);
 			}
@@ -358,33 +358,28 @@ public class Main55_W {
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='search-button']").click();
 			
 			// Waiting for the result for 10 seconds
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("/html/body/div[13]/form/table/tbody/tr")));
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".historyResults")));
 
-			//Get the link
-			List<WebElement> tb = webDriver.findElements(By.xpath("/html/body/div[13]/form/table/tbody/tr"));
-			tb.remove(0);
-			tb.remove(0);
-			for (WebElement t : tb) {
-				// Close the detail page and return the list
-				// page
-				ArrayList<String> tabs;
-				tabs = new ArrayList<String>(webDriver.getWindowHandles());
-				if (tabs.size() > 1) {
-					for (int a = tabs.size(); a > 1; a--) {
-						webDriver.switchTo().window(tabs.get(a - 1));
-						Thread.sleep(1500);
-						webDriver.close();
-					}
-					webDriver.switchTo().window(tabs.get(0));
+			// Get the link
+			// Close the detail page and return the list
+			// page
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			if (tabs.size() > 1) {
+				for (int a = tabs.size(); a > 1; a--) {
+					webDriver.switchTo().window(tabs.get(a - 1));
+					Thread.sleep(1500);
+					webDriver.close();
 				}
-				tabs.clear();
-				
-				JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-				String searchlink = t.findElements(By.cssSelector("a[href]")).get(0).getAttribute("href");
-				executor.executeScript("window.open('" + searchlink + "')");	
-				Thread.sleep(3000);
-				break;
-			}		
+				webDriver.switchTo().window(tabs.get(0));
+			}
+			tabs.clear();
+
+			JavascriptExecutor executor = (JavascriptExecutor) webDriver;
+			String searchlink = webDriver.findElements(By.cssSelector(".historyResults > a[href]")).get(0)
+					.getAttribute("href");
+			executor.executeScript("window.open('" + searchlink + "')");
+			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
 			writrintExcel();
