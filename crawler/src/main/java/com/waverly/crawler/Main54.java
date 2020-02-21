@@ -266,16 +266,25 @@ public class Main54 {
 							int status = searchName(webDriver, k);
 							if (status == 1) {
 								// Get the item name
-								getAName(webDriver);
-							} else {
-								webDriver.navigate().refresh();
+								int getNameStatus = getAName(webDriver);
+							} 	else if (status == 2) {
+								// Status is 2 means the result number is zero
+								writrintExcel();
+								continue;
+							}	else {
+								try {
+									webDriver.navigate().refresh();
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 								status = searchName(webDriver, k);
 								if (status == 1) {
-									getAName(webDriver);
+									int getNameStatus = getAName(webDriver);
 								} else {
 									throw new Exception("throw error");
 								}
-							}														
+							}										
 						}
 					} catch (Exception e1) {
 						Thread.sleep(300000);
@@ -403,9 +412,25 @@ public class Main54 {
 			tabs.clear();
 
 			JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-			String searchlink = webDriver.findElements(By.cssSelector(".historyResults > a[href]")).get(0)
-					.getAttribute("href");
-			executor.executeScript("window.open('" + searchlink + "')");
+			String searchlink="";
+			String searchResultNo = ""; 
+			try {
+				searchResultNo = webDriver.findElements(By.cssSelector(".historyResults")).get(0).getText();
+				if (!searchResultNo.equals("0")) {
+					WebElement searchlink_webelement = webDriver.findElements(By.cssSelector(".historyResults")).get(0)
+							.findElement(By.cssSelector("a"));
+					searchlink = searchlink_webelement.getAttribute("href");
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				searchlink = "";
+				e.printStackTrace();
+			}
+			if (searchlink != null && searchlink.length() != 0) {
+				executor.executeScript("window.open('" + searchlink + "')");
+			} else {
+				return 2;
+			}
 			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
@@ -415,7 +440,7 @@ public class Main54 {
 		}
 	}
 
-	public static void getAName(WebDriver webDriver) throws IOException {
+	public static int getAName(WebDriver webDriver) throws IOException {
 		try {
 			// Shift the second page
 			ArrayList<String> tabs;
@@ -455,7 +480,7 @@ public class Main54 {
 						if (searchCount > 3) {
 							Thread.sleep(10000);
 						}
-						return;
+						return 0;
 					} else {
 						searchCount = 0;
 						pages = Integer.parseInt(pc_string);
@@ -470,7 +495,7 @@ public class Main54 {
 						Thread.sleep(10000);
 					}
 					writrintExcel();
-					return;
+					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
 				if (Integer.parseInt(pc_string) < 3) {
@@ -480,7 +505,7 @@ public class Main54 {
 				pages = 0;
 				writrintExcel();
 				Thread.sleep(3000);
-				return;
+				return 0;
 			}
 
 			total = pages;
@@ -590,7 +615,14 @@ public class Main54 {
 						try {						
 							executor.executeScript("window.open('" + detailrecord + "')");
 							Thread.sleep(1000);
-							getDetail(webDriver);
+							int detailStatus;
+							detailStatus = getDetail(webDriver);
+							if (detailStatus == 2)
+							{
+								webDriver.switchTo().window(tabs.get(2));
+								webDriver.navigate().refresh();
+								getDetail(webDriver);
+							}
 						} catch (Exception e3) {
 							writrintExcel();
 							continue;
@@ -646,43 +678,60 @@ public class Main54 {
 				tabs = null;
 
 				// get the next page
+				int turnpage=0;
 				try {
 					WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
 					next.click();
 				} catch (Exception e3) {
 					// writrintExcel();
-					return;
+					Thread.sleep(10000);
+					try {
+						webDriver.switchTo().window(tabs.get(1));
+						webDriver.navigate().refresh();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return 0;
+					}
 				}
 			}
 			Thread.sleep(3000);
+			return 1;
 		} catch (Exception e2) {
 			exceptionCode = 2;
+			return 0;
 		}
 	}
 
-	public static void getDetail(WebDriver webDriver) throws IOException {
-		// Switch to detail page
-		ArrayList<String> tabs;
-		tabs = new ArrayList<String>(webDriver.getWindowHandles());
-		if (tabs.size() > 1) {
-			for (int a = tabs.size(); a > 1; a--) {
-				if (a > 3) {
-					webDriver.switchTo().window(tabs.get(a - 1));
-					try {
-						Thread.sleep(500);
-					} catch (Exception e2) {
-					}
-					webDriver.close();
-				}
-			}
-			webDriver.switchTo().window(tabs.get(2));
-		}
-		tabs = null;
-
+	public static int getDetail(WebDriver webDriver) throws IOException {
 		try {
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
+			// Switch to detail page
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			if (tabs.size() > 1) {
+				for (int a = tabs.size(); a > 1; a--) {
+					if (a > 3) {
+						webDriver.switchTo().window(tabs.get(a - 1));
+						try {
+							Thread.sleep(500);
+						} catch (Exception e2) {
+						}
+						webDriver.close();
+					}
+				}
+				webDriver.switchTo().window(tabs.get(2));
+			}
+			tabs = null;
+			
+			try {
+				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+						By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
+			} catch (Exception e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+				return 2;
+			}
 			
 			// Gether FR_label
 			List<WebElement> FRLabel =  webDriver.findElements(By.cssSelector(".FR_label"));
@@ -1033,9 +1082,10 @@ public class Main54 {
 				} catch (Exception e) {
 					Result[18] = "";
 				}
-			}				
+			}	
+			return 1;
 		} catch (Exception e) {
-			return;
+			return 0;
 		}
 	}
 
