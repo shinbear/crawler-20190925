@@ -133,7 +133,7 @@ public class Main70_linkedin {
 			DesiredCapabilities caps = setDownloadsPath();
 
 			ChromeOptions options = new ChromeOptions();
-			options.addArguments("--lang=zh-cn");
+			options.addArguments("--lang=en");
 			WebDriver webDriver = new ChromeDriver(options);
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -295,7 +295,7 @@ public class Main70_linkedin {
 	public static int searchName(WebDriver webDriver) throws IOException {
 		try {
 			webDriver.get(linkedinaddress);
-			// webDriver.get("https://www.linkedin.com/in/contactdavidwright/");
+			//webDriver.get("https://www.linkedin.com/in/adam-rudiger-cfa-73765a2a/");
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#mynetwork-tab-icon")));
@@ -365,7 +365,7 @@ public class Main70_linkedin {
 					organizationName = "NA";
 					Result[4] = about;
 					e.printStackTrace();
-				}
+				}			
 				writrintExcel();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -388,10 +388,12 @@ public class Main70_linkedin {
 
 			List<WebElement> showMore = webDriver.findElements(By.cssSelector(".pv-profile-section__see-more-inline"));
 			for (WebElement showMoreElement : showMore) {
-				if (showMoreElement.getText().contains("Show 5 more experiences")) {
+				if (showMoreElement.getText().contains("more experiences")
+						|| showMoreElement.getText().contains("more experience")) {
 					showMoreElement.findElement(By.cssSelector("li-icon")).click();
 				}
 			}
+			Thread.sleep(1000);
 
 			try {
 				WebElement experienceSection = webDriver.findElement(By.cssSelector("#experience-section"));
