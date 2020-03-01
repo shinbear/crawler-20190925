@@ -279,7 +279,7 @@ public class Main70_linkedin {
 						webDriver.switchTo().window(tabs.get(0));
 					}
 					tabs = null;
-					continue;
+					// continue;
 				}
 			}
 			writer.close();
@@ -295,7 +295,7 @@ public class Main70_linkedin {
 	public static int searchName(WebDriver webDriver) throws IOException {
 		try {
 			webDriver.get(linkedinaddress);
-			//webDriver.get("https://www.linkedin.com/in/adam-rudiger-cfa-73765a2a/");
+			// webDriver.get("https://www.linkedin.com/in/adrienne-yih-857a149/");
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#mynetwork-tab-icon")));
@@ -358,15 +358,16 @@ public class Main70_linkedin {
 					e.printStackTrace();
 				}
 				try {
-					organizationName = webDriver.findElement(By.cssSelector("#ember93")).getText().replace('\n', ' ');
+					organizationName = webDriver.findElement(By.cssSelector(".pv-top-card--experience-list-item")).getText().replace('\n', ' ');
 					Result[4] = organizationName;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					organizationName = "NA";
 					Result[4] = about;
 					e.printStackTrace();
-				}			
+				}
 				writrintExcel();
+				Thread.sleep(500);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				Result[0] = "experience";
@@ -375,6 +376,7 @@ public class Main70_linkedin {
 				Result[3] = "NA";
 				Result[4] = "NA";
 				writrintExcel();
+				Thread.sleep(500);
 				for (i = 0; i < 40; i++) {
 					Result[i] = "NA";
 				}
@@ -382,16 +384,21 @@ public class Main70_linkedin {
 			}
 
 			// Get the experience loop
-			for (i = 0; i < 5; i++) {
+			for (i = 0; i < 40; i++) {
 				Result[i] = "NA";
 			}
 
-			List<WebElement> showMore = webDriver.findElements(By.cssSelector(".pv-profile-section__see-more-inline"));
-			for (WebElement showMoreElement : showMore) {
-				if (showMoreElement.getText().contains("more experiences")
-						|| showMoreElement.getText().contains("more experience")) {
-					showMoreElement.findElement(By.cssSelector("li-icon")).click();
+			try {
+				List<WebElement> showMore = webDriver.findElements(By.cssSelector(".pv-profile-section__see-more-inline"));
+				for (WebElement showMoreElement : showMore) {
+					if (showMoreElement.getText().contains("more experiences")
+							|| showMoreElement.getText().contains("more experience")) {
+						showMoreElement.findElement(By.cssSelector("li-icon")).click();
+					}
 				}
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
 			}
 			Thread.sleep(1000);
 
@@ -462,6 +469,7 @@ public class Main70_linkedin {
 								Result[9] = periodEnd;
 								Result[10] = location;
 								writrintExcel();
+								Thread.sleep(500);
 								Result[4] = "NA";
 								Result[5] = "NA";
 								Result[8] = "NA";
@@ -476,6 +484,7 @@ public class Main70_linkedin {
 							Result[9] = "NA";
 							Result[10] = "NA";
 							writrintExcel();
+							Thread.sleep(500);
 							e1.printStackTrace();
 						}
 					} else {
@@ -509,7 +518,7 @@ public class Main70_linkedin {
 						}
 						try {
 							location = experienceItem.findElement(By.cssSelector(".pv-entity__location")).getText()
-									.replace('\n', ' ');
+									.substring(9).replace('\n', ' ');
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							location = "NA";
@@ -521,13 +530,13 @@ public class Main70_linkedin {
 						Result[9] = periodEnd;
 						Result[10] = location;
 						writrintExcel();
+						Thread.sleep(500);
 						for (i = 0; i < 40; i++) {
 							Result[i] = "NA";
 						}
 					}
 				}
 			} catch (Exception e) {
-
 				// TODO Auto-generated catch block
 				Result[4] = "NA";
 				Result[5] = "NA";
@@ -535,6 +544,7 @@ public class Main70_linkedin {
 				Result[9] = "NA";
 				Result[10] = "NA";
 				writrintExcel();
+				Thread.sleep(500);
 				for (i = 0; i < 40; i++) {
 					Result[i] = "NA";
 				}
@@ -542,7 +552,7 @@ public class Main70_linkedin {
 			}
 
 			// Get the education loop
-			for (i = 0; i < 5; i++) {
+			for (i = 0; i < 40; i++) {
 				Result[i] = "NA";
 			}
 			try {
@@ -595,9 +605,14 @@ public class Main70_linkedin {
 						}
 					}
 					writrintExcel();
-					for (i = 0; i < 40; i++) {
-						Result[i] = "NA";
-					}
+					Thread.sleep(500);
+					Result[0] = "NA";
+					Result[4] = "NA";
+					Result[5] = "NA";
+					Result[6] = "NA";
+					Result[7] = "NA";
+					Result[8] = "NA";
+					Result[9] = "NA";
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -609,11 +624,80 @@ public class Main70_linkedin {
 				Result[8] = "NA";
 				Result[9] = "NA";
 				writrintExcel();
+				Thread.sleep(500);
 				for (i = 0; i < 40; i++) {
 					Result[i] = "NA";
 				}
 				e.printStackTrace();
 			}
+			
+			//Get the Volunteer Experience
+			for (i = 0; i < 5; i++) {
+				Result[i] = "NA";
+			}
+			
+			try {
+				List<WebElement> voluExperienceList = webDriver.findElements(By.cssSelector(".pv-volunteering-entity"));
+				for (WebElement voluExperienceItem : voluExperienceList) {
+					Result[0] = "volunteer Experience";
+					try {
+						organizationName = voluExperienceItem.findElement(By.cssSelector(".pv-entity__secondary-title")).getText();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						organizationName = "NA";
+						e.printStackTrace();
+					}
+					try {
+						title = voluExperienceItem.findElement(By.cssSelector("h3.t-16")).getText();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						title = "volunteer";
+						e.printStackTrace();
+					}
+					try {
+						String periodStr = voluExperienceItem.findElement(By.cssSelector(".pv-entity__date-range"))
+								.getText();
+						periodStart = periodStr.substring(0, periodStr.indexOf("–")).replace('\n', ' ');
+						if (periodStart.contains("Dates volunteered")) {
+							periodStart = periodStart.substring(periodStart.indexOf("Dates volunteered") + 17);
+						}
+						periodEnd = periodStr.substring(periodStr.indexOf("–") + 2).replace('\n', ' ');
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						periodStart = "NA";
+						periodEnd = "NA";
+						e.printStackTrace();
+					}					
+					Result[4] = organizationName;
+					Result[5] = title;
+					Result[8] = periodStart;
+					Result[9] = periodEnd;
+					writrintExcel();
+					Thread.sleep(500);
+					Result[0] = "NA";
+					Result[4] = "NA";
+					Result[5] = "NA";
+					Result[6] = "NA";
+					Result[7] = "NA";
+					Result[8] = "NA";
+					Result[9] = "NA";						
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Result[0] = "volunteer Experience";
+				Result[4] = "NA";
+				Result[5] = "student";
+				Result[6] = "NA";
+				Result[7] = "NA";
+				Result[8] = "NA";
+				Result[9] = "NA";
+				writrintExcel();
+				Thread.sleep(500);
+				for (i = 0; i < 40; i++) {
+					Result[i] = "NA";
+				}
+				e.printStackTrace();
+			}	
 			Thread.sleep(60000);
 			return 1;
 		} catch (Exception e2) {
