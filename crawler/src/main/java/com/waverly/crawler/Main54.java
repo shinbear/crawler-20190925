@@ -269,8 +269,14 @@ public class Main54 {
 								int getNameStatus = getAName(webDriver);
 							} 	else if (status == 2) {
 								// Status is 2 means the result number is zero
-								writrintExcel();
-								continue;
+							int h;
+							for (h = 0; h < 40; h++) {									
+								Result[h] = "0";								
+							}	
+							h = 0;
+							writrintExcel();	
+							Thread.sleep(30000);
+							continue;
 							}	else {
 								try {
 									webDriver.navigate().refresh();
@@ -278,19 +284,35 @@ public class Main54 {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-								status = searchName(webDriver, k);
-								if (status == 1) {
-									int getNameStatus = getAName(webDriver);
-								} else {
-									throw new Exception("throw error");
-								}
-							}										
-						}
-					} catch (Exception e1) {
-						Thread.sleep(300000);
-						writrintExcel();
-					}
-
+									status = searchName(webDriver, k);
+									if (status == 1) {
+										int getNameStatus = getAName(webDriver);
+										}	else if (status == 2) {
+											// Status is 2 means the result number is zero
+											int h;
+											for (h = 0; h < 40; h++) {									
+												Result[h] = "0";								
+											}	
+											h = 0;
+											writrintExcel();
+											Thread.sleep(30000);
+											continue;
+											} 	else {
+												throw new Exception("throw error");
+												}
+									}										
+							}
+						} catch (Exception e1) {
+							Thread.sleep(300000);
+							// result array clear
+							int h;
+							for (h = 0; h < 40; h++) {									
+								Result[h] = "0";								
+							}	
+							h = 0;
+							writrintExcel();
+							Thread.sleep(30000);
+							}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -305,6 +327,12 @@ public class Main54 {
 				} catch (Exception e3) {
 					// e3.printStackTrace();
 					// If in exception
+					// result array clear
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = "0";								
+					}	
+					h = 0;
 					writrintExcel();
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -324,6 +352,7 @@ public class Main54 {
 			JOptionPane.showMessageDialog(frame, "Downloading over. Data ready in " + filename.getText() + ".xls");
 			webDriver.close();
 		} catch (Exception e2) {
+			System.out.print(e2);
 			writer.close();
 			JOptionPane.showMessageDialog(null, e2.getMessage());
 		}
@@ -434,6 +463,12 @@ public class Main54 {
 			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
+			// result array clear
+			int h;
+			for (h = 0; h < 40; h++) {									
+				Result[h] = " ";								
+			}	
+			h = 0;
 			writrintExcel();
 			System.out.print(e2);
 			return 0;
@@ -475,6 +510,12 @@ public class Main54 {
 				if (!pc_string.equals("")) {
 					if (Integer.parseInt(pc_string) == 0) {
 						pages = 0;
+						// result array clear
+						int h;
+						for (h = 0; h < 40; h++) {									
+							Result[h] = "0";								
+						}	
+						h = 0;
 						writrintExcel();
 						searchCount++;
 						if (searchCount > 3) {
@@ -494,6 +535,12 @@ public class Main54 {
 					if (searchCount > 3) {
 						Thread.sleep(10000);
 					}
+					// result array clear
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = "0";								
+					}	
+					h = 0;
 					writrintExcel();
 					return 0;
 				}
@@ -503,6 +550,12 @@ public class Main54 {
 				}
 			} catch (Exception e1) {
 				pages = 0;
+				// result array clear
+				int h;
+				for (h = 0; h < 40; h++) {									
+					Result[h] = " ";								
+				}	
+				h = 0;
 				writrintExcel();
 				Thread.sleep(3000);
 				return 0;
@@ -553,9 +606,11 @@ public class Main54 {
 
 					row++;
 					// result array clear
-					for (i = 0; i < 40; i++) {
-						Result[i] = "";
-					}
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = " ";								
+					}	
+					h = 0;
 
 					try {
 						// Get the result row
@@ -624,6 +679,11 @@ public class Main54 {
 								getDetail(webDriver);
 							}
 						} catch (Exception e3) {
+							// result array clear
+							for (h = 0; h < 40; h++) {									
+								Result[h] = " ";								
+							}	
+							h = 0;
 							writrintExcel();
 							continue;
 						}
@@ -632,17 +692,18 @@ public class Main54 {
 						writrintExcel();
 
 						// result array clear
-						for (i = 0; i < 40; i++) {
-							Result[i] = "";
-						}
+						for (h = 0; h < 40; h++) {									
+							Result[h] = " ";								
+						}	
+						h = 0;
 					} catch (Exception e) {
 						// Write the data into excel
-						writrintExcel();
-
 						// result array clear
-						for (i = 0; i < 40; i++) {
-							Result[i] = "";
-						}
+						for (h = 0; h < 40; h++) {									
+							Result[h] = " ";								
+						}	
+						h = 0;
+						writrintExcel();
 
 						// Close the detail page and return the list
 						// page
@@ -685,14 +746,12 @@ public class Main54 {
 				} catch (Exception e3) {
 					// writrintExcel();
 					Thread.sleep(10000);
-					try {
-						webDriver.switchTo().window(tabs.get(1));
-						webDriver.navigate().refresh();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return 0;
-					}
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = " ";								
+					}	
+					h = 0;
+					return 0;
 				}
 			}
 			Thread.sleep(3000);
@@ -704,7 +763,6 @@ public class Main54 {
 	}
 
 	public static int getDetail(WebDriver webDriver) throws IOException {
-		try {
 			// Switch to detail page
 			ArrayList<String> tabs;
 			tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -727,10 +785,14 @@ public class Main54 {
 				WebDriverWait wait = new WebDriverWait(webDriver, 10);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 						By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
-			} catch (Exception e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-				return 2;
+			if (webDriver.findElement(By.cssSelector("#hidden_section_label")).getText().contains("查看更多数据字段")) {
+				// see more
+				try {
+					webDriver.findElement(By.linkText("查看更多数据字段")).click();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			
 			// Gether FR_label

@@ -141,9 +141,10 @@ public class Main55_W {
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			// lanunch the webdriver 
-			webDriver.get(URL);		
-			WebElement focus_element = webDriver.findElement(By.linkText("Web of Science Core Collection"));
-			focus_element.click();
+			// webDriver.get(URL);		
+			// WebElement focus_element = webDriver.findElement(By.linkText("Web of Science Core Collection"));
+			// focus_element.click();
+			// webDriver.get("");
 			Thread.sleep(3000);
 			
 			// Show the dialog to wait
@@ -241,21 +242,59 @@ public class Main55_W {
 						webDriver.switchTo().window(tabs.get(0));
 					}
 					tabs = null;
-
-					int status = searchName(webDriver);
-					if (status == 1) {
-						// Get the item name
-						getAName(webDriver);
-					} else {
-						webDriver.navigate().refresh();
-						status = searchName(webDriver);
-						if (status == 1) {
-							getAName(webDriver);
-						} else {
-							throw new Exception("throw error");
-						}
-					}
 					
+					try {						
+						int status = searchName(webDriver);						
+						if (status == 1) {
+								// Get the item name							
+							int getNameStatus = getAName(webDriver);							
+						} 	else if (status == 2) {								
+							// Status is 2 means the result number is zero	
+							int h;
+							for (h = 0; h < 40; h++) {									
+								Result[h] = "0";								
+							}	
+							h = 0;
+							writrintExcel();	
+							Thread.sleep(30000);
+							continue;
+							}	else {								
+								try {
+									webDriver.navigate().refresh();
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+									
+								status = searchName(webDriver);								
+								if (status == 1) {									
+									int getNameStatus = getAName(webDriver);
+										}	else if (status == 2) {
+											// Status is 2 means the result number is zero
+											int h;
+											for (h = 0; h < 40; h++) {									
+												Result[h] = "0";								
+											}	
+											h = 0;
+											writrintExcel();
+											Thread.sleep(30000);
+											continue;
+											} 	else {
+												throw new Exception("throw error");
+												
+											}				
+							}
+						} catch (Exception e1) {
+							Thread.sleep(300000);
+							// result array clear
+							int h;
+							for (h = 0; h < 40; h++) {									
+								Result[h] = " ";								
+							}	
+							h = 0;
+							writrintExcel();
+							Thread.sleep(30000);
+							}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
 						for (int a = tabs.size(); a > 1; a--) {
@@ -270,6 +309,12 @@ public class Main55_W {
 				} catch (Exception e3) {
 					// e3.printStackTrace();
 					// If in exception
+					// result array clear
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = " ";								
+					}	
+					h = 0;
 					writrintExcel();
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -330,7 +375,7 @@ public class Main55_W {
 				Thread.sleep(500);
 				WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
 				yearTo.clear();
-				yearTo.sendKeys("2009");	
+				yearTo.sendKeys("2019");	
 				yearTo.sendKeys(Keys.ENTER);
 				Thread.sleep(200);
 			}
@@ -376,19 +421,41 @@ public class Main55_W {
 			tabs.clear();
 
 			JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-			String searchlink = webDriver.findElements(By.cssSelector(".historyResults > a[href]")).get(0)
-					.getAttribute("href");
-			executor.executeScript("window.open('" + searchlink + "')");
+			String searchlink="";
+			String searchResultNo = ""; 
+			try {
+				searchResultNo = webDriver.findElements(By.cssSelector(".historyResults")).get(0).getText();
+				if (!searchResultNo.equals("0")) {
+					WebElement searchlink_webelement = webDriver.findElements(By.cssSelector(".historyResults")).get(0)
+							.findElement(By.cssSelector("a"));
+					searchlink = searchlink_webelement.getAttribute("href");
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				searchlink = "";
+				e.printStackTrace();
+			}
+			if (searchlink != null && searchlink.length() != 0) {
+				executor.executeScript("window.open('" + searchlink + "')");
+			} else {
+				return 2;
+			}
 			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
+			// result array clear
+			int h;
+			for (h = 0; h < 40; h++) {									
+				Result[h] = " ";								
+			}	
+			h = 0;
 			writrintExcel();
 			System.out.print(e2);
 			return 0;
 		}
 	}
 
-	public static void getAName(WebDriver webDriver) throws IOException {
+	public static int getAName(WebDriver webDriver) throws IOException {
 		try {
 			// Shift the second page
 			ArrayList<String> tabs;
@@ -423,12 +490,18 @@ public class Main55_W {
 				if (!pc_string.equals("")) {
 					if (Integer.parseInt(pc_string) == 0) {
 						pages = 0;
+						// result array clear
+						int h;
+						for (h = 0; h < 40; h++) {									
+							Result[h] = "0";								
+						}	
+						h = 0;
 						writrintExcel();
 						searchCount++;
 						if (searchCount > 3) {
 							Thread.sleep(10000);
 						}
-						return;
+						return 0;
 					} else {
 						searchCount = 0;
 						pages = Integer.parseInt(pc_string);
@@ -442,8 +515,14 @@ public class Main55_W {
 					if (searchCount > 3) {
 						Thread.sleep(10000);
 					}
+					// result array clear
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = "0";								
+					}	
+					h = 0;
 					writrintExcel();
-					return;
+					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
 				if (Integer.parseInt(pc_string) < 3) {
@@ -451,9 +530,15 @@ public class Main55_W {
 				}
 			} catch (Exception e1) {
 				pages = 0;
+				// result array clear
+				int h;
+				for (h = 0; h < 40; h++) {									
+					Result[h] = " ";								
+				}	
+				h = 0;
 				writrintExcel();
 				Thread.sleep(3000);
-				return;
+				return 0;
 			}
 
 			total = pages;
@@ -501,9 +586,11 @@ public class Main55_W {
 
 					row++;
 					// result array clear
-					for (i = 0; i < 40; i++) {
-						Result[i] = "";
-					}
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = " ";								
+					}	
+					h = 0;
 
 					try {
 						// Get the result row
@@ -563,8 +650,20 @@ public class Main55_W {
 						try {						
 							executor.executeScript("window.open('" + detailrecord + "')");
 							Thread.sleep(1000);
-							getDetail(webDriver);
+							int detailStatus;
+							detailStatus = getDetail(webDriver);
+							if (detailStatus == 2)
+							{
+								webDriver.switchTo().window(tabs.get(2));
+								webDriver.navigate().refresh();
+								getDetail(webDriver);
+							}
 						} catch (Exception e3) {
+							// result array clear
+							for (h = 0; h < 40; h++) {									
+								Result[h] = " ";								
+							}	
+							h = 0;
 							writrintExcel();
 							continue;
 						}
@@ -573,17 +672,18 @@ public class Main55_W {
 						writrintExcel();
 
 						// result array clear
-						for (i = 0; i < 40; i++) {
-							Result[i] = "";
-						}
+						for (h = 0; h < 40; h++) {									
+							Result[h] = " ";								
+						}	
+						h = 0;
 					} catch (Exception e) {
 						// Write the data into excel
-						writrintExcel();
-
 						// result array clear
-						for (i = 0; i < 40; i++) {
-							Result[i] = "";
-						}
+						for (h = 0; h < 40; h++) {									
+							Result[h] = " ";								
+						}	
+						h = 0;
+						writrintExcel();
 
 						// Close the detail page and return the list
 						// page
@@ -619,21 +719,30 @@ public class Main55_W {
 				tabs = null;
 
 				// get the next page
+				int turnpage=0;
 				try {
 					WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
 					next.click();
 				} catch (Exception e3) {
 					// writrintExcel();
-					return;
+					Thread.sleep(10000);
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = " ";								
+					}	
+					h = 0;
+					return 0;
 				}
 			}
 			Thread.sleep(3000);
+			return 1;
 		} catch (Exception e2) {
 			exceptionCode = 2;
+			return 0;
 		}
 	}
 
-	public static void getDetail(WebDriver webDriver) throws IOException {
+	public static int getDetail(WebDriver webDriver) throws IOException {
 		// Switch to detail page
 		ArrayList<String> tabs;
 		tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -708,6 +817,13 @@ public class Main55_W {
 				e2.printStackTrace();
 				Result[1] = "";
 				Result[2] = "";
+			}
+			// see more
+			try {
+				webDriver.findElement(By.linkText("查看更多数据字段")).click();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 								
 			// Get Volume
@@ -1001,10 +1117,13 @@ public class Main55_W {
 				} catch (Exception e) {
 					Result[18] = "";
 				}
-			}				
+			}	
+			return 1;
+			
 		} catch (Exception e) {
-			return;
+			return 0;
 		}
+		
 	}
 
 	public static void writrintExcel() throws IOException {
