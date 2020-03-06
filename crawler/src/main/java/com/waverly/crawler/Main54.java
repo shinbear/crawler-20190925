@@ -105,6 +105,8 @@ public class Main54 {
 	public static boolean isPatentPage = false;
 	public static boolean isFirstSearch = true;
 	public static String Result[] = new String[40];
+	
+	public static String tempLink= "";
 
 	 
 
@@ -277,6 +279,16 @@ public class Main54 {
 							writrintExcel();	
 							Thread.sleep(30000);
 							continue;
+						} else if (status == 3) {
+							// Status is 2 means the result number is zero
+							int h;
+							for (h = 0; h < 40; h++) {
+								Result[h] = "ER";
+							}
+							h = 0;
+							writrintExcel();
+							Thread.sleep(30000);
+							continue;
 							}	else {
 								try {
 									webDriver.navigate().refresh();
@@ -297,6 +309,18 @@ public class Main54 {
 											writrintExcel();
 											Thread.sleep(30000);
 											continue;
+							}
+
+							else if (status == 3) {
+								// Status is 2 means the result number is zero
+								int h;
+								for (h = 0; h < 40; h++) {
+									Result[h] = "ER";
+								}
+								h = 0;
+								writrintExcel();
+								Thread.sleep(30000);
+								continue;
 											} 	else {
 												throw new Exception("throw error");
 												}
@@ -307,10 +331,13 @@ public class Main54 {
 							// result array clear
 							int h;
 							for (h = 0; h < 40; h++) {									
-								Result[h] = "0";								
+								Result[h] = " ";								
 							}	
+							Result[18] = tempLink;
 							h = 0;
 							writrintExcel();
+							Result[18] = "";
+							tempLink= "";
 							Thread.sleep(30000);
 							}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -330,7 +357,7 @@ public class Main54 {
 					// result array clear
 					int h;
 					for (h = 0; h < 40; h++) {									
-						Result[h] = "0";								
+						Result[h] = " ";								
 					}	
 					h = 0;
 					writrintExcel();
@@ -418,6 +445,21 @@ public class Main54 {
 				} catch (Exception e1) {
 				}
 			}
+			
+			try {
+				String searchSetNumStr = webDriver.findElements(By.cssSelector(".historySetNum")).get(0).getText();
+				searchSetNumStr = searchSetNumStr.substring(searchSetNumStr.indexOf("#") + 1).replace(" ", "");
+				int searchSetNum = Integer.parseInt(searchSetNumStr);
+				if (searchSetNum > 100) {
+					webDriver.findElement(By.cssSelector("#SearchHistoryTableBanner + table"))
+							.findElement(By.cssSelector("[title='选择所有检索式']")).click();
+					webDriver.findElement(By.cssSelector("#SearchHistoryTableBanner + table"))
+					.findElement(By.cssSelector("#deleteTop")).click();
+				}
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 
 			// Click "search" button
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='search-button']").click();
@@ -443,6 +485,14 @@ public class Main54 {
 			JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 			String searchlink="";
 			String searchResultNo = ""; 
+
+			try {
+				if (webDriver.findElement(By.cssSelector(".errorText")).getText().contains("检索错误")) {
+					return 3;}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}	
+			
 			try {
 				searchResultNo = webDriver.findElements(By.cssSelector(".historyResults")).get(0).getText();
 				if (!searchResultNo.equals("0")) {
@@ -454,8 +504,10 @@ public class Main54 {
 				// TODO Auto-generated catch block
 				searchlink = "";
 				e.printStackTrace();
+				return 0;
 			}
 			if (searchlink != null && searchlink.length() != 0) {
+				tempLink = searchlink;
 				executor.executeScript("window.open('" + searchlink + "')");
 			} else {
 				return 2;
@@ -465,11 +517,14 @@ public class Main54 {
 		} catch (Exception e2) {
 			// result array clear
 			int h;
-			for (h = 0; h < 40; h++) {									
-				Result[h] = " ";								
-			}	
+			for (h = 0; h < 40; h++) {
+				Result[h] = " ";
+			}
+			Result[18] = tempLink;
 			h = 0;
 			writrintExcel();
+			Result[18] = "";
+			tempLink= "";
 			System.out.print(e2);
 			return 0;
 		}
@@ -552,11 +607,14 @@ public class Main54 {
 				pages = 0;
 				// result array clear
 				int h;
-				for (h = 0; h < 40; h++) {									
-					Result[h] = " ";								
-				}	
+				for (h = 0; h < 40; h++) {
+					Result[h] = " ";
+				}
+				Result[18] = tempLink;
 				h = 0;
 				writrintExcel();
+				Result[18] = "";
+				tempLink= "";
 				Thread.sleep(3000);
 				return 0;
 			}
@@ -667,7 +725,8 @@ public class Main54 {
 						String detailrecord = titleItem.getAttribute("href");												
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						Thread.sleep(3500);
-						try {						
+						try {
+							tempLink = detailrecord;
 							executor.executeScript("window.open('" + detailrecord + "')");
 							Thread.sleep(1000);
 							int detailStatus;
@@ -680,11 +739,14 @@ public class Main54 {
 							}
 						} catch (Exception e3) {
 							// result array clear
-							for (h = 0; h < 40; h++) {									
-								Result[h] = " ";								
-							}	
+							for (h = 0; h < 40; h++) {
+								Result[h] = " ";
+							}
+							Result[18] = tempLink;
 							h = 0;
 							writrintExcel();
+							Result[18] = "";
+							tempLink= "";
 							continue;
 						}
 
@@ -810,6 +872,16 @@ public class Main54 {
 				WebElement authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
 				authorCombine = authorItem.getText();
 				
+				if (authorCombine.contains("更多内容")) {
+					authorItem.findElement(By.cssSelector("#show_more_authors_authors_txt_label")).click();
+
+				}
+				
+				authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
+				authorCombine = authorItem.getText();
+				if (authorCombine.contains("...更少内容")) {
+					authorCombine = authorCombine.substring(0, authorCombine.indexOf("...更少内容"));
+				}
 				// get the full & short names
 				Pattern pattern = Pattern.compile("\\(.*?\\)|\\[.*?\\]");
 				Matcher matcher = pattern.matcher(authorCombine);

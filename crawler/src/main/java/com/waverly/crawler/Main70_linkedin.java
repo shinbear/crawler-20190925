@@ -388,11 +388,15 @@ public class Main70_linkedin {
 				Result[i] = "NA";
 			}
 
+			// show more experience or roles
 			try {
-				List<WebElement> showMore = webDriver.findElements(By.cssSelector(".pv-profile-section__see-more-inline"));
+				List<WebElement> showMore = webDriver
+						.findElements(By.cssSelector(".pv-profile-section__see-more-inline"));
 				for (WebElement showMoreElement : showMore) {
 					if (showMoreElement.getText().contains("more experiences")
-							|| showMoreElement.getText().contains("more experience")) {
+							|| showMoreElement.getText().contains("more experience")
+							|| showMoreElement.getText().contains("more roles")
+							|| showMoreElement.getText().contains("more role")) {
 						showMoreElement.findElement(By.cssSelector("li-icon")).click();
 					}
 				}

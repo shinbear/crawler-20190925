@@ -47,7 +47,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-public class Main55_W {
+public class Main55_W_Lu0304 {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
@@ -75,15 +75,20 @@ public class Main55_W {
 	public static String auadQuery = "";
 	//The content read from Excel
 	public static String  ID= "";
-	public static String  Stkcd= "";
-	public static String  year= "";
-	public static String  Name_cn= "";
-	public static String  PersonID= "";
-	public static String  university_cn= "";
-	public static String  firstname_en= "";
-	public static String  lastname_en= "";
-	public static String  name_en= "";
-	public static String  university_en="";
+	public static String  Name= "";
+	public static String  LastName= "";
+	public static String  FirstName= "";
+	public static String  DissertationYear= "";
+	public static String  DissertationInstitution= "";
+	public static String  DissertationInstitution_WOS= "";
+	public static String  CurrentAffilication= "";
+	public static String  CurrentAffilication_WOS= "";
+	public static String  ProgramYear= "";
+	public static String  ProgramAffication= "";
+	public static String  ProgramAffication_WOS= "";
+	public static String  SearchKeywords= "";
+	public static String  YearFrom= "";
+	public static String  YearTo= "";
 
 	public static String author = "";
 	public static String authorOrg = "";
@@ -186,8 +191,8 @@ public class Main55_W {
 			}
 
 			// write the excel the top item
-			String toptitle = "ID\tStkcd\tyear\tName_cn\tPersonID\tuniversity_cn\t"
-					+ "firstname_en\tlastname_en\tname_en\tuniversity_en\tPT\tAU\tAF"
+			String toptitle = "ID\tPID\tname\tlastname\tfirstname\tmidname\tphdu\tphdyr"
+					+ "\tphd_country\tsearch_list\ttime_from\ttime_to\tPT\tAU\tAF"
 					+ "\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tTC\tZ9\tU1\tU2\tSN\t"
 					+ "EI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA\tUT\tPM";
 			writer.println(toptitle);
@@ -374,7 +379,7 @@ public class Main55_W {
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Input the author
-			String searchQuery = "AU=" + name_en + " AND AD=" + university_en;
+			String searchQuery = SearchKeywords;
 			WebElement author_input = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
 			author_input.clear();
 			author_input.sendKeys(searchQuery);
@@ -395,14 +400,14 @@ public class Main55_W {
 				tss.get(0).click();
 				Thread.sleep(500);
 				WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
-				yearFrom.clear();
-				yearFrom.sendKeys("2006");
+				yearFrom.clear();			
+				yearFrom.sendKeys(YearFrom);
 				yearFrom.sendKeys(Keys.ENTER);
 				tss.get(1).click();
 				Thread.sleep(500);
 				WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
 				yearTo.clear();
-				yearTo.sendKeys("2019");	
+				yearTo.sendKeys(YearTo);	
 				yearTo.sendKeys(Keys.ENTER);
 				Thread.sleep(200);
 			}
@@ -705,7 +710,7 @@ public class Main55_W {
 						String detailrecord = titleItem.getAttribute("href");												
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						Thread.sleep(3500);
-						try {		
+						try {
 							tempLink = detailrecord;
 							executor.executeScript("window.open('" + detailrecord + "')");
 							Thread.sleep(1000);
@@ -1198,8 +1203,7 @@ public class Main55_W {
 					Result[18] = "";
 				}
 			}	
-			return 1;
-			
+			return 1;			
 		} catch (Exception e) {
 			return 0;
 		}
@@ -1208,15 +1212,17 @@ public class Main55_W {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(ID + "\t" + Stkcd + "\t" + year + "\t" + Name_cn + "\t" + PersonID + "\t" + university_cn + "\t"
-				+ firstname_en + "\t" + lastname_en + "\t" + name_en + "\t" + university_en + "\t" + Result[0] + "\t"
-				+ Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t"
-				+ Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t"
-				+ Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t"
-				+ Result[16] + "\t" + Result[17] + "\t" + Result[18] + "\t" + Result[19] + "\t" + Result[20] + "\t"
-				+ Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t" + Result[25] + "\t"
-				+ Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t" + Result[30] + "\t"
-				+ Result[31] + "\t" + Result[32] + "\t" + Result[33]);
+		writer.println(ID + "\t" + Name + "\t" + LastName + "\t" + FirstName + "\t" + DissertationYear + "\t"
+				+ DissertationInstitution + "\t" + DissertationInstitution_WOS + "\t" + CurrentAffilication + "\t"
+				+ CurrentAffilication_WOS + "\t" + ProgramYear + "\t" + ProgramAffication + "\t" + ProgramAffication_WOS
+				+ "\t" + SearchKeywords + "\t" + YearFrom + "\t" + YearTo + "\t" + Result[0] + "\t" + Result[1] + "\t"
+				+ Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t" + Result[6] + "\t"
+				+ Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t" + Result[11] + "\t"
+				+ Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t" + Result[16] + "\t"
+				+ Result[17] + "\t" + Result[18] + "\t" + Result[19] + "\t" + Result[20] + "\t" + Result[21] + "\t"
+				+ Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t" + Result[25] + "\t" + Result[26] + "\t"
+				+ Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t" + Result[30] + "\t" + Result[31] + "\t"
+				+ Result[32] + "\t" + Result[33]);
 		writer.flush();
 	}
 
@@ -1294,7 +1300,8 @@ public class Main55_W {
 	}
 
 	public static void readExcel(Sheet sheet, int rowid) {
-		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10;
+		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10, cell11, cell12, cell13, cell14,
+				cell15;
 		try {
 			cell1 = sheet.getCell(0, rowid);
 			cell2 = sheet.getCell(1, rowid);
@@ -1306,18 +1313,29 @@ public class Main55_W {
 			cell8 = sheet.getCell(7, rowid);
 			cell9 = sheet.getCell(8, rowid);
 			cell10 = sheet.getCell(9, rowid);
+			cell11 = sheet.getCell(10, rowid);
+			cell12 = sheet.getCell(11, rowid);
+			cell13 = sheet.getCell(12, rowid);
+			cell14 = sheet.getCell(13, rowid);
+			cell15 = sheet.getCell(14, rowid);
 
 			if ("".equals(cell1.getContents()) != true) {
-				ID = cell1.getContents().replace('\n', ' ');
-				Stkcd = cell2.getContents().replace('\n', ' ');
-				year = cell3.getContents().replace('\n', ' ');
-				Name_cn = cell4.getContents().replace('\n', ' ');
-				PersonID = cell5.getContents().replace('\n', ' ');			
-				university_cn = cell6.getContents().replace('\n', ' ');
-				firstname_en = cell7.getContents().replace('\n', ' ');
-				lastname_en = cell8.getContents().replace('\n', ' ');
-				name_en = cell9.getContents().replace('\n', ' ');
-				university_en = cell10.getContents().replace('\n', ' ');
+				ID=cell1.getContents().replace('\n', ' ');
+				Name=cell2.getContents().replace('\n', ' ');
+				LastName=cell3.getContents().replace('\n', ' ');
+				FirstName=cell4.getContents().replace('\n', ' ');
+				DissertationYear=cell5.getContents().replace('\n', ' ');
+				DissertationInstitution=cell6.getContents().replace('\n', ' ');
+				DissertationInstitution_WOS=cell7.getContents().replace('\n', ' ');
+				CurrentAffilication=cell8.getContents().replace('\n', ' ');
+				CurrentAffilication_WOS=cell9.getContents().replace('\n', ' ');
+				ProgramYear=cell10.getContents().replace('\n', ' ');
+				ProgramAffication=cell11.getContents().replace('\n', ' ');
+				ProgramAffication_WOS=cell12.getContents().replace('\n', ' ');
+				SearchKeywords=cell13.getContents().replace('\n', ' ');
+				YearFrom=cell14.getContents().replace('\n', ' ');
+				YearTo=cell15.getContents().replace('\n', ' ');
+
 			}
 		} catch (Exception e) {
 		}
