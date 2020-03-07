@@ -223,6 +223,8 @@ public class Main48_W_202001 {
 			// URL =
 			// "http://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=CCJD,CPFD,IPFD,CDFD,CMFD,SCOD,CJRF,CJFQ,CJFN";
 			URL = "https://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=" + libraryStr;
+			
+				   https://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCDB&crossDbcodes=CJFQ,CJRF,CJFN,CDFD,CCJD
 
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
@@ -329,8 +331,14 @@ public class Main48_W_202001 {
 							}
 						}
 					} catch (Exception e1) {
-						Thread.sleep(3000);
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = "0";
+						}
+						h = 0;
 						writrintExcel();
+						Thread.sleep(30000);
+						continue;
 					}
 					
 					ArrayList<String> tabs;
@@ -349,7 +357,7 @@ public class Main48_W_202001 {
 					// e3.printStackTrace();
 					// If in exception
 					writrintExcel();
-					Thread.sleep(30000);
+					Thread.sleep(60000);
 					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -422,12 +430,18 @@ public class Main48_W_202001 {
 			return 1;
 		} catch (Exception e2) {
 			writrintExcel();
+			try {
+				Thread.sleep(60000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.print(e2);
 			return 0;
 		}
 	}
 
-	public static void getAName(WebDriver webDriver) throws IOException {
+	public static int getAName(WebDriver webDriver) throws IOException {
 		try {
 			// Get the page number
 			int pages;
@@ -480,7 +494,7 @@ public class Main48_W_202001 {
 						if (searchCount > 3) {
 							Thread.sleep(10000);
 						}					
-						return;
+						return 0;
 					} else {
 						searchCount = 0;
 						pages = (Integer.parseInt(pc_string) - 1) / 20 + 1;
@@ -495,7 +509,7 @@ public class Main48_W_202001 {
 						Thread.sleep(10000);
 					}	
 					writrintExcel();
-					return;
+					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
 				if (Integer.parseInt(pc_string) < 3) {
@@ -504,8 +518,8 @@ public class Main48_W_202001 {
 			} catch (Exception e1) {
 				pages = 0;
 				writrintExcel();
-				Thread.sleep(3000);
-				return;
+				Thread.sleep(60000);
+				return 0;
 			}
 
 			total = pages;
@@ -984,8 +998,10 @@ public class Main48_W_202001 {
 				}
 			}
 			Thread.sleep(3000);
+			return 1;
 		} catch (Exception e2) {
 			exceptionCode = 2;
+			return 0;
 		}
 	}
 

@@ -299,8 +299,11 @@ public class Main55_W {
 								for (h = 0; h < 40; h++) {
 									Result[h] = "ER";
 								}
+								Result[18] = tempLink;
 								h = 0;
 								writrintExcel();
+								Result[18] = "";
+								tempLink= "";
 								Thread.sleep(30000);
 								continue;
 							} else {
@@ -309,7 +312,6 @@ public class Main55_W {
 							}
 						}
 					} catch (Exception e1) {
-						Thread.sleep(300000);
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
@@ -320,7 +322,7 @@ public class Main55_W {
 						writrintExcel();
 						Result[18] = "";
 						tempLink= "";
-						Thread.sleep(30000);
+						Thread.sleep(300000);
 					}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -338,11 +340,14 @@ public class Main55_W {
 					// If in exception
 					// result array clear
 					int h;
-					for (h = 0; h < 40; h++) {									
-						Result[h] = " ";								
-					}	
+					for (h = 0; h < 40; h++) {
+						Result[h] = " ";
+					}
+					Result[18] = tempLink;
 					h = 0;
 					writrintExcel();
+					Result[18] = "";
+					tempLink= "";
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -595,7 +600,7 @@ public class Main55_W {
 				writrintExcel();
 				Result[18] = "";
 				tempLink= "";
-				Thread.sleep(3000);
+				Thread.sleep(30000);
 				return 0;
 			}
 

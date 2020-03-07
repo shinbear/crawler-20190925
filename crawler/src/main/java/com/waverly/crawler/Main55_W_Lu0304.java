@@ -304,8 +304,11 @@ public class Main55_W_Lu0304 {
 								for (h = 0; h < 40; h++) {
 									Result[h] = "ER";
 								}
+								Result[33] = tempLink;
 								h = 0;
 								writrintExcel();
+								Result[33] = "";
+								tempLink= "";
 								Thread.sleep(30000);
 								continue;
 							} else {
@@ -320,10 +323,10 @@ public class Main55_W_Lu0304 {
 						for (h = 0; h < 40; h++) {
 							Result[h] = " ";
 						}
-						Result[18] = tempLink;
+						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
-						Result[18] = "";
+						Result[33] = "";
 						tempLink= "";
 						Thread.sleep(30000);
 					}
@@ -343,11 +346,14 @@ public class Main55_W_Lu0304 {
 					// If in exception
 					// result array clear
 					int h;
-					for (h = 0; h < 40; h++) {									
-						Result[h] = " ";								
-					}	
+					for (h = 0; h < 40; h++) {
+						Result[h] = " ";
+					}
+					Result[33] = tempLink;
 					h = 0;
 					writrintExcel();
+					Result[33] = "";
+					tempLink= "";
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -505,10 +511,10 @@ public class Main55_W_Lu0304 {
 			for (h = 0; h < 40; h++) {
 				Result[h] = " ";
 			}
-			Result[18] = tempLink;
+			Result[33] = tempLink;
 			h = 0;
 			writrintExcel();
-			Result[18] = "";
+			Result[33] = "";
 			tempLink= "";
 			System.out.print(e2);
 			return 0;
@@ -595,12 +601,12 @@ public class Main55_W_Lu0304 {
 				for (h = 0; h < 40; h++) {
 					Result[h] = " ";
 				}
-				Result[18] = tempLink;
+				Result[33] = tempLink;
 				h = 0;
 				writrintExcel();
-				Result[18] = "";
+				Result[33] = "";
 				tempLink= "";
-				Thread.sleep(3000);
+				Thread.sleep(30000);
 				return 0;
 			}
 
@@ -727,10 +733,10 @@ public class Main55_W_Lu0304 {
 							for (h = 0; h < 40; h++) {
 								Result[h] = " ";
 							}
-							Result[18] = tempLink;
+							Result[33] = tempLink;
 							h = 0;
 							writrintExcel();
-							Result[18] = "";
+							Result[33] = "";
 							tempLink= "";
 							continue;
 						}
@@ -746,11 +752,14 @@ public class Main55_W_Lu0304 {
 					} catch (Exception e) {
 						// Write the data into excel
 						// result array clear
-						for (h = 0; h < 40; h++) {									
-							Result[h] = " ";								
-						}	
+						for (h = 0; h < 40; h++) {
+							Result[h] = " ";
+						}
+						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
+						Result[33] = "";
+						tempLink= "";
 
 						// Close the detail page and return the list
 						// page
