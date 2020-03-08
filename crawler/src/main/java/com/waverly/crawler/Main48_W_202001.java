@@ -35,6 +35,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -59,7 +60,6 @@ public class Main48_W_202001 {
 	public static ButtonGroup jRadioGroup = new ButtonGroup();
 	public static JTextField recordFrom = new JTextField("");
 	public static JTextField recordTo = new JTextField("");
-	
 	public static String URL = "";
 	public static String q;
 	public static String dcs;
@@ -83,12 +83,10 @@ public class Main48_W_202001 {
 	public static String  lastname_en= "";
 	public static String  name_en= "";
 	public static String  university_en="";
-
 	public static JComboBox combo1 = new JComboBox(auhorParam);
 	public static JComboBox combo2 = new JComboBox(organizationParam);
 	public static JComboBox combo3 = new JComboBox(yearParam);
-	public static JComboBox combo4 = new JComboBox(languageSelect);
-	
+	public static JComboBox combo4 = new JComboBox(languageSelect);	
 	private static JCheckBox CJFQ = new JCheckBox("期刊", true);
 	private static JCheckBox CJRF = new JCheckBox("教育期刊", true);
 	private static JCheckBox CJFN = new JCheckBox("特色期刊", true);
@@ -102,21 +100,18 @@ public class Main48_W_202001 {
 	private static Boolean yearParamState = true;
 	private static String publishdate_from = "";
 	private static String publishdate_to = "";
-
 	public static JFrame frame = new JFrame();
 	public static PrintWriter writer;
 	private static ReadProgress dataProgress;
 	private static int total = 0;
 	private static int page = 0;
 	private static int row = 0;
-	private static int sim_row = 0;
-	
+	private static int sim_row = 0;	
 	public static int rowID = 1;
 	public static int rowID_Total = 0;
 	public static int exceptionCode = 0;
 	public static int clickCount = 0;
 	public static int searchCount = 0;
-
 	// List item String
 	public static String list_1 = "";
 	public static String list_2 = "";
@@ -129,6 +124,7 @@ public class Main48_W_202001 {
 	public static boolean isFirstPage = true;
 	public static boolean isPatentPage = false;
 	public static String Result[] = new String[40];
+	public static String tempLink= "";
 
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
@@ -229,8 +225,9 @@ public class Main48_W_202001 {
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
-			ChromeOptions options = new ChromeOptions();
-			options.addArguments("--proxy-server=127.0.0.1:8080");        			
+			ChromeOptions options = new ChromeOptions();   	
+			options.addArguments("--lang=zh-cn");		
+			
 			/*
 			// 关闭界面上的---Chrome正在受到自动软件的控制
 	        options.addArguments("--disable-infobars");
@@ -333,10 +330,13 @@ public class Main48_W_202001 {
 					} catch (Exception e1) {
 						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = "0";
+							Result[h] = "ER";
 						}
 						h = 0;
 						writrintExcel();
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
 						Thread.sleep(30000);
 						continue;
 					}
@@ -429,9 +429,17 @@ public class Main48_W_202001 {
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='btnSearch']").click();
 			return 1;
 		} catch (Exception e2) {
+			int h;
+			for (h = 0; h < 40; h++) {
+				Result[h] = "ER";
+			}
+			h = 0;
 			writrintExcel();
+			for (h = 0; h < 40; h++) {
+				Result[h] = "";
+			}
 			try {
-				Thread.sleep(60000);
+				Thread.sleep(30000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -489,7 +497,22 @@ public class Main48_W_202001 {
 				if (!pc_string.equals("")) {
 					if (Integer.parseInt(pc_string) == 0) {
 						pages = 0;
+						// result array clear
+						int h;
+						for (h = 0; h < 40; h++) {									
+							Result[h] = "0";								
+						}	
+						h = 0;
 						writrintExcel();
+						for (h = 0; h < 40; h++) {									
+							Result[h] = "";								
+						}	
+						try {
+							Thread.sleep(30000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						searchCount++;
 						if (searchCount > 3) {
 							Thread.sleep(10000);
@@ -508,7 +531,21 @@ public class Main48_W_202001 {
 					if (searchCount > 3) {
 						Thread.sleep(10000);
 					}	
+					int h;
+					for (h = 0; h < 40; h++) {									
+						Result[h] = "0";								
+					}	
+					h = 0;
 					writrintExcel();
+					for (h = 0; h < 40; h++) {									
+						Result[h] = "";								
+					}	
+					try {
+						Thread.sleep(30000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
@@ -517,8 +554,16 @@ public class Main48_W_202001 {
 				}
 			} catch (Exception e1) {
 				pages = 0;
+				int h;
+				for (h = 0; h < 40; h++) {									
+					Result[h] = "ER";								
+				}	
+				h = 0;
 				writrintExcel();
-				Thread.sleep(60000);
+				for (h = 0; h < 40; h++) {									
+					Result[h] = "";								
+				}	
+				Thread.sleep(30000);
 				return 0;
 			}
 
@@ -598,8 +643,8 @@ public class Main48_W_202001 {
 						td.remove(0);
 
 						// result array clear
-						for (i = 0; i < 40; i++) {
-							Result[i] = "";
+						for (int h = 0; h < 40; h++) {
+							Result[h] = "";
 						}
 
 						for (WebElement tds : td) {
@@ -877,62 +922,79 @@ public class Main48_W_202001 {
 
 								// Open the detail page
 								try {
+									tempLink = tdss.get(1).findElement(By.cssSelector(".fz14")).getAttribute("href");;
 									tdss.get(1).findElement(By.cssSelector(".fz14")).click();
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
+									int h;
+									for (h = 0; h < 40; h++) {									
+										Result[h] = "";								
+									}	
+									Result[31]= tempLink;
 									writrintExcel();
 									// result array clear
-									for (i = 0; i < 40; i++) {
-										Result[i] = "";
+									for (h = 0; h < 40; h++) {									
+										Result[h] = "";								
+									}	
+									try {
+										Thread.sleep(30000);
+									} catch (InterruptedException e2) {
+										// TODO Auto-generated catch block
+										e2.printStackTrace();
 									}
 									continue;
-
 								}
 
 								int status = getDetail(webDriver);
 								try {
 									if (status == 0) {
 										// Get the item name
+										webDriver.navigate().refresh();
 										status = getDetail(webDriver);
 										if (status == 0) {
 											throw new Exception("throw error");
 										}
 									}
 								} catch (Exception e1) {
-									Thread.sleep(3000);
+									int h;
+									for (h = 0; h < 40; h++) {
+										Result[h] = "";
+									}
+									h = 0;
+									Result[31]= tempLink;
 									writrintExcel();
+									for (h = 0; h < 40; h++) {									
+										Result[h] = "";								
+									}
+									tempLink = "";
+									Thread.sleep(30000);
 									continue;
 								}
-
-								/*
-								if (isPatentPage == true) {
-									try {
-										getDetailPatent(webDriver);
-									} catch (Exception e3) {
-										writrintExcel();
-									}
-								}
-								isPatentPage = false;
-								*/
 
 								// Write the data into excel
 								writrintExcel();
 
 								// result array clear
-								for (i = 0; i < 40; i++) {
-									Result[i] = "";
+								for (int h = 0; h < 40; h++) {
+									Result[h] = "";
 								}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 								// Write the data into excel
-								writrintExcel();
-
-								// result array clear
-								for (i = 0; i < 40; i++) {
-									Result[i] = "";
+								int h;
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
 								}
+								h = 0;
+								Result[31]= tempLink;
+								writrintExcel();
+								for (h = 0; h < 40; h++) {									
+									Result[h] = "";								
+								}	
+								tempLink = "";
+								Thread.sleep(30000);
 
 								// Close the detail page and return the list
 								// page
@@ -1001,6 +1063,21 @@ public class Main48_W_202001 {
 			return 1;
 		} catch (Exception e2) {
 			exceptionCode = 2;
+			int h;
+			for (h = 0; h < 40; h++) {
+				Result[h] = "0";
+			}
+			h = 0;
+			writrintExcel();
+			for (h = 0; h < 40; h++) {									
+				Result[h] = "";								
+			}	
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return 0;
 		}
 	}
@@ -1108,7 +1185,6 @@ public class Main48_W_202001 {
 				}
 			} catch (Exception e1) {
 			}
-
 			Result[10] = keywordStr;
 			Result[11] = fundStr;
 			Result[12] = categoryStr;
@@ -1118,6 +1194,21 @@ public class Main48_W_202001 {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			int h;
+			for (h = 0; h < 40; h++) {
+				Result[h] = "0";
+			}
+			h = 0;
+			writrintExcel();
+			for (h = 0; h < 40; h++) {									
+				Result[h] = "";								
+			}	
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 			return 0;
 		}
 	}

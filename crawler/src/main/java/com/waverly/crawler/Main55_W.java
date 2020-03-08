@@ -100,9 +100,6 @@ public class Main55_W {
 	public static String Result[] = new String[40];
 	
 	public static String tempLink= "";
-
-	 
-
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -299,10 +296,10 @@ public class Main55_W {
 								for (h = 0; h < 40; h++) {
 									Result[h] = "ER";
 								}
-								Result[18] = tempLink;
+								Result[33] = tempLink;
 								h = 0;
 								writrintExcel();
-								Result[18] = "";
+								Result[33] = "";
 								tempLink= "";
 								Thread.sleep(30000);
 								continue;
@@ -312,17 +309,18 @@ public class Main55_W {
 							}
 						}
 					} catch (Exception e1) {
+						Thread.sleep(300000);
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
 							Result[h] = " ";
 						}
-						Result[18] = tempLink;
+						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
-						Result[18] = "";
+						Result[33] = "";
 						tempLink= "";
-						Thread.sleep(300000);
+						Thread.sleep(30000);
 					}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -343,10 +341,10 @@ public class Main55_W {
 					for (h = 0; h < 40; h++) {
 						Result[h] = " ";
 					}
-					Result[18] = tempLink;
+					Result[33] = tempLink;
 					h = 0;
 					writrintExcel();
-					Result[18] = "";
+					Result[33] = "";
 					tempLink= "";
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -505,10 +503,10 @@ public class Main55_W {
 			for (h = 0; h < 40; h++) {
 				Result[h] = " ";
 			}
-			Result[18] = tempLink;
+			Result[33] = tempLink;
 			h = 0;
 			writrintExcel();
-			Result[18] = "";
+			Result[33] = "";
 			tempLink= "";
 			System.out.print(e2);
 			return 0;
@@ -595,10 +593,10 @@ public class Main55_W {
 				for (h = 0; h < 40; h++) {
 					Result[h] = " ";
 				}
-				Result[18] = tempLink;
+				Result[33] = tempLink;
 				h = 0;
 				writrintExcel();
-				Result[18] = "";
+				Result[33] = "";
 				tempLink= "";
 				Thread.sleep(30000);
 				return 0;
@@ -727,10 +725,10 @@ public class Main55_W {
 							for (h = 0; h < 40; h++) {
 								Result[h] = " ";
 							}
-							Result[18] = tempLink;
+							Result[33] = tempLink;
 							h = 0;
 							writrintExcel();
-							Result[18] = "";
+							Result[33] = "";
 							tempLink= "";
 							continue;
 						}
@@ -746,11 +744,14 @@ public class Main55_W {
 					} catch (Exception e) {
 						// Write the data into excel
 						// result array clear
-						for (h = 0; h < 40; h++) {									
-							Result[h] = " ";								
-						}	
+						for (h = 0; h < 40; h++) {
+							Result[h] = " ";
+						}
+						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
+						Result[33] = "";
+						tempLink= "";
 
 						// Close the detail page and return the list
 						// page
