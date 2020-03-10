@@ -140,7 +140,7 @@ public class Main55_W {
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			// lanunch the webdriver 
-			// webDriver.get(URL);		
+			webDriver.get(URL);		
 			// WebElement focus_element = webDriver.findElement(By.linkText("Web of Science Core Collection"));
 			// focus_element.click();
 			// webDriver.get("");
@@ -165,7 +165,7 @@ public class Main55_W {
 			tabs = null;
 			
 			// Waiting for element for 10 seconds
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 20);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Show the progress
@@ -373,7 +373,7 @@ public class Main55_W {
 	public static int searchName(WebDriver webDriver) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 30);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Input the author
@@ -470,11 +470,12 @@ public class Main55_W {
 			String searchResultNo = ""; 
 			
 			try {
-				if (webDriver.findElement(By.cssSelector(".errorText")).getText().contains("检索错误")) {
-					return 3;}
+				if (webDriver.findElement(By.cssSelector(".errorText")).getText().length() > 0) {
+					return 3;
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			}	
+			}
 			
 			try {
 				searchResultNo = webDriver.findElements(By.cssSelector(".historyResults")).get(0).getText();
@@ -535,7 +536,7 @@ public class Main55_W {
 			try {
 				webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 				// Waiting for element for 10 seconds
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				WebDriverWait wait = new WebDriverWait(webDriver, 40);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));			
 				
 				// Get the result number
@@ -625,7 +626,7 @@ public class Main55_W {
 				tabs = null;
 				Thread.sleep(4000);
 				// Waiting for element for 10 seconds
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				WebDriverWait wait = new WebDriverWait(webDriver, 40);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".search-results")));	
 				WebElement ta = webDriver.findElement(By.cssSelector(".search-results"));
 				List<WebElement> tb = ta.findElements(By.cssSelector(".search-results-item"));
@@ -711,14 +712,46 @@ public class Main55_W {
 						try {		
 							tempLink = detailrecord;
 							executor.executeScript("window.open('" + detailrecord + "')");
-							Thread.sleep(1000);
+							
+							// Switch to detail page
+							tabs = new ArrayList<String>(webDriver.getWindowHandles());
+							if (tabs.size() > 1) {
+								for (int a = tabs.size(); a > 1; a--) {
+									if (a > 3) {
+										webDriver.switchTo().window(tabs.get(a - 1));
+										try {
+											Thread.sleep(500);
+										} catch (Exception e2) {
+										}
+										webDriver.close();
+									}
+								}
+								webDriver.switchTo().window(tabs.get(2));
+							}
+							tabs = null;
+
+							try {
+								Thread.sleep(4000);
+							} catch (InterruptedException e3) {
+								// TODO Auto-generated catch block
+								e3.printStackTrace();
+							}
+							
+							wait = new WebDriverWait(webDriver, 40);
+							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+									By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
+							
+							
+
 							int detailStatus;
 							detailStatus = getDetail(webDriver);
-							if (detailStatus == 2)
-							{
+							if (detailStatus == 0) {
 								webDriver.switchTo().window(tabs.get(2));
 								webDriver.navigate().refresh();
 								getDetail(webDriver);
+								if (detailStatus == 0) {
+									throw new Exception("throw error");
+								}
 							}
 						} catch (Exception e3) {
 							// result array clear
@@ -795,9 +828,10 @@ public class Main55_W {
 					// writrintExcel();
 					Thread.sleep(10000);
 					int h;
-					for (h = 0; h < 40; h++) {									
-						Result[h] = " ";								
-					}	
+					for (h = 0; h < 40; h++) {
+						Result[h] = " ";
+					}
+					writrintExcel();
 					h = 0;
 					return 0;
 				}
@@ -837,7 +871,7 @@ public class Main55_W {
 		}
 
 		try {
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 40);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
