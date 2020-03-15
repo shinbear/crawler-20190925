@@ -168,7 +168,7 @@ public class Main55_W_Lu0303 {
 			tabs = null;
 
 			// Waiting for element for 10 seconds
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 20);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Show the progress
@@ -232,27 +232,24 @@ public class Main55_W_Lu0303 {
 						// write the excel the top item
 						writer.println(toptitle);
 					}
-
-					// Remain the search page
-					tabs = new ArrayList<String>(webDriver.getWindowHandles());
-					if (tabs.size() > 1) {
-						for (int a = tabs.size(); a > 1; a--) {
-							webDriver.switchTo().window(tabs.get(a - 1));
-							Thread.sleep(500);
-							webDriver.close();
-						}
-						webDriver.switchTo().window(tabs.get(0));
-					}
-					tabs = null;
-
+					
 					try {
+						// Remain the search page
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								webDriver.switchTo().window(tabs.get(a - 1));
+								Thread.sleep(500);
+								webDriver.close();
+							}
+							webDriver.switchTo().window(tabs.get(0));
+						}
+						tabs = null;
+						
 						int status = searchName(webDriver);
 						if (status == 1) {
 							// Get the item name
 							int getNameStatus = getAName(webDriver);
-							if (getNameStatus == 0) {
-								throw new Exception("throw error");
-							}
 						} else if (status == 2) {
 							// Status is 2 means the result number is zero
 							int h;
@@ -305,7 +302,6 @@ public class Main55_W_Lu0303 {
 								for (h = 0; h < 40; h++) {
 									Result[h] = "ER";
 								}
-								Result[32] = "0";
 								Result[33] = tempLink;
 								h = 0;
 								writrintExcel();
@@ -325,7 +321,6 @@ public class Main55_W_Lu0303 {
 						for (h = 0; h < 40; h++) {
 							Result[h] = " ";
 						}
-						Result[32] = "1";
 						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
@@ -352,7 +347,6 @@ public class Main55_W_Lu0303 {
 					for (h = 0; h < 40; h++) {
 						Result[h] = " ";
 					}
-					Result[32] = "2";
 					Result[33] = tempLink;
 					h = 0;
 					writrintExcel();
@@ -399,9 +393,7 @@ public class Main55_W_Lu0303 {
 			WebElement element = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
 			((JavascriptExecutor) webDriver).executeScript(js3, element);
 
-			Thread.sleep(1000);
 			// Year range from to
-			if (isFirstSearch) {
 				Thread.sleep(1000);
 				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));
 				yearRange.selectByIndex(6);
@@ -419,8 +411,7 @@ public class Main55_W_Lu0303 {
 				yearTo.clear();
 				yearTo.sendKeys(time_to);
 				yearTo.sendKeys(Keys.ENTER);
-				Thread.sleep(200);
-			}
+
 
 			if (isFirstSearch) {
 				try {
@@ -482,7 +473,7 @@ public class Main55_W_Lu0303 {
 			String searchResultNo = "";
 
 			try {
-				if (webDriver.findElement(By.cssSelector(".errorText")).getText().contains("检索错误")) {
+				if (webDriver.findElement(By.cssSelector(".errorText")).getText().length() > 0) {
 					return 3;
 				}
 			} catch (Exception e1) {
@@ -511,18 +502,6 @@ public class Main55_W_Lu0303 {
 			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
-			// result array clear
-			int h;
-			for (h = 0; h < 40; h++) {
-				Result[h] = " ";
-			}
-			Result[33] = tempLink;
-			Result[32] = "3";
-			h = 0;
-			writrintExcel();
-			Result[33] = "";
-			tempLink = "";
-			System.out.print(e2);
 			return 0;
 		}
 	}
@@ -607,7 +586,6 @@ public class Main55_W_Lu0303 {
 				for (h = 0; h < 40; h++) {
 					Result[h] = " ";
 				}
-				Result[32] = "4";
 				Result[33] = tempLink;
 				h = 0;
 				writrintExcel();
@@ -675,7 +653,11 @@ public class Main55_W_Lu0303 {
 						// Title
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
 						Result[3] = titleItem.getText();
-
+						
+						/// Get the record link
+						String detailrecord = titleItem.getAttribute("href");
+						tempLink = detailrecord;
+						
 						/*
 						 * author List<WebElement> authorItem =
 						 * tc.get(1).findElements(By.cssSelector("a[title]"));
@@ -688,43 +670,66 @@ public class Main55_W_Lu0303 {
 							List<WebElement> td = tc.get(i).findElements(By.cssSelector("div"));
 							for (j = 0; j < td.size(); j++) {
 								if (td.get(j).getText().contains("出版年")) {
-									String sourceStr = td.get(j).getText();
+									String sourceStr;
+									try {
+										sourceStr = td.get(j).getText();
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										sourceStr = "";
+										e.printStackTrace();
+									}
 									// Journal
-									Result[4] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
-											.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
+									try {
+										Result[4] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
+												.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										Result[4] = "";
+										e.printStackTrace();
+									}
 									// Publish Year
-									String publishDate, publishYear, publishmonth;
-									publishDate = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
-									// match year format
-									Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
-									Matcher matcher = pattern.matcher(publishDate);
-									publishmonth = matcher.replaceAll("");
-									publishYear = publishDate
-											.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
-									Result[22] = publishYear;
-									Result[21] = publishmonth;
+									try {
+										String publishDate, publishYear, publishmonth;
+										publishDate = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
+										// match year format
+										Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
+										Matcher matcher = pattern.matcher(publishDate);
+										publishmonth = matcher.replaceAll("");
+										publishYear = publishDate
+												.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
+										Result[22] = publishYear;
+										Result[21] = publishmonth;
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										Result[22] = "";
+										Result[21] = "";
+										e.printStackTrace();
+									}
 
 								}
 							}
 						}
 
 						// Being cite of web science
-						WebElement beingCiteItem = tbb.findElement(By.cssSelector(".search-results-data-cite"));
-						WebElement beingCiteItem_remove = webDriver
-								.findElement(By.cssSelector(".search-results-data-cite .en_data_bold"));
-						String beingCiteStr = beingCiteItem.getText().substring(0,
-								beingCiteItem.getText().indexOf(beingCiteItem_remove.getText()));
-						// Remove the characters
-						Pattern pattern = Pattern.compile("[^0-9]");
-						Matcher matcher = pattern.matcher(beingCiteStr);
-						Result[13] = matcher.replaceAll("");
+						try {
+							WebElement beingCiteItem = tbb.findElement(By.cssSelector(".search-results-data-cite"));
+							WebElement beingCiteItem_remove = webDriver
+									.findElement(By.cssSelector(".search-results-data-cite .en_data_bold"));
+							String beingCiteStr = beingCiteItem.getText().substring(0,
+									beingCiteItem.getText().indexOf(beingCiteItem_remove.getText()));
+							// Remove the characters
+							Pattern pattern = Pattern.compile("[^0-9]");
+							Matcher matcher = pattern.matcher(beingCiteStr);
+							Result[13] = matcher.replaceAll("");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							Result[13] = "";
+							e.printStackTrace();
+						}
 
 						// Open the detail record page
-						String detailrecord = titleItem.getAttribute("href");
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-						Thread.sleep(3500);
 						try {
-							tempLink = detailrecord;
 							executor.executeScript("window.open('" + detailrecord + "')");
 							
 							// Switch to detail page
@@ -755,16 +760,21 @@ public class Main55_W_Lu0303 {
 							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 									By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 							
-							
-
 							int detailStatus;
 							detailStatus = getDetail(webDriver);
 							if (detailStatus == 0) {
 								webDriver.switchTo().window(tabs.get(2));
+								Thread.sleep(30000);
 								webDriver.navigate().refresh();
-								getDetail(webDriver);
+								detailStatus = getDetail(webDriver);
 								if (detailStatus == 0) {
-									throw new Exception("throw error");
+									webDriver.switchTo().window(tabs.get(2));
+									Thread.sleep(30000);
+									webDriver.navigate().refresh();
+									detailStatus = getDetail(webDriver);
+									if (detailStatus == 0) {
+										throw new Exception("throw error");
+									}
 								}
 							}
 						} catch (Exception e3) {
@@ -772,7 +782,6 @@ public class Main55_W_Lu0303 {
 							for (h = 0; h < 40; h++) {
 								Result[h] = " ";
 							}
-							Result[32] = "5";
 							Result[33] = tempLink;
 							h = 0;
 							writrintExcel();
@@ -783,6 +792,7 @@ public class Main55_W_Lu0303 {
 
 						// Write the data into excel
 						writrintExcel();
+						tempLink = "";
 
 						// result array clear
 						for (h = 0; h < 40; h++) {
@@ -796,7 +806,6 @@ public class Main55_W_Lu0303 {
 						for (h = 0; h < 40; h++) {
 							Result[h] = " ";
 						}
-						Result[32] = "6";
 						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
@@ -836,22 +845,26 @@ public class Main55_W_Lu0303 {
 				}
 				tabs = null;
 
-				// get the next page
+				// get the next page if it is not last page
 				int turnpage = 0;
-				try {
-					WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
-					next.click();
-				} catch (Exception e3) {
-					// writrintExcel();
-					Thread.sleep(10000);
-					int h;
-					for (h = 0; h < 40; h++) {
-						Result[h] = " ";
+				if (k < pages - 1) {
+					try {
+						WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
+						next.click();
+					} catch (Exception e3) {
+						// writrintExcel();
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = "TurnPageWR";
+						}
+						writrintExcel();
+						for (h = 0; h < 40; h++) {
+							Result[h] = "TurnPageWR";
+						}
+						h = 0;
+						return 0;
 					}
-					writrintExcel();
-					h = 0;
-					return 0;
-				}
+				}				
 			}
 			Thread.sleep(3000);
 			return 1;
@@ -1257,7 +1270,6 @@ public class Main55_W_Lu0303 {
 				}
 			}
 			return 1;
-
 		} catch (Exception e) {
 			return 0;
 		}
