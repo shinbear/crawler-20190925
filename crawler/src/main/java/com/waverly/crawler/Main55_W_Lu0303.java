@@ -604,7 +604,20 @@ public class Main55_W_Lu0303 {
 						searchCount = 0;
 						pages = Integer.parseInt(pc_string);
 						if (pages > 50) {
-							pages = 300;
+							int h;
+							for (h = 0; h < 40; h++) {
+								Result[h] = "OT";
+							}
+							h = 0;
+							writrintExcel();
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
+							searchCount++;
+							if (searchCount > 3) {
+								Thread.sleep(10000);
+							}
+							return 1;
 						}
 					}
 				} else {
