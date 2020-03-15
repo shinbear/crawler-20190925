@@ -255,10 +255,11 @@ public class Main55_W {
 							}
 							h = 0;
 							writrintExcel();
+							Thread.sleep(30000);
 							for (h = 0; h < 40; h++) {
 								Result[h] = "";
 							}
-							Thread.sleep(30000);
+							h = 0;
 							continue;
 						} else if (status == 3) {
 							// Status is 3 means the search has error
@@ -592,6 +593,10 @@ public class Main55_W {
 						if (searchCount > 3) {
 							Thread.sleep(10000);
 						}
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+						h = 0;
 						return 0;
 					} else {
 						searchCount = 0;
@@ -613,6 +618,10 @@ public class Main55_W {
 					}	
 					h = 0;
 					writrintExcel();
+					for (h = 0; h < 40; h++) {
+						Result[h] = "";
+					}
+					h = 0;
 					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
@@ -899,7 +908,7 @@ public class Main55_W {
 						}
 						writrintExcel();
 						for (h = 0; h < 40; h++) {
-							Result[h] = "TurnPageWR";
+							Result[h] = "";
 						}
 						h = 0;
 						return 0;

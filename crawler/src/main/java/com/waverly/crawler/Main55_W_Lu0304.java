@@ -264,18 +264,40 @@ public class Main55_W_Lu0304 {
 							h = 0;
 							writrintExcel();
 							Thread.sleep(30000);
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
+							h = 0;
 							continue;
 						} else if (status == 3) {
-							// Status is 2 means the result number is zero
+							// Status is 3 means the search has error
 							int h;
 							for (h = 0; h < 40; h++) {
 								Result[h] = "ER";
 							}
 							h = 0;
 							writrintExcel();
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
 							Thread.sleep(30000);
 							continue;
-						} else {
+						} 
+						else if (status == 4) {
+							// Status is 3 means the search has error
+							int h;
+							for (h = 0; h < 40; h++) {
+								Result[h] = "FA";
+							}
+							h = 0;
+							writrintExcel();
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
+							Thread.sleep(30000);
+							continue;
+						}
+						else {
 							try {
 								webDriver.navigate().refresh();
 							} catch (Exception e) {
@@ -297,6 +319,9 @@ public class Main55_W_Lu0304 {
 								}
 								h = 0;
 								writrintExcel();
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
+								}
 								Thread.sleep(30000);
 								continue;
 							}
@@ -312,9 +337,27 @@ public class Main55_W_Lu0304 {
 								writrintExcel();
 								Result[33] = "";
 								tempLink= "";
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
+								}
 								Thread.sleep(30000);
 								continue;
-							} else {
+							} 
+							else if (status == 4) {
+								// Status is 3 means the search has error
+								int h;
+								for (h = 0; h < 40; h++) {
+									Result[h] = "FA";
+								}
+								h = 0;
+								writrintExcel();
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
+								}
+								Thread.sleep(30000);
+								continue;
+							}
+							else {
 								throw new Exception("throw error");
 
 							}
@@ -330,7 +373,11 @@ public class Main55_W_Lu0304 {
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
-						tempLink= "";
+						tempLink = "";
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+						h = 0;
 						Thread.sleep(30000);
 					}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -559,6 +606,10 @@ public class Main55_W_Lu0304 {
 						if (searchCount > 3) {
 							Thread.sleep(10000);
 						}
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+						h = 0;
 						return 0;
 					} else {
 						searchCount = 0;
@@ -580,6 +631,10 @@ public class Main55_W_Lu0304 {
 					}	
 					h = 0;
 					writrintExcel();
+					for (h = 0; h < 40; h++) {
+						Result[h] = "";
+					}
+					h = 0;
 					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
@@ -859,13 +914,15 @@ public class Main55_W_Lu0304 {
 						WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
 						next.click();
 					} catch (Exception e3) {
+						// writrintExcel();
+						Thread.sleep(10000);
 						int h;
 						for (h = 0; h < 40; h++) {
 							Result[h] = "TurnPageWR";
 						}
 						writrintExcel();
 						for (h = 0; h < 40; h++) {
-							Result[h] = "TurnPageWR";
+							Result[h] = "";
 						}
 						h = 0;
 						return 0;

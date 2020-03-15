@@ -259,18 +259,40 @@ public class Main55_W_Lu0303 {
 							h = 0;
 							writrintExcel();
 							Thread.sleep(30000);
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
+							h = 0;
 							continue;
 						} else if (status == 3) {
-							// Status is 2 means the result number is zero
+							// Status is 3 means the search has error
 							int h;
 							for (h = 0; h < 40; h++) {
 								Result[h] = "ER";
 							}
 							h = 0;
 							writrintExcel();
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
 							Thread.sleep(30000);
 							continue;
-						} else {
+						} 
+						else if (status == 4) {
+							// Status is 3 means the search has error
+							int h;
+							for (h = 0; h < 40; h++) {
+								Result[h] = "FA";
+							}
+							h = 0;
+							writrintExcel();
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
+							Thread.sleep(30000);
+							continue;
+						}
+						else {
 							try {
 								webDriver.navigate().refresh();
 							} catch (Exception e) {
@@ -292,6 +314,9 @@ public class Main55_W_Lu0303 {
 								}
 								h = 0;
 								writrintExcel();
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
+								}
 								Thread.sleep(30000);
 								continue;
 							}
@@ -306,16 +331,33 @@ public class Main55_W_Lu0303 {
 								h = 0;
 								writrintExcel();
 								Result[33] = "";
-								tempLink = "";
+								tempLink= "";
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
+								}
 								Thread.sleep(30000);
 								continue;
-							} else {
-								throw new Exception("throw error");
-
+							} 
+							else if (status == 4) {
+								// Status is 3 means the search has error
+								int h;
+								for (h = 0; h < 40; h++) {
+									Result[h] = "FA";
+								}
+								h = 0;
+								writrintExcel();
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
+								}
+								Thread.sleep(30000);
+								continue;
 							}
-						}
-					} catch (Exception e1) {
-						Thread.sleep(300000);
+							else {
+								throw new Exception("throw error");
+								}
+							}
+						} catch (Exception e1) {
+							Thread.sleep(60000);
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
@@ -325,8 +367,7 @@ public class Main55_W_Lu0303 {
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
-						tempLink = "";
-						Thread.sleep(30000);
+						tempLink= "";
 					}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -351,7 +392,7 @@ public class Main55_W_Lu0303 {
 					h = 0;
 					writrintExcel();
 					Result[33] = "";
-					tempLink = "";
+					tempLink= "";
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -473,7 +514,9 @@ public class Main55_W_Lu0303 {
 			String searchResultNo = "";
 
 			try {
-				if (webDriver.findElement(By.cssSelector(".errorText")).getText().length() > 0) {
+				if (webDriver.findElement(By.cssSelector(".errorText")).getText().contains("zh_CN")) {
+					return 4;
+				} else if (webDriver.findElement(By.cssSelector(".errorText")).getText().length() > 0) {
 					return 3;
 				}
 			} catch (Exception e1) {
@@ -552,11 +595,15 @@ public class Main55_W_Lu0303 {
 						if (searchCount > 3) {
 							Thread.sleep(10000);
 						}
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+						h = 0;
 						return 0;
 					} else {
 						searchCount = 0;
 						pages = Integer.parseInt(pc_string);
-						if (pages >= 300) {
+						if (pages > 50) {
 							pages = 300;
 						}
 					}
@@ -573,6 +620,10 @@ public class Main55_W_Lu0303 {
 					}
 					h = 0;
 					writrintExcel();
+					for (h = 0; h < 40; h++) {
+						Result[h] = "";
+					}
+					h = 0;
 					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
@@ -853,13 +904,14 @@ public class Main55_W_Lu0303 {
 						next.click();
 					} catch (Exception e3) {
 						// writrintExcel();
+						Thread.sleep(10000);
 						int h;
 						for (h = 0; h < 40; h++) {
 							Result[h] = "TurnPageWR";
 						}
 						writrintExcel();
 						for (h = 0; h < 40; h++) {
-							Result[h] = "TurnPageWR";
+							Result[h] = "";
 						}
 						h = 0;
 						return 0;
