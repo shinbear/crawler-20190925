@@ -53,12 +53,12 @@ public class Main48 {
 	public static JTextField searchstring = new JTextField();
 	public static JTextField location = new JTextField();
 	public static JTextField filename = new JTextField("Jobs");
-	public static JRadioButton jRadio1 = new JRadioButton("Run all records",true);
+	public static JRadioButton jRadio1 = new JRadioButton("Run all records", true);
 	public static JRadioButton jRadio2 = new JRadioButton("Run the specific records from- to");
 	public static ButtonGroup jRadioGroup = new ButtonGroup();
 	public static JTextField recordFrom = new JTextField("");
 	public static JTextField recordTo = new JTextField("");
-	
+
 	public static String URL = "";
 	public static String q;
 	public static String dcs;
@@ -94,7 +94,7 @@ public class Main48 {
 	private static int page = 0;
 	private static int row = 0;
 	private static int sim_row = 0;
-	
+
 	public static String ID = "";
 	public static String projectNo = "";
 	public static String appCode = "";
@@ -125,6 +125,7 @@ public class Main48 {
 	public static boolean isPatentPage = false;
 	public static String Result[] = new String[40];
 
+	public static String tempLink = "";
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -136,7 +137,7 @@ public class Main48 {
 
 	public static void main(String[] args) throws IOException {
 		try {
-			System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
+			System.out.println("用户的当前工作目录:" + System.getProperty("user.dir"));
 			input();
 			q = "q-" + searchstring.getText();
 			String q1 = q.replace(" ", "_");
@@ -252,7 +253,7 @@ public class Main48 {
 					+ "\t阅读\t关键词\t基金\t分类号\tISSN\tDOI\t专利申请号\t专利申请日\t专利公开号\t专利公开日"
 					+ "\t专利申请人\t专利地址\t专利发明人\t专利代理机构\t专利代理人\t专利主分类号\t专利分类号\t国省代码";
 			writer.println(toptitle);
-			
+
 			int startRow, endRow;
 			if (jRadio1.isSelected()) {
 				startRow = 1;
@@ -273,7 +274,7 @@ public class Main48 {
 			}
 
 			// Read the unedname from exccel sheet
-			for (int i = startRow; i <= endRow; i++)  {
+			for (int i = startRow; i <= endRow; i++) {
 				try {
 					sim_row = i;
 					dataProgress.setPanel(total, page, row, sim_row);
@@ -295,25 +296,7 @@ public class Main48 {
 						writer.println(toptitle);
 					}
 
-					int status = searchName(webDriver, author, authorOrg);
-					try {
-						if (status == 1) {
-							// Get the item name
-							getAName(webDriver);
-						} else {
-							webDriver.navigate().refresh();
-							status = searchName(webDriver, author, authorOrg);
-							if (status == 1) {
-								getAName(webDriver);
-							} else {
-								throw new Exception("throw error");
-							}
-						}
-					} catch (Exception e1) {
-						Thread.sleep(3000);
-						writrintExcel();
-					}
-					
+					// Remain the search page
 					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -324,12 +307,99 @@ public class Main48 {
 						}
 						webDriver.switchTo().window(tabs.get(0));
 					}
+					
+					//Get the search page
+					try {
+						webDriver.get(URL);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						Thread.sleep(30000);
+						try {
+							webDriver.get(URL);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							Thread.sleep(30000);
+							webDriver.get(URL);
+							e1.printStackTrace();
+						}
+						e.printStackTrace();
+					}
+					
 					tabs = null;
-					webDriver.get(URL);
+					int status = searchName(webDriver, author, authorOrg);
+					int getNameStatus;
+					try {
+						// Remain the search page
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								webDriver.switchTo().window(tabs.get(a - 1));
+								Thread.sleep(500);
+								webDriver.close();
+							}
+							webDriver.switchTo().window(tabs.get(0));
+						}
+						tabs = null;
+
+						if (status == 1) {
+							// Get the item name
+							getNameStatus = getAName(webDriver);
+						} else {
+							webDriver.navigate().refresh();
+							status = searchName(webDriver, author, authorOrg);
+							if (status == 1) {
+								getNameStatus = getAName(webDriver);
+							} else {
+								throw new Exception("throw error");
+							}
+						}
+					} catch (Exception e1) {
+						Thread.sleep(60000);
+						// result array clear
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = "ER";
+						}
+						h = 0;
+						writrintExcel();
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								webDriver.switchTo().window(tabs.get(a - 1));
+								Thread.sleep(500);
+								webDriver.close();
+							}
+							webDriver.switchTo().window(tabs.get(0));
+						}
+						tabs = null;
+					}
+
+					tabs = new ArrayList<String>(webDriver.getWindowHandles());
+					if (tabs.size() > 1) {
+						for (int a = tabs.size(); a > 1; a--) {
+							webDriver.switchTo().window(tabs.get(a - 1));
+							Thread.sleep(500);
+							webDriver.close();
+						}
+						webDriver.switchTo().window(tabs.get(0));
+					}
+					tabs = null;
+					// webDriver.get(URL);
 				} catch (Exception e3) {
 					// e3.printStackTrace();
 					// If in exception
+					int h;
+					for (h = 0; h < 40; h++) {
+						Result[h] = "ER";
+					}
 					writrintExcel();
+					for (h = 0; h < 40; h++) {
+						Result[h] = "";
+					}
 					Thread.sleep(30000);
 					ArrayList<String> tabs;
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -380,31 +450,45 @@ public class Main48 {
 			yearParamfrom.clear();
 			WebElement yearParamto = webDriver.findElement(By.xpath("//*[@id='publishdate_to']"));
 			yearParamto.clear();
-			if (yearParamState)
-			{			
-				publishdate_from = projectStartEnd.substring(0,4);
-				publishdate_to = projectStartEnd.substring(projectStartEnd.indexOf("至")+1 , projectStartEnd.indexOf("至")+5);
-				publishdate_from = String.valueOf((Integer.parseInt(publishdate_from)-1)) + "-01-01";
-				publishdate_to = String.valueOf((Integer.parseInt(publishdate_to)+1)) + "-12-31";
-				
-				//publishdate_from = projectYear + "-01-01";
-				//publishdate_to = projectYear + "-12-31";
+			if (yearParamState) {
+				publishdate_from = projectStartEnd.substring(0, 4);
+				publishdate_to = projectStartEnd.substring(projectStartEnd.indexOf("至") + 1,
+						projectStartEnd.indexOf("至") + 5);
+				publishdate_from = String.valueOf((Integer.parseInt(publishdate_from) - 1)) + "-01-01";
+				publishdate_to = String.valueOf((Integer.parseInt(publishdate_to) + 1)) + "-12-31";
+
+				// publishdate_from = projectYear + "-01-01";
+				// publishdate_to = projectYear + "-12-31";
 				yearParamfrom.sendKeys(publishdate_from);
 				yearParamto.sendKeys(publishdate_to);
 			}
-		
+
 			// Click "search" button
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='ddSubmit']/b").click();
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='btnSearch']").click();
 			return 1;
 		} catch (Exception e2) {
+			int h;
+			for (h = 0; h < 40; h++) {
+				Result[h] = "ER";
+			}
+			h = 0;
 			writrintExcel();
+			for (h = 0; h < 40; h++) {
+				Result[h] = "";
+			}
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.print(e2);
 			return 0;
 		}
 	}
 
-	public static void getAName(WebDriver webDriver) throws IOException {
+	public static int getAName(WebDriver webDriver) throws IOException {
 		try {
 			// Get the page number
 			int pages;
@@ -443,12 +527,27 @@ public class Main48 {
 				if (!pc_string.equals("")) {
 					if (Integer.parseInt(pc_string) == 0) {
 						pages = 0;
+						// result array clear
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = "0";
+						}
+						h = 0;
 						writrintExcel();
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+						try {
+							Thread.sleep(30000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						searchCount++;
 						if (searchCount > 3) {
 							Thread.sleep(10000);
-						}					
-						return;
+						}
+						return 0;
 					} else {
 						searchCount = 0;
 						pages = (Integer.parseInt(pc_string) - 1) / 20 + 1;
@@ -461,9 +560,24 @@ public class Main48 {
 					searchCount++;
 					if (searchCount > 3) {
 						Thread.sleep(10000);
-					}	
+					}
+					// result array clear
+					int h;
+					for (h = 0; h < 40; h++) {
+						Result[h] = "0";
+					}
+					h = 0;
 					writrintExcel();
-					return;
+					for (h = 0; h < 40; h++) {
+						Result[h] = "";
+					}
+					try {
+						Thread.sleep(30000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
 				if (Integer.parseInt(pc_string) < 3) {
@@ -471,9 +585,17 @@ public class Main48 {
 				}
 			} catch (Exception e1) {
 				pages = 0;
+				int h;
+				for (h = 0; h < 40; h++) {
+					Result[h] = "ER";
+				}
+				h = 0;
 				writrintExcel();
-				Thread.sleep(3000);
-				return;
+				for (h = 0; h < 40; h++) {
+					Result[h] = "";
+				}
+				Thread.sleep(30000);
+				return 0;
 			}
 
 			total = pages;
@@ -504,19 +626,20 @@ public class Main48 {
 					}
 				}
 
-				// Select the grid area with 10 items
+				/* Select the grid area with 10 items
 				if (isFirstPage) {
 					WebElement btn = ((ChromeDriver) webDriver)
 							.findElementByXPath("//*[@id=\"id_grid_display_num\"]/a[2]");
 					btn.click();
 					isFirstPage = false;
 				}
+				*/
 
 				Thread.sleep(4000);
 				// Get the element tr in this iframe
 				List<WebElement> tb = webDriver.findElements(By.xpath("//*[@id=\"ctl00\"]/table/tbody/tr[2]"));
-				
-				//Get row loop
+
+				// Get row loop
 				for (WebElement t : tb) {
 					// Close the detail page and return the list
 					// page
@@ -533,7 +656,7 @@ public class Main48 {
 					tabs.clear();
 
 					// Get iframe
-					// iframe = webDriver.findElement(By.id("iframeResult"));				
+					// iframe = webDriver.findElement(By.id("iframeResult"));
 					now_handle = webDriver.getWindowHandle();
 					all_handles = webDriver.getWindowHandles();
 					// identify if the windows is
@@ -544,7 +667,7 @@ public class Main48 {
 							((ChromeDriver) webDriver).switchTo().frame(iframe);
 						}
 					}
-					
+
 					List<WebElement> tbod = t.findElements(By.tagName("tbody"));
 					for (WebElement tr : tbod) {
 						row++;
@@ -552,10 +675,11 @@ public class Main48 {
 						td.remove(0);
 
 						// result array clear
-						for (i = 0; i < 40; i++) {
-							Result[i] = "";
+						for (int h = 0; h < 40; h++) {
+							Result[h] = "";
 						}
 
+						// read row headline
 						for (WebElement tds : td) {
 							try {
 								// Close the detail page and return the list
@@ -570,9 +694,10 @@ public class Main48 {
 									webDriver.switchTo().window(tabs.get(0));
 								}
 								tabs.clear();
-								
+
 								// Get iframe
-								// iframe = webDriver.findElement(By.id("iframeResult"));				
+								// iframe =
+								// webDriver.findElement(By.id("iframeResult"));
 								now_handle = webDriver.getWindowHandle();
 								all_handles = webDriver.getWindowHandles();
 								// identify if the windows is
@@ -583,7 +708,7 @@ public class Main48 {
 										((ChromeDriver) webDriver).switchTo().frame(iframe);
 									}
 								}
-								
+
 								List<WebElement> tdss = tds.findElements(By.tagName("td"));
 
 								// click the more authors
@@ -600,10 +725,11 @@ public class Main48 {
 
 								// Get the single author link
 								List<WebElement> tAu2 = tdss.get(2).findElements(By.cssSelector(".KnowledgeNetLink"));
-	
-								// Get all author name text including without author link
-								List<String> auStrallSingleArray=new ArrayList<String>();
-								List<String> auStrallSingleArray_temp=new ArrayList<String>();								
+
+								// Get all author name text including without
+								// author link
+								List<String> auStrallSingleArray = new ArrayList<String>();
+								List<String> auStrallSingleArray_temp = new ArrayList<String>();
 								try {
 									Collections.addAll(auStrallSingleArray_temp, tdss.get(2).getText().split(";"));
 									for (String tt : auStrallSingleArray_temp) {
@@ -615,7 +741,7 @@ public class Main48 {
 									// TODO Auto-generated catch block
 									e4.printStackTrace();
 								}
-								
+
 								String tAu_Code_Str = "unknown";
 								String auName_Str = "unknown";
 								String orgName_Str = "unknown";
@@ -643,7 +769,8 @@ public class Main48 {
 										String tAu_link_Str;
 										try {
 											tAu_link_Str = tAu_link.getAttribute("href");
-											tAu_Code_Str = tAu_link_Str.substring(tAu_link_Str.lastIndexOf(("code=")) + 5);
+											tAu_Code_Str = tAu_link_Str
+													.substring(tAu_link_Str.lastIndexOf(("code=")) + 5);
 										} catch (Exception e2) {
 											// TODO Auto-generated catch block
 											e2.printStackTrace();
@@ -655,17 +782,21 @@ public class Main48 {
 												if (!AuthorMaptable.get(auName_Str).contains("unknown")) {
 													auStrSingle = AuthorMaptable.get(auName_Str);
 													/*
-													String auCodeCompare = auStrSingle.substring(0,
-															auStrSingle.lastIndexOf("+"));
-													if (auCodeCompare.equals(auName_Str + "+" + tAu_Code_Str)) {
-														auStr = auStr + ";" + auStrSingle;
-														identicalFlag = 1;
-														if (auStr.substring(0, 1).equals(";")) {
-															auStr = auStr.substring(1);
-														}
-														break;
-													}
-													*/
+													 * String auCodeCompare =
+													 * auStrSingle.substring(0,
+													 * auStrSingle.lastIndexOf(
+													 * "+")); if
+													 * (auCodeCompare.equals(
+													 * auName_Str + "+" +
+													 * tAu_Code_Str)) { auStr =
+													 * auStr + ";" +
+													 * auStrSingle;
+													 * identicalFlag = 1; if
+													 * (auStr.substring(0,
+													 * 1).equals(";")) { auStr =
+													 * auStr.substring(1); }
+													 * break; }
+													 */
 													auStr = auStr + ";" + auStrSingle;
 													if (auStr.substring(0, 1).equals(";")) {
 														auStr = auStr.substring(1);
@@ -703,8 +834,8 @@ public class Main48 {
 											tabs = null;
 
 											WebDriverWait wait = new WebDriverWait(webDriver, 10);
-											wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-													By.cssSelector("h2.name")));
+											wait.until(ExpectedConditions
+													.presenceOfAllElementsLocatedBy(By.cssSelector("h2.name")));
 
 											// Get the author name in the person
 											// page
@@ -725,7 +856,7 @@ public class Main48 {
 										}
 									} catch (Exception e2) {
 										// Get the author code,name,organization
-										auStr = auStr + ";" + auName_Str + "+" + tAu_Code_Str+ "+" + orgName_Str;
+										auStr = auStr + ";" + auName_Str + "+" + tAu_Code_Str + "+" + orgName_Str;
 										if (auStr.substring(0, 1).equals(";")) {
 											auStr = auStr.substring(1);
 										}
@@ -734,7 +865,7 @@ public class Main48 {
 
 									// store the author info into a map
 									AuthorMaptable.put(auName_Str, auStrSingle);
-									
+
 									// Close author page & return the list
 									// page
 									tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -745,23 +876,23 @@ public class Main48 {
 											webDriver.close();
 										}
 									}
-										webDriver.switchTo().window(tabs.get(0));
-										tabs.clear();
+									webDriver.switchTo().window(tabs.get(0));
+									tabs.clear();
 
-										// Get iframe
-										iframe = webDriver.findElement(By.id("iframeResult"));
-										now_handle = webDriver.getWindowHandle();
-										all_handles = webDriver.getWindowHandles();
-										// identify if the windows is
-										// correct
-										for (String handle2 : all_handles) {
-											if (handle2 != now_handle) {
-												webDriver.switchTo().window(handle2);
-												((ChromeDriver) webDriver).switchTo().frame(iframe);
-											}
+									// Get iframe
+									iframe = webDriver.findElement(By.id("iframeResult"));
+									now_handle = webDriver.getWindowHandle();
+									all_handles = webDriver.getWindowHandles();
+									// identify if the windows is
+									// correct
+									for (String handle2 : all_handles) {
+										if (handle2 != now_handle) {
+											webDriver.switchTo().window(handle2);
+											((ChromeDriver) webDriver).switchTo().frame(iframe);
 										}
 									}
-								
+								}
+
 								// process the author name without link
 								for (String auStrallSingle : auStrallSingleArray) {
 									if (!auStr.contains(auStrallSingle.trim())) {
@@ -778,7 +909,7 @@ public class Main48 {
 											}
 										}
 										if (flagTemp == 0) {
-											auStr = auStr + ";" + auStrallSingle + "+" +  "unknown" + "+" + "unknown";
+											auStr = auStr + ";" + auStrallSingle + "+" + "unknown" + "+" + "unknown";
 											if (auStr.substring(0, 1).equals(";")) {
 												auStr = auStr.substring(1);
 											}
@@ -786,7 +917,6 @@ public class Main48 {
 									}
 								}
 
-			
 								// author name+code+org
 								Result[1] = auStr;
 
@@ -840,62 +970,76 @@ public class Main48 {
 
 								// Open the detail page
 								try {
+									tempLink = tdss.get(1).findElement(By.cssSelector(".fz14")).getAttribute("href");
 									tdss.get(1).findElement(By.cssSelector(".fz14")).click();
+									int status = getDetail(webDriver);
+									if (status == 0) {
+										// Get the item name
+										// Switch to detail page
+										tabs = new ArrayList<String>(webDriver.getWindowHandles());
+										// switches to new tab
+										webDriver.switchTo().window(tabs.get(1));
+										tabs = null;
+										webDriver.navigate().refresh();
+										status = getDetail(webDriver);
+										if (status == 0) {
+											tabs = new ArrayList<String>(webDriver.getWindowHandles());
+											webDriver.switchTo().window(tabs.get(1));
+											tabs = null;
+											webDriver.navigate().refresh();
+											status = getDetail(webDriver);
+											if (status == 0) {
+												throw new Exception("throw error");
+											}
+										}
+									}
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
+									int h;
+									for (h = 0; h < 40; h++) {
+										Result[h] = "ER";
+									}
+									Result[31] = tempLink;
 									writrintExcel();
 									// result array clear
-									for (i = 0; i < 40; i++) {
-										Result[i] = "";
+									for (h = 0; h < 40; h++) {
+										Result[h] = "";
 									}
-									continue;
-
-								}
-
-								int status = getDetail(webDriver);
-								try {
-									if (status == 0) {
-										// Get the item name
-										status = getDetail(webDriver);
-										if (status == 0) {
-											throw new Exception("throw error");
-										}
-									}
-								} catch (Exception e1) {
-									Thread.sleep(3000);
-									writrintExcel();
-									continue;
-								}
-
-								/*
-								if (isPatentPage == true) {
 									try {
-										getDetailPatent(webDriver);
-									} catch (Exception e3) {
-										writrintExcel();
+										Thread.sleep(30000);
+									} catch (InterruptedException e2) {
+										// TODO Auto-generated catch block
+										e2.printStackTrace();
 									}
+									continue;
 								}
+
 								isPatentPage = false;
-								*/
 
 								// Write the data into excel
 								writrintExcel();
 
 								// result array clear
-								for (i = 0; i < 40; i++) {
-									Result[i] = "";
+								for (int h = 0; h < 40; h++) {
+									Result[h] = "";
 								}
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 								// Write the data into excel
-								writrintExcel();
-
-								// result array clear
-								for (i = 0; i < 40; i++) {
-									Result[i] = "";
+								int h;
+								for (h = 0; h < 40; h++) {
+									Result[h] = "ER";
 								}
+								h = 0;
+								Result[31] = tempLink;
+								writrintExcel();
+								for (h = 0; h < 40; h++) {
+									Result[h] = "";
+								}
+								tempLink = "";
+								Thread.sleep(30000);
 
 								// Close the detail page and return the list
 								// page
@@ -946,23 +1090,53 @@ public class Main48 {
 						((ChromeDriver) webDriver).switchTo().frame(iframe);
 					}
 				}
-				
-				// get the next page
-				List<WebElement> tk = webDriver
-						.findElements(By.xpath("//*[@id=\"ctl00\"]/table/tbody/tr[3]/td/table/tbody/tr/td/div/a"));
-				for (WebElement t : tk) {
-					if (t.getText().equals("下一页")) {
-						try {
-							t.click();
-						} catch (Exception e3) {							
-						}
 
+				// get the next page
+				if (k < pages - 1) {
+					try {
+						List<WebElement> tk = webDriver.findElements(
+								By.xpath("//*[@id=\"ctl00\"]/table/tbody/tr[3]/td/table/tbody/tr/td/div/a"));
+						for (WebElement t : tk) {
+							if (t.getText().equals("下一页")) {
+								t.click();
+							}
+						}
+					} catch (Exception e3) {
+						// writrintExcel();
+						Thread.sleep(10000);
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = "TurnPageWR";
+						}
+						writrintExcel();
+						for (h = 0; h < 40; h++) {
+							Result[h] = "TurnPageWR";
+						}
+						h = 0;
+						return 0;
 					}
 				}
 			}
 			Thread.sleep(3000);
+			return 1;
 		} catch (Exception e2) {
 			exceptionCode = 2;
+			int h;
+			for (h = 0; h < 40; h++) {
+				Result[h] = "ER";
+			}
+			h = 0;
+			writrintExcel();
+			for (h = 0; h < 40; h++) {
+				Result[h] = "";
+			}
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return 0;
 		}
 	}
 
@@ -975,26 +1149,9 @@ public class Main48 {
 			webDriver.switchTo().window(tabs.get(1));
 			tabs = null;
 
-			try {
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
-				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#catalog_Ptitle")));
-				isPatentPage = false;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				try {
-					Result[10] = "";
-					Result[11] = "";
-					Result[12] = "";
-					Result[13] = "";
-					Result[14] = "";
-					getDetailPatent(webDriver);
-					isPatentPage = true;
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-					return 0;
-				}
-			}
+			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#catalog_Ptitle")));
+			isPatentPage = false;
 
 			// keywords
 			String keywordStr = "";
@@ -1002,14 +1159,14 @@ public class Main48 {
 			String categoryStr = "";
 			String issnStr = "";
 			String DOIStr = "";
-			
+
 			// Gether label
-			List<WebElement> catalog_Label =  webDriver.findElements(By.cssSelector("p > label"));
+			List<WebElement> catalog_Label = webDriver.findElements(By.cssSelector("p > label"));
 			ArrayList<String> catalog_LabelStr = new ArrayList<String>();
 			for (WebElement catalog_Labellist : catalog_Label) {
 				catalog_LabelStr.add(catalog_Labellist.getText());
 			}
-			
+
 			try {
 				if ((catalog_LabelStr.contains("关键词：")) || (catalog_LabelStr.contains("KEYWORDS:"))) {
 					// keywords
@@ -1024,9 +1181,9 @@ public class Main48 {
 			try {
 				// Funds
 				if ((catalog_LabelStr.contains("基金：")) || (catalog_LabelStr.contains("FUND:"))) {
-				List<WebElement> tk = webDriver.findElements(By.cssSelector("#catalog_FUND~a"));
-				for (WebElement tdk : tk) {
-					fundStr = fundStr + tdk.getText();
+					List<WebElement> tk = webDriver.findElements(By.cssSelector("#catalog_FUND~a"));
+					for (WebElement tdk : tk) {
+						fundStr = fundStr + tdk.getText();
 					}
 				}
 			} catch (Exception e1) {
@@ -1035,9 +1192,9 @@ public class Main48 {
 			try {
 				// category no
 				if (catalog_LabelStr.contains("分类号：")) {
-				List<WebElement> tk1 = webDriver.findElements(By.xpath("//*[@id='catalog_ZTCLS']/.."));
-				for (WebElement tdk1 : tk1) {
-					categoryStr = categoryStr + tdk1.getText().substring(4);
+					List<WebElement> tk1 = webDriver.findElements(By.xpath("//*[@id='catalog_ZTCLS']/.."));
+					for (WebElement tdk1 : tk1) {
+						categoryStr = categoryStr + tdk1.getText().substring(4);
 					}
 				}
 			} catch (Exception e1) {
@@ -1045,8 +1202,8 @@ public class Main48 {
 
 			try {
 				// ISSN
-				List<WebElement> tk2 = webDriver
-						.findElements(By.cssSelector("#mainArea > div.wxmain > div.wxInfo > div.wxsour > div.sourinfo >p"));
+				List<WebElement> tk2 = webDriver.findElements(
+						By.cssSelector("#mainArea > div.wxmain > div.wxInfo > div.wxsour > div.sourinfo >p"));
 				for (WebElement tdk2 : tk2) {
 					if (tdk2.getText().contains("ISSN")) {
 						issnStr = tdk2.getText().substring(tdk2.getText().indexOf("ISSN") + 5);
@@ -1058,12 +1215,12 @@ public class Main48 {
 			try {
 				// DOI
 				if ((catalog_LabelStr.contains("DOI：")) || (catalog_LabelStr.contains("DOI:"))) {
-				List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
-				for (WebElement tdk3 : tk3) {
-					DOIStr = DOIStr + tdk3.getText().substring(4);
+					List<WebElement> tk3 = webDriver.findElements(By.xpath("//*[@id='catalog_ZCDOI']/.."));
+					for (WebElement tdk3 : tk3) {
+						DOIStr = DOIStr + tdk3.getText().substring(4);
 					}
-				if (DOIStr.equals("")){
-					DOIStr= webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
+					if (DOIStr.equals("")) {
+						DOIStr = webDriver.findElement(By.xpath("//*[text()='DOI:']/following-sibling::a")).getText();
 					}
 				}
 			} catch (Exception e1) {
@@ -1192,9 +1349,9 @@ public class Main48 {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writer.println(ID + "\t" + projectNo + "\t" + appCode + "\t" + projectName + "\t" + ProjectLeaderName + "\t" + projectOrg
-				+ "\t" + approvedAmount + "\t" + projectStartEnd + "\t" + projectYear + "\t" + Result[0] + "\t"
-				+ Result[1] + "\t" + Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t"
+		writer.println(ID + "\t" + projectNo + "\t" + appCode + "\t" + projectName + "\t" + ProjectLeaderName + "\t"
+				+ projectOrg + "\t" + approvedAmount + "\t" + projectStartEnd + "\t" + projectYear + "\t" + Result[0]
+				+ "\t" + Result[1] + "\t" + Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t"
 				+ Result[9] + "\t" + Result[10] + "\t" + Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t"
 				+ Result[14] + "\t" + Result[20] + "\t" + Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t"
 				+ Result[24] + "\t" + Result[25] + "\t" + Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t"
