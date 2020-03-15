@@ -173,7 +173,7 @@ public class Main55_W_Lu0304 {
 			tabs = null;
 			
 			// Waiting for element for 10 seconds
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 20);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Show the progress
@@ -237,20 +237,20 @@ public class Main55_W_Lu0304 {
 						// write the excel the top item
 						writer.println(toptitle);
 					}
-
-					//Remain the search page
-					tabs = new ArrayList<String>(webDriver.getWindowHandles());
-					if (tabs.size() > 1) {
-						for (int a = tabs.size(); a > 1; a--) {
-							webDriver.switchTo().window(tabs.get(a - 1));
-							Thread.sleep(500);
-							webDriver.close();
-						}
-						webDriver.switchTo().window(tabs.get(0));
-					}
-					tabs = null;
 					
 					try {
+						//Remain the search page
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								webDriver.switchTo().window(tabs.get(a - 1));
+								Thread.sleep(500);
+								webDriver.close();
+							}
+							webDriver.switchTo().window(tabs.get(0));
+						}
+						tabs = null;
+						
 						int status = searchName(webDriver);
 						if (status == 1) {
 							// Get the item name
@@ -286,6 +286,9 @@ public class Main55_W_Lu0304 {
 							status = searchName(webDriver);
 							if (status == 1) {
 								int getNameStatus = getAName(webDriver);
+								if (getNameStatus == 0) {
+									throw new Exception("throw error");
+								}
 							} else if (status == 2) {
 								// Status is 2 means the result number is zero
 								int h;
@@ -381,7 +384,7 @@ public class Main55_W_Lu0304 {
 	public static int searchName(WebDriver webDriver) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 30);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
 			// Input the author
@@ -397,7 +400,6 @@ public class Main55_W_Lu0304 {
 
 			Thread.sleep(1000);
 			// Year range from to
-			if (isFirstSearch) {
 				Thread.sleep(1000);
 				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));				
 				yearRange.selectByIndex(6);
@@ -416,7 +418,7 @@ public class Main55_W_Lu0304 {
 				yearTo.sendKeys(YearTo);	
 				yearTo.sendKeys(Keys.ENTER);
 				Thread.sleep(200);
-			}
+
 								
 			if (isFirstSearch) {
 				try {
@@ -478,8 +480,9 @@ public class Main55_W_Lu0304 {
 			String searchResultNo = ""; 
 			
 			try {
-				if (webDriver.findElement(By.cssSelector(".errorText")).getText().contains("检索错误")) {
-					return 3;}
+				if (webDriver.findElement(By.cssSelector(".errorText")).getText().length() > 0) {
+					return 3;
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}	
@@ -506,17 +509,6 @@ public class Main55_W_Lu0304 {
 			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
-			// result array clear
-			int h;
-			for (h = 0; h < 40; h++) {
-				Result[h] = " ";
-			}
-			Result[33] = tempLink;
-			h = 0;
-			writrintExcel();
-			Result[33] = "";
-			tempLink= "";
-			System.out.print(e2);
 			return 0;
 		}
 	}
@@ -543,7 +535,7 @@ public class Main55_W_Lu0304 {
 			try {
 				webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 				// Waiting for element for 10 seconds
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				WebDriverWait wait = new WebDriverWait(webDriver, 40);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));			
 				
 				// Get the result number
@@ -633,25 +625,26 @@ public class Main55_W_Lu0304 {
 				tabs = null;
 				Thread.sleep(4000);
 				// Waiting for element for 10 seconds
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				WebDriverWait wait = new WebDriverWait(webDriver, 40);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".search-results")));	
 				WebElement ta = webDriver.findElement(By.cssSelector(".search-results"));
 				List<WebElement> tb = ta.findElements(By.cssSelector(".search-results-item"));
 
 				// Get row loop
 				for (WebElement tbb : tb) {
-					tabs = new ArrayList<String>(webDriver.getWindowHandles());
-					if (tabs.size() > 1) {
-						for (int a = tabs.size(); a > 1; a--) {
-							if (a > 2) {
-								webDriver.switchTo().window(tabs.get(a - 1));
-								Thread.sleep(500);
-								webDriver.close();
+					try {
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								if (a > 2) {
+									webDriver.switchTo().window(tabs.get(a - 1));
+									Thread.sleep(500);
+									webDriver.close();
+								}
 							}
+							webDriver.switchTo().window(tabs.get(1));
 						}
-						webDriver.switchTo().window(tabs.get(1));
-					}
-					tabs = null;
+						tabs = null;
 
 					row++;
 					// result array clear
@@ -661,72 +654,135 @@ public class Main55_W_Lu0304 {
 					}	
 					h = 0;
 
-					try {
 						// Get the result row
 						List<WebElement> tc = tbb.findElements(By.cssSelector(".search-results-content"));
 
 						// Title
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
 						Result[3] = titleItem.getText();
-
-						/* author
-						List<WebElement> authorItem = tc.get(1).findElements(By.cssSelector("a[title]"));
-						for (WebElement tAu : authorItem) {
-							Result[1] = Result[1] + ";" + tAu.getText();
-						}
-						Result[1] = Result[1].substring(1);
-						*/
 						
+						/// Get the record link
+						String detailrecord = titleItem.getAttribute("href");
+						tempLink = detailrecord;
+						
+						/*
+						 * author List<WebElement> authorItem =
+						 * tc.get(1).findElements(By.cssSelector("a[title]"));
+						 * for (WebElement tAu : authorItem) { Result[1] =
+						 * Result[1] + ";" + tAu.getText(); } Result[1] =
+						 * Result[1].substring(1);
+						 */
+
 						for (i = 0; i < tc.size(); i++) {
 							List<WebElement> td = tc.get(i).findElements(By.cssSelector("div"));
 							for (j = 0; j < td.size(); j++) {
 								if (td.get(j).getText().contains("出版年")) {
-									String sourceStr = td.get(j).getText();
+									String sourceStr;
+									try {
+										sourceStr = td.get(j).getText();
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										sourceStr = "";
+										e.printStackTrace();
+									}
 									// Journal
-									Result[4] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
-											.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
+									try {
+										Result[4] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
+												.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										Result[4] = "";
+										e.printStackTrace();
+									}
 									// Publish Year
-									String publishDate, publishYear, publishmonth;
-									publishDate = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
-									// match year format
-									Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
-									Matcher matcher = pattern.matcher(publishDate);
-									publishmonth = matcher.replaceAll("");
-									publishYear = publishDate
-											.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
-									Result[22] = publishYear;
-									Result[21] = publishmonth;
+									try {
+										String publishDate, publishYear, publishmonth;
+										publishDate = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
+										// match year format
+										Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
+										Matcher matcher = pattern.matcher(publishDate);
+										publishmonth = matcher.replaceAll("");
+										publishYear = publishDate
+												.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
+										Result[22] = publishYear;
+										Result[21] = publishmonth;
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										Result[22] = "";
+										Result[21] = "";
+										e.printStackTrace();
+									}
 
 								}
 							}
 						}
 
 						// Being cite of web science
-						WebElement beingCiteItem = tbb.findElement(By.cssSelector(".search-results-data-cite"));
-						WebElement beingCiteItem_remove = webDriver
-								.findElement(By.cssSelector(".search-results-data-cite .en_data_bold"));
-						String beingCiteStr = beingCiteItem.getText().substring(0,
-								beingCiteItem.getText().indexOf(beingCiteItem_remove.getText()));
-						// Remove the characters
-						Pattern pattern = Pattern.compile("[^0-9]");
-						Matcher matcher = pattern.matcher(beingCiteStr);
-						Result[13] = matcher.replaceAll("");					
-						
-						// Open the detail record page
-						String detailrecord = titleItem.getAttribute("href");												
-						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-						Thread.sleep(3500);
 						try {
-							tempLink = detailrecord;
+							WebElement beingCiteItem = tbb.findElement(By.cssSelector(".search-results-data-cite"));
+							WebElement beingCiteItem_remove = webDriver
+									.findElement(By.cssSelector(".search-results-data-cite .en_data_bold"));
+							String beingCiteStr = beingCiteItem.getText().substring(0,
+									beingCiteItem.getText().indexOf(beingCiteItem_remove.getText()));
+							// Remove the characters
+							Pattern pattern = Pattern.compile("[^0-9]");
+							Matcher matcher = pattern.matcher(beingCiteStr);
+							Result[13] = matcher.replaceAll("");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							Result[13] = "";
+							e.printStackTrace();
+						}
+
+						// Open the detail record page
+						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
+						try {
 							executor.executeScript("window.open('" + detailrecord + "')");
-							Thread.sleep(1000);
+							
+							// Switch to detail page
+							tabs = new ArrayList<String>(webDriver.getWindowHandles());
+							if (tabs.size() > 1) {
+								for (int a = tabs.size(); a > 1; a--) {
+									if (a > 3) {
+										webDriver.switchTo().window(tabs.get(a - 1));
+										try {
+											Thread.sleep(500);
+										} catch (Exception e2) {
+										}
+										webDriver.close();
+									}
+								}
+								webDriver.switchTo().window(tabs.get(2));
+							}
+							tabs = null;
+
+							try {
+								Thread.sleep(4000);
+							} catch (InterruptedException e3) {
+								// TODO Auto-generated catch block
+								e3.printStackTrace();
+							}
+							
+							wait = new WebDriverWait(webDriver, 40);
+							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+									By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
+							
 							int detailStatus;
 							detailStatus = getDetail(webDriver);
-							if (detailStatus == 2)
-							{
+							if (detailStatus == 0) {
 								webDriver.switchTo().window(tabs.get(2));
+								Thread.sleep(30000);
 								webDriver.navigate().refresh();
-								getDetail(webDriver);
+								detailStatus = getDetail(webDriver);
+								if (detailStatus == 0) {
+									webDriver.switchTo().window(tabs.get(2));
+									Thread.sleep(30000);
+									webDriver.navigate().refresh();
+									detailStatus = getDetail(webDriver);
+									if (detailStatus == 0) {
+										throw new Exception("throw error");
+									}
+								}
 							}
 						} catch (Exception e3) {
 							// result array clear
@@ -743,6 +799,7 @@ public class Main55_W_Lu0304 {
 
 						// Write the data into excel
 						writrintExcel();
+						tempLink = "";
 
 						// result array clear
 						for (h = 0; h < 40; h++) {									
@@ -752,6 +809,7 @@ public class Main55_W_Lu0304 {
 					} catch (Exception e) {
 						// Write the data into excel
 						// result array clear
+						int h;
 						for (h = 0; h < 40; h++) {
 							Result[h] = " ";
 						}
@@ -794,21 +852,25 @@ public class Main55_W_Lu0304 {
 				}
 				tabs = null;
 
-				// get the next page
-				int turnpage=0;
-				try {
-					WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
-					next.click();
-				} catch (Exception e3) {
-					// writrintExcel();
-					Thread.sleep(10000);
-					int h;
-					for (h = 0; h < 40; h++) {									
-						Result[h] = " ";								
-					}	
-					h = 0;
-					return 0;
-				}
+				// get the next page if it is not last page
+				int turnpage = 0;
+				if (k < pages - 1) {
+					try {
+						WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
+						next.click();
+					} catch (Exception e3) {
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = "TurnPageWR";
+						}
+						writrintExcel();
+						for (h = 0; h < 40; h++) {
+							Result[h] = "TurnPageWR";
+						}
+						h = 0;
+						return 0;
+					}
+				}				
 			}
 			Thread.sleep(3000);
 			return 1;
@@ -845,7 +907,7 @@ public class Main55_W_Lu0304 {
 		}
 
 		try {
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 40);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
 			
