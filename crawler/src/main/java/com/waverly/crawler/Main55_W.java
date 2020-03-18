@@ -100,6 +100,7 @@ public class Main55_W {
 	public static String Result[] = new String[40];
 	
 	public static String tempLink= "";
+	public static String tempTitle= "";
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -265,7 +266,7 @@ public class Main55_W {
 							// Status is 3 means the search has error
 							int h;
 							for (h = 0; h < 40; h++) {
-								Result[h] = "ER";
+								Result[h] = "PER";
 							}
 							h = 0;
 							writrintExcel();
@@ -320,7 +321,7 @@ public class Main55_W {
 								// Status is 2 means the result number is zero
 								int h;
 								for (h = 0; h < 40; h++) {
-									Result[h] = "ER";
+									Result[h] = "PER";
 								}
 								Result[33] = tempLink;
 								h = 0;
@@ -356,7 +357,7 @@ public class Main55_W {
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = " ";
+							Result[h] = "SEER";
 						}
 						Result[33] = tempLink;
 						h = 0;
@@ -381,7 +382,7 @@ public class Main55_W {
 					// result array clear
 					int h;
 					for (h = 0; h < 40; h++) {
-						Result[h] = " ";
+						Result[h] = "SEER";
 					}
 					Result[33] = tempLink;
 					h = 0;
@@ -633,7 +634,7 @@ public class Main55_W {
 				// result array clear
 				int h;
 				for (h = 0; h < 40; h++) {
-					Result[h] = " ";
+					Result[h] = "ER";
 				}
 				Result[33] = tempLink;
 				h = 0;
@@ -702,6 +703,7 @@ public class Main55_W {
 						// Title
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
 						Result[3] = titleItem.getText();
+						tempTitle = Result[3];
 						
 						/// Get the record link
 						String detailrecord = titleItem.getAttribute("href");
@@ -818,7 +820,7 @@ public class Main55_W {
 								detailStatus = getDetail(webDriver);
 								if (detailStatus == 0) {
 									webDriver.switchTo().window(tabs.get(2));
-									Thread.sleep(30000);
+									Thread.sleep(90000);
 									webDriver.navigate().refresh();
 									detailStatus = getDetail(webDriver);
 									if (detailStatus == 0) {
@@ -829,19 +831,23 @@ public class Main55_W {
 						} catch (Exception e3) {
 							// result array clear
 							for (h = 0; h < 40; h++) {
-								Result[h] = " ";
+								Result[h] = "ROWER";
 							}
 							Result[33] = tempLink;
+							Result[3] = tempTitle;					
 							h = 0;
 							writrintExcel();
 							Result[33] = "";
+							Result[3] = "";
 							tempLink= "";
+							tempTitle = "";
 							continue;
 						}
 
 						// Write the data into excel
 						writrintExcel();
 						tempLink = "";
+						tempTitle = "";
 
 						// result array clear
 						for (h = 0; h < 40; h++) {									
@@ -853,13 +859,16 @@ public class Main55_W {
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = " ";
+							Result[h] = "ROWER";
 						}
 						Result[33] = tempLink;
+						Result[3] = tempTitle;		
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
+						Result[3] = "";
 						tempLink= "";
+						tempTitle = "";
 
 						// Close the detail page and return the list
 						// page
