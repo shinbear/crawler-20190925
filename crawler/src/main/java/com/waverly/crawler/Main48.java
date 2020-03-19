@@ -311,11 +311,18 @@ public class Main48 {
 					//Get the search page
 					try {
 						webDriver.get(URL);
+						// Waiting for element for 20 seconds
+						wait = new WebDriverWait(webDriver, 20);
+						wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id='au_1_value1']")));
+
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						Thread.sleep(30000);
 						try {
 							webDriver.get(URL);
+							// Waiting for element for 20 seconds
+							wait = new WebDriverWait(webDriver, 20);
+							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id='au_1_value1']")));
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							Thread.sleep(30000);
@@ -358,7 +365,7 @@ public class Main48 {
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = "ER";
+							Result[h] = "SEER";
 						}
 						h = 0;
 						writrintExcel();
@@ -394,7 +401,7 @@ public class Main48 {
 					// If in exception
 					int h;
 					for (h = 0; h < 40; h++) {
-						Result[h] = "ER";
+						Result[h] = "SEER";
 					}
 					writrintExcel();
 					for (h = 0; h < 40; h++) {
@@ -428,7 +435,7 @@ public class Main48 {
 	public static int searchName(WebDriver webDriver, String author, String authorOrg) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
-			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 20);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id='au_1_value1']")));
 
 			// Input the author
@@ -470,7 +477,7 @@ public class Main48 {
 		} catch (Exception e2) {
 			int h;
 			for (h = 0; h < 40; h++) {
-				Result[h] = "ER";
+				Result[h] = "SEER";
 			}
 			h = 0;
 			writrintExcel();
@@ -587,7 +594,7 @@ public class Main48 {
 				pages = 0;
 				int h;
 				for (h = 0; h < 40; h++) {
-					Result[h] = "ER";
+					Result[h] = "SEER";
 				}
 				h = 0;
 				writrintExcel();
@@ -998,7 +1005,7 @@ public class Main48 {
 									e.printStackTrace();
 									int h;
 									for (h = 0; h < 40; h++) {
-										Result[h] = "ER";
+										Result[h] = "ROWER";
 									}
 									Result[31] = tempLink;
 									writrintExcel();
@@ -1123,7 +1130,7 @@ public class Main48 {
 			exceptionCode = 2;
 			int h;
 			for (h = 0; h < 40; h++) {
-				Result[h] = "ER";
+				Result[h] = "ROWER";
 			}
 			h = 0;
 			writrintExcel();
