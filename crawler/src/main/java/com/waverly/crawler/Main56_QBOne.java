@@ -172,9 +172,6 @@ public class Main56_QBOne {
 				return;
 			}
 
-			webDriver.switchTo().window(tabs.get(0));
-			tabs = null;
-
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 20);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
@@ -194,11 +191,10 @@ public class Main56_QBOne {
 			}
 
 			// write the excel the top item
-			String toptitle = "ID\tName\tLast Name\tFirst Name\tDissertation Year\tDissertation Institution\t"
-					+ "Dissertation Institution(WOS)\tCurrent Affilication\tCurrent Affilication(WOS)\t"
-					+ "Program Year\tProgram Affication\tProgram Affication(WOS)\tSearch keywords\t"
-					+ "Year From\tYear To\tPT\tAU\tAF\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tTC\tZ9\tU1\tU2\tSN\t"
-					+ "EI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA\tUT\tPM";
+			String toptitle = "IDS\tNo\tID\tName\tname_en_last\tname_en_first"
+					+ "\taff_inst (candidate year)\tCAS_candidate_yr\tSearch Keywords"
+					+ "\tYear From\tYear To\tPT\tAU\tAF\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tNR\tTC\tZ9\t"
+					+ "U1\tU2\tPU-PA\tSN\tEI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA";
 			writer.println(toptitle);
 
 			int startRow, endRow;
@@ -260,60 +256,22 @@ public class Main56_QBOne {
 							source_Search = source_SearchArry[k];
 							source_SearchYearFrom = source_SearchYearFromArry[k];
 							source_SearchYearTo = source_SearchYearToArry[k];
-							tabs = new ArrayList<String>(webDriver.getWindowHandles());
-							if (tabs.size() > 1) {
-								for (int a = tabs.size(); a > 1; a--) {
-									webDriver.switchTo().window(tabs.get(a - 1));
-									Thread.sleep(500);
-									webDriver.close();
-								}
-								webDriver.switchTo().window(tabs.get(0));
-							}
-							tabs = null;
-							int status = searchName(webDriver, k);
-							if (status == 1) {
-								// Get the item name
-								int getNameStatus = getAName(webDriver);
-							} else if (status == 2) {
-								// Status is 2 means the result number is zero
-								int h;
-								for (h = 0; h < 40; h++) {
-									Result[h] = "0";
-								}
-								h = 0;
-								writrintExcel();
-								Thread.sleep(30000);
-								for (h = 0; h < 40; h++) {
-									Result[h] = "";
-								}
-								h = 0;
-								continue;
-							} else if (status == 3) {
-								// Status is 3 means the search has error
-								int h;
-								for (h = 0; h < 40; h++) {
-									Result[h] = "PER";
-								}
-								h = 0;
-								writrintExcel();
-								for (h = 0; h < 40; h++) {
-									Result[h] = "";
-								}
-								Thread.sleep(30000);
-								continue;
-							} else {
-								try {
-									webDriver.navigate().refresh();
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								status = searchName(webDriver, k);
-								if (status == 1) {
-									int getNameStatus = getAName(webDriver);
-									if (getNameStatus == 0) {
-										throw new Exception("throw error");
+
+							if (source_Search != null && !source_Search.equals("")) {
+								tabs = new ArrayList<String>(webDriver.getWindowHandles());
+								if (tabs.size() > 1) {
+									for (int a = tabs.size(); a > 1; a--) {
+										webDriver.switchTo().window(tabs.get(a - 1));
+										Thread.sleep(500);
+										webDriver.close();
 									}
+									webDriver.switchTo().window(tabs.get(0));
+								}
+								tabs = null;
+								int status = searchName(webDriver, k);
+								if (status == 1) {
+									// Get the item name
+									int getNameStatus = getAName(webDriver);
 								} else if (status == 2) {
 									// Status is 2 means the result number is
 									// zero
@@ -323,32 +281,77 @@ public class Main56_QBOne {
 									}
 									h = 0;
 									writrintExcel();
+									Thread.sleep(30000);
 									for (h = 0; h < 40; h++) {
 										Result[h] = "";
 									}
-									Thread.sleep(30000);
+									h = 0;
 									continue;
 								} else if (status == 3) {
-									// Status is 2 means the result number is
-									// zero
+									// Status is 3 means the search has error
 									int h;
 									for (h = 0; h < 40; h++) {
 										Result[h] = "PER";
 									}
-									Result[33] = tempLink;
 									h = 0;
 									writrintExcel();
-									Result[33] = "";
-									tempLink = "";
 									for (h = 0; h < 40; h++) {
 										Result[h] = "";
 									}
 									Thread.sleep(30000);
 									continue;
 								} else {
-									throw new Exception("throw error");
+									try {
+										webDriver.navigate().refresh();
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									status = searchName(webDriver, k);
+									if (status == 1) {
+										int getNameStatus = getAName(webDriver);
+										if (getNameStatus == 0) {
+											throw new Exception("throw error");
+										}
+									} else if (status == 2) {
+										// Status is 2 means the result number
+										// is
+										// zero
+										int h;
+										for (h = 0; h < 40; h++) {
+											Result[h] = "0";
+										}
+										h = 0;
+										writrintExcel();
+										for (h = 0; h < 40; h++) {
+											Result[h] = "";
+										}
+										Thread.sleep(30000);
+										continue;
+									} else if (status == 3) {
+										// Status is 2 means the result number
+										// is
+										// zero
+										int h;
+										for (h = 0; h < 40; h++) {
+											Result[h] = "PER";
+										}
+										Result[33] = tempLink;
+										h = 0;
+										writrintExcel();
+										Result[33] = "";
+										tempLink = "";
+										for (h = 0; h < 40; h++) {
+											Result[h] = "";
+										}
+										Thread.sleep(30000);
+										continue;
+									} else {
+										throw new Exception("throw error");
+									}
 								}
 							}
+
 						}
 					} catch (Exception e1) {
 						Thread.sleep(300000);
@@ -1377,7 +1380,7 @@ public class Main56_QBOne {
 
 	public static void readExcel(Sheet sheet, int rowid) {
 		Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10, cell11, cell12, cell13, cell14,
-				cell15, cell16, cell17, cell18, cell19, cell20, cell21;
+				cell15, cell16, cell17;
 		try {
 			cell1 = sheet.getCell(0, rowid);
 			cell2 = sheet.getCell(1, rowid);
@@ -1396,10 +1399,6 @@ public class Main56_QBOne {
 			cell15 = sheet.getCell(14, rowid);
 			cell16 = sheet.getCell(15, rowid);
 			cell17 = sheet.getCell(16, rowid);
-			cell18 = sheet.getCell(17, rowid);
-			cell19 = sheet.getCell(18, rowid);
-			cell20 = sheet.getCell(19, rowid);
-			cell21 = sheet.getCell(20, rowid);
 
 			if ("".equals(cell1.getContents()) != true) {
 				IDS = cell1.getContents().replace('\n', ' ');
@@ -1409,15 +1408,16 @@ public class Main56_QBOne {
 				name_en_last = cell5.getContents().replace('\n', ' ');
 				name_en_first = cell6.getContents().replace('\n', ' ');
 				aff_inst_candidate_year = cell7.getContents().replace('\n', ' ');
-				source_SearchArry[0] = cell13.getContents().replace('\n', ' ');
-				source_SearchYearFromArry[0] = cell14.getContents().replace('\n', ' ');
-				source_SearchYearToArry[0] = cell15.getContents().replace('\n', ' ');
-				source_SearchArry[1] = cell16.getContents().replace('\n', ' ');
-				source_SearchYearFromArry[1] = cell17.getContents().replace('\n', ' ');
-				source_SearchYearToArry[1] = cell18.getContents().replace('\n', ' ');
-				source_SearchArry[2] = cell19.getContents().replace('\n', ' ');
-				source_SearchYearFromArry[2] = cell20.getContents().replace('\n', ' ');
-				source_SearchYearToArry[2] = cell21.getContents().replace('\n', ' ');
+				CAS_candidate_yr = cell8.getContents().replace('\n', ' ');
+				source_SearchArry[0] = cell9.getContents().replace('\n', ' ');
+				source_SearchYearFromArry[0] = cell10.getContents().replace('\n', ' ');
+				source_SearchYearToArry[0] = cell11.getContents().replace('\n', ' ');
+				source_SearchArry[1] = cell12.getContents().replace('\n', ' ');
+				source_SearchYearFromArry[1] = cell13.getContents().replace('\n', ' ');
+				source_SearchYearToArry[1] = cell14.getContents().replace('\n', ' ');
+				source_SearchArry[2] = cell15.getContents().replace('\n', ' ');
+				source_SearchYearFromArry[2] = cell16.getContents().replace('\n', ' ');
+				source_SearchYearToArry[2] = cell17.getContents().replace('\n', ' ');
 			}
 		} catch (Exception e) {
 		}
