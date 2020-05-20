@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,7 +102,7 @@ public class Main56_QBOne {
 	public static boolean isFirstPage = true;
 	public static boolean isPatentPage = false;
 	public static boolean isFirstSearch = true;
-	public static String Result[] = new String[40];
+	public static String Result[] = new String[42];
 
 	public static String tempLink = "";
 
@@ -132,7 +134,7 @@ public class Main56_QBOne {
 			sheet = book.getSheet(0);
 			rowid_Total = sheet.getRows();
 
-			URL = "http://apps.webofknowledge.com/WOS_AdvancedSearch_input.do?SID=8DEJ9qRQSdW6p6ieIOa&product=WOS&search_mode=AdvancedSearch";
+			URL = "http://stpaper.cn/knowledgePush/emeb/database.htm";
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 			// modify the download path
@@ -144,21 +146,12 @@ public class Main56_QBOne {
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			// lanunch the webdriver
-			// webDriver.get(URL);
-
+			webDriver.get(URL);
+			webDriver.findElements(By.cssSelector(".col-xs-6")).get(3).click();
+			
 			// Input the query condition
 			Thread.sleep(3000);
 			ArrayList<String> tabs;
-			tabs = new ArrayList<String>(webDriver.getWindowHandles());
-			if (tabs.size() > 1) {
-				for (int a = tabs.size(); a > 1; a--) {
-					webDriver.switchTo().window(tabs.get(a - 1));
-					Thread.sleep(500);
-					webDriver.close();
-				}
-				webDriver.switchTo().window(tabs.get(0));
-			}
-			tabs = null;
 
 			// Show the dialog to wait
 			int res = JOptionPane.showConfirmDialog(null, "Waiting for you access the advanced search page", " ",
@@ -172,7 +165,12 @@ public class Main56_QBOne {
 				return;
 			}
 
-			// Waiting for element for 10 seconds
+			// Input the query condition
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			webDriver.switchTo().window(tabs.get(0));
+			tabs = null;
+			
+			// Waiting for element for 10 seconds			
 			WebDriverWait wait = new WebDriverWait(webDriver, 20);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
 
@@ -194,7 +192,7 @@ public class Main56_QBOne {
 			String toptitle = "IDS\tNo\tID\tName\tname_en_last\tname_en_first"
 					+ "\taff_inst (candidate year)\tCAS_candidate_yr\tSearch Keywords"
 					+ "\tYear From\tYear To\tPT\tAU\tAF\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tNR\tTC\tZ9\t"
-					+ "U1\tU2\tPU-PA\tSN\tEI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA";
+					+ "U1\tU2\tPU-PA\tSN\tEI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA\tUT";
 			writer.println(toptitle);
 
 			int startRow, endRow;
@@ -357,7 +355,7 @@ public class Main56_QBOne {
 						Thread.sleep(300000);
 						// result array clear
 						int h;
-						for (h = 0; h < 40; h++) {
+						for (h = 0; h < 42; h++) {
 							Result[h] = " ";
 						}
 						Result[33] = tempLink;
@@ -383,7 +381,7 @@ public class Main56_QBOne {
 					// If in exception
 					// result array clear
 					int h;
-					for (h = 0; h < 40; h++) {
+					for (h = 0; h < 42; h++) {
 						Result[h] = " ";
 					}
 					Result[33] = tempLink;
@@ -547,7 +545,7 @@ public class Main56_QBOne {
 		} catch (Exception e2) {
 			// result array clear
 			int h;
-			for (h = 0; h < 40; h++) {
+			for (h = 0; h < 42; h++) {
 				Result[h] = " ";
 			}
 			Result[33] = tempLink;
@@ -637,7 +635,7 @@ public class Main56_QBOne {
 				pages = 0;
 				// result array clear
 				int h;
-				for (h = 0; h < 40; h++) {
+				for (h = 0; h < 42; h++) {
 					Result[h] = " ";
 				}
 				Result[33] = tempLink;
@@ -695,7 +693,7 @@ public class Main56_QBOne {
 					row++;
 					// result array clear
 					int h;
-					for (h = 0; h < 40; h++) {
+					for (h = 0; h < 42; h++) {
 						Result[h] = " ";
 					}
 					h = 0;
@@ -768,7 +766,7 @@ public class Main56_QBOne {
 							}
 						} catch (Exception e3) {
 							// result array clear
-							for (h = 0; h < 40; h++) {
+							for (h = 0; h < 42; h++) {
 								Result[h] = " ";
 							}
 							Result[33] = tempLink;
@@ -783,14 +781,14 @@ public class Main56_QBOne {
 						writrintExcel();
 
 						// result array clear
-						for (h = 0; h < 40; h++) {
+						for (h = 0; h < 42; h++) {
 							Result[h] = " ";
 						}
 						h = 0;
 					} catch (Exception e) {
 						// Write the data into excel
 						// result array clear
-						for (h = 0; h < 40; h++) {
+						for (h = 0; h < 42; h++) {
 							Result[h] = " ";
 						}
 						Result[33] = tempLink;
@@ -841,7 +839,7 @@ public class Main56_QBOne {
 					// writrintExcel();
 					Thread.sleep(10000);
 					int h;
-					for (h = 0; h < 40; h++) {
+					for (h = 0; h < 42; h++) {
 						Result[h] = " ";
 					}
 					h = 0;
@@ -987,7 +985,7 @@ public class Main56_QBOne {
 
 			// Get article category
 			try {
-				Result[6] = webDriver.findElement(By.xpath("//*[text()='文献类型:']/following-sibling::span")).getText();
+				Result[6] = webDriver.findElement(By.xpath("//*[text()='文献类型:']/..")).getText().substring(5);
 			} catch (Exception e) {
 				Result[6] = "";
 			}
@@ -1035,7 +1033,7 @@ public class Main56_QBOne {
 			}
 
 			// Get the corresponding address
-			try {
+			try {				
 				List<WebElement> addressItem = webDriver.findElements(
 						By.xpath("//span[contains(text(), '通讯作者地址:')]/../following-sibling::table/tbody/tr"));
 				for (WebElement tkk3 : addressItem) {
@@ -1045,8 +1043,7 @@ public class Main56_QBOne {
 						Result[9] = tkk3.getText();
 					}
 				}
-				Result[8] = Result[8].substring(2).replace('\n', ' ');
-				;
+				Result[8] = Result[8].replace('\n', ' ');
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1123,7 +1120,7 @@ public class Main56_QBOne {
 						}
 					}
 					if (Result[11].length() > 0)
-						Result[11] = Result[11].substring(2);
+						// Result[11] = Result[11].substring(2);
 					Result[11] = Result[11].replace('\n', ' ');
 					;
 				} catch (Exception e1) {
@@ -1151,7 +1148,7 @@ public class Main56_QBOne {
 					Result[12] = fdi.findElement(By.cssSelector("#show_fund_blurb")).getText();
 					Result[12] = Result[12].replace('\n', ' ');
 				} catch (Exception e) {
-					Result[12] = "";
+					Result[12] = "-"; 
 				}
 			}
 
@@ -1243,6 +1240,23 @@ public class Main56_QBOne {
 					Result[18] = "";
 				}
 			}
+			
+			// Get the reference number
+			try {
+				WebElement tl = webDriver.findElement(By.cssSelector(".cited-ref-separator > h2"));
+				Result[40] = tl.getText().substring(9);
+			} catch (Exception e) {
+				Result[40] = "";
+			}
+			
+			// Get the PUPA
+			try {
+				WebElement tl = webDriver.findElement(By.xpath("//*[text()='出版商']/.."));
+				Result[41] = tl.getText().substring(4);
+			} catch (Exception e) {
+				Result[41] = "";
+			}
+			
 			return 1;
 		} catch (Exception e) {
 			return 0;
@@ -1256,11 +1270,11 @@ public class Main56_QBOne {
 				+ source_SearchYearFrom + "\t" + source_SearchYearTo + "\t" + Result[0] + "\t" + Result[1] + "\t"
 				+ Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t" + Result[5] + "\t" + Result[6] + "\t"
 				+ Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t" + Result[10] + "\t" + Result[11] + "\t"
-				+ Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t" + Result[16] + "\t"
-				+ Result[17] + "\t" + Result[18] + "\t" + Result[19] + "\t" + Result[20] + "\t" + Result[21] + "\t"
-				+ Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t" + Result[25] + "\t" + Result[26] + "\t"
-				+ Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t" + Result[30] + "\t" + Result[31] + "\t"
-				+ Result[32] + "\t" + Result[33]);
+				+ Result[12] + "\t" + Result[40] + "\t" + Result[13] + "\t" + Result[14] + "\t" + Result[15] + "\t"
+				+ Result[16] + "\t" + Result[41] + "\t" + Result[17] + "\t" + Result[18] + "\t" + Result[19] + "\t"
+				+ Result[20] + "\t" + Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t"
+				+ Result[25] + "\t" + Result[26] + "\t" + Result[27] + "\t" + Result[28] + "\t" + Result[29] + "\t"
+				+ Result[30] + "\t" + Result[31] + "\t" + Result[32]);
 		writer.flush();
 	}
 
