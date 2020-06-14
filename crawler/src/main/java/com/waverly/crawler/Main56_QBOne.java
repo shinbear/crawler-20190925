@@ -56,6 +56,7 @@ public class Main56_QBOne {
 	public static ButtonGroup jRadioGroup = new ButtonGroup();
 	public static JTextField recordFrom = new JTextField("");
 	public static JTextField recordTo = new JTextField("");
+	public static JTextField startPage = new JTextField("");
 
 	public static String URL = "";
 	public static String q;
@@ -103,7 +104,8 @@ public class Main56_QBOne {
 	public static String Result[] = new String[40];
 
 	public static String tempLink = "";
-
+	public static String tempTitle = "";
+	public static String current_url = "";
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -132,7 +134,7 @@ public class Main56_QBOne {
 			sheet = book.getSheet(0);
 			rowid_Total = sheet.getRows();
 
-			URL = "http://apps.webofknowledge.com/WOS_AdvancedSearch_input.do?SID=8DEJ9qRQSdW6p6ieIOa&product=WOS&search_mode=AdvancedSearch";
+			URL = "http://stpaper.cn/knowledgePush/emeb/database.htm";
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
 			// modify the download path
@@ -144,7 +146,7 @@ public class Main56_QBOne {
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			// lanunch the webdriver
-			// webDriver.get(URL);
+			webDriver.get(URL);
 
 			// Input the query condition
 			Thread.sleep(3000);
@@ -171,6 +173,11 @@ public class Main56_QBOne {
 				System.exit(0);
 				return;
 			}
+
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			Thread.sleep(3000);
+			webDriver.switchTo().window(tabs.get(0));
+			tabs = null;
 
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 20);
@@ -300,6 +307,19 @@ public class Main56_QBOne {
 									}
 									Thread.sleep(30000);
 									continue;
+								} else if (status == 4) {
+									// Status is 3 means the search has error
+									int h;
+									for (h = 0; h < 40; h++) {
+										Result[h] = "FA";
+									}
+									h = 0;
+									writrintExcel();
+									for (h = 0; h < 40; h++) {
+										Result[h] = "";
+									}
+									Thread.sleep(30000);
+									continue;
 								} else {
 									try {
 										webDriver.navigate().refresh();
@@ -346,6 +366,20 @@ public class Main56_QBOne {
 										}
 										Thread.sleep(30000);
 										continue;
+									} else if (status == 4) {
+										// Status is 3 means the search has
+										// error
+										int h;
+										for (h = 0; h < 40; h++) {
+											Result[h] = "FA";
+										}
+										h = 0;
+										writrintExcel();
+										for (h = 0; h < 40; h++) {
+											Result[h] = "";
+										}
+										Thread.sleep(30000);
+										continue;
 									} else {
 										throw new Exception("throw error");
 									}
@@ -358,14 +392,15 @@ public class Main56_QBOne {
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = " ";
+							Result[h] = "SEER1";
 						}
 						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
 						tempLink = "";
-						Thread.sleep(30000);
+						e1.printStackTrace();
+						continue;
 					}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -384,7 +419,7 @@ public class Main56_QBOne {
 					// result array clear
 					int h;
 					for (h = 0; h < 40; h++) {
-						Result[h] = " ";
+						Result[h] = "SEER2";
 					}
 					Result[33] = tempLink;
 					h = 0;
@@ -409,7 +444,6 @@ public class Main56_QBOne {
 			JOptionPane.showMessageDialog(frame, "Downloading over. Data ready in " + filename.getText() + ".xls");
 			webDriver.close();
 		} catch (Exception e2) {
-			System.out.print(e2);
 			writer.close();
 			JOptionPane.showMessageDialog(null, e2.getMessage());
 		}
@@ -516,7 +550,9 @@ public class Main56_QBOne {
 			String searchResultNo = "";
 
 			try {
-				if (webDriver.findElement(By.cssSelector(".errorText")).getText().contains("检索错误")) {
+				if (webDriver.findElement(By.cssSelector(".errorText")).getText().contains("zh_CN")) {
+					return 4;
+				} else if (webDriver.findElement(By.cssSelector(".errorText")).getText().length() > 0) {
 					return 3;
 				}
 			} catch (Exception e1) {
@@ -545,17 +581,6 @@ public class Main56_QBOne {
 			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
-			// result array clear
-			int h;
-			for (h = 0; h < 40; h++) {
-				Result[h] = " ";
-			}
-			Result[33] = tempLink;
-			h = 0;
-			writrintExcel();
-			Result[33] = "";
-			tempLink = "";
-			System.out.print(e2);
 			return 0;
 		}
 	}
@@ -582,7 +607,7 @@ public class Main56_QBOne {
 			try {
 				webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 				// Waiting for element for 10 seconds
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
+				WebDriverWait wait = new WebDriverWait(webDriver, 40);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));
 
 				// Get the result number
@@ -606,12 +631,29 @@ public class Main56_QBOne {
 						if (searchCount > 3) {
 							Thread.sleep(10000);
 						}
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+						h = 0;
 						return 0;
 					} else {
 						searchCount = 0;
 						pages = Integer.parseInt(pc_string);
-						if (pages >= 300) {
-							pages = 300;
+						if (pages > 100) {
+							int h;
+							for (h = 0; h < 40; h++) {
+								Result[h] = "OT";
+							}
+							h = 0;
+							writrintExcel();
+							for (h = 0; h < 40; h++) {
+								Result[h] = "";
+							}
+							searchCount++;
+							if (searchCount > 3) {
+								Thread.sleep(10000);
+							}
+							return 1;
 						}
 					}
 				} else {
@@ -627,6 +669,10 @@ public class Main56_QBOne {
 					}
 					h = 0;
 					writrintExcel();
+					for (h = 0; h < 40; h++) {
+						Result[h] = "";
+					}
+					h = 0;
 					return 0;
 				}
 				// If the result is too less, then sleep 15 seconds
@@ -638,22 +684,45 @@ public class Main56_QBOne {
 				// result array clear
 				int h;
 				for (h = 0; h < 40; h++) {
-					Result[h] = " ";
+					Result[h] = "ER";
 				}
 				Result[33] = tempLink;
 				h = 0;
 				writrintExcel();
 				Result[33] = "";
 				tempLink = "";
-				Thread.sleep(3000);
+				Thread.sleep(30000);
 				return 0;
 			}
 
 			total = pages;
 			dataProgress.setPanel(total, page, row, sim_row);
 
+			// Count the start page
+			int startPageNum;
+			if (!startPage.getText().equals("")) {
+				startPageNum = Integer.parseInt(startPage.getText());
+			} else {
+				startPageNum = 1;
+			}
+			page = page + startPageNum;
+			dataProgress.setPanel(total, page, row, sim_row);
+
+			if (startPageNum != 1) {
+				WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
+				next.click();
+				// Waiting for element for 10 seconds
+				WebDriverWait wait = new WebDriverWait(webDriver, 40);
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));
+				String current_url = webDriver.getCurrentUrl();
+				String cut_url = current_url.substring(0, current_url.lastIndexOf("=") + 1);
+				webDriver.get(cut_url + String.valueOf(startPageNum));
+			}
+			WebDriverWait wait = new WebDriverWait(webDriver, 40);
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));
+
 			// Loop in pages
-			for (int k = 0; k < pages; k++) {
+			for (int k = startPageNum - 1; k < pages; k++) {
 				page++;
 
 				// Close detail page return the list page
@@ -672,41 +741,45 @@ public class Main56_QBOne {
 				tabs = null;
 				Thread.sleep(4000);
 				// Waiting for element for 10 seconds
-				WebDriverWait wait = new WebDriverWait(webDriver, 10);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".search-results")));
 				WebElement ta = webDriver.findElement(By.cssSelector(".search-results"));
 				List<WebElement> tb = ta.findElements(By.cssSelector(".search-results-item"));
 
 				// Get row loop
 				for (WebElement tbb : tb) {
-					tabs = new ArrayList<String>(webDriver.getWindowHandles());
-					if (tabs.size() > 1) {
-						for (int a = tabs.size(); a > 1; a--) {
-							if (a > 2) {
-								webDriver.switchTo().window(tabs.get(a - 1));
-								Thread.sleep(500);
-								webDriver.close();
-							}
-						}
-						webDriver.switchTo().window(tabs.get(1));
-					}
-					tabs = null;
-
-					row++;
-					// result array clear
-					int h;
-					for (h = 0; h < 40; h++) {
-						Result[h] = " ";
-					}
-					h = 0;
-
 					try {
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								if (a > 2) {
+									webDriver.switchTo().window(tabs.get(a - 1));
+									Thread.sleep(500);
+									webDriver.close();
+								}
+							}
+							webDriver.switchTo().window(tabs.get(1));
+						}
+						tabs = null;
+
+						row++;
+						// result array clear
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = " ";
+						}
+						h = 0;
+
 						// Get the result row
 						List<WebElement> tc = tbb.findElements(By.cssSelector(".search-results-content"));
 
 						// Title
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
 						Result[3] = titleItem.getText();
+						tempTitle = Result[3];
+
+						/// Get the record link
+						String detailrecord = titleItem.getAttribute("href");
+						tempLink = detailrecord;
 
 						/*
 						 * author List<WebElement> authorItem =
@@ -720,68 +793,174 @@ public class Main56_QBOne {
 							List<WebElement> td = tc.get(i).findElements(By.cssSelector("div"));
 							for (j = 0; j < td.size(); j++) {
 								if (td.get(j).getText().contains("出版年")) {
-									String sourceStr = td.get(j).getText();
+									String sourceStr;
+									try {
+										sourceStr = td.get(j).getText();
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										sourceStr = "";
+										e.printStackTrace();
+									}
 									// Journal
-									Result[4] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
-											.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
+									try {
+										Result[4] = sourceStr.substring(0, sourceStr.indexOf("卷:"))
+												.replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										Result[4] = "";
+										e.printStackTrace();
+									}
 									// Publish Year
-									String publishDate, publishYear, publishmonth;
-									publishDate = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
-									// match year format
-									Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
-									Matcher matcher = pattern.matcher(publishDate);
-									publishmonth = matcher.replaceAll("");
-									publishYear = publishDate
-											.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
-									Result[22] = publishYear;
-									Result[21] = publishmonth;
+									try {
+										String publishDate, publishYear, publishmonth;
+										publishDate = sourceStr.substring(sourceStr.indexOf("出版年: ") + 4);
+										// match year format
+										Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
+										Matcher matcher = pattern.matcher(publishDate);
+										publishmonth = matcher.replaceAll("");
+										publishYear = publishDate
+												.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
+										Result[22] = publishYear;
+										Result[21] = publishmonth;
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										Result[22] = "";
+										Result[21] = "";
+										e.printStackTrace();
+									}
 
 								}
 							}
 						}
 
 						// Being cite of web science
-						WebElement beingCiteItem = tbb.findElement(By.cssSelector(".search-results-data-cite"));
-						WebElement beingCiteItem_remove = webDriver
-								.findElement(By.cssSelector(".search-results-data-cite .en_data_bold"));
-						String beingCiteStr = beingCiteItem.getText().substring(0,
-								beingCiteItem.getText().indexOf(beingCiteItem_remove.getText()));
-						// Remove the characters
-						Pattern pattern = Pattern.compile("[^0-9]");
-						Matcher matcher = pattern.matcher(beingCiteStr);
-						Result[13] = matcher.replaceAll("");
+						try {
+							WebElement beingCiteItem = tbb.findElement(By.cssSelector(".search-results-data-cite"));
+							WebElement beingCiteItem_remove = webDriver
+									.findElement(By.cssSelector(".search-results-data-cite .en_data_bold"));
+							String beingCiteStr = beingCiteItem.getText().substring(0,
+									beingCiteItem.getText().indexOf(beingCiteItem_remove.getText()));
+							// Remove the characters
+							Pattern pattern = Pattern.compile("[^0-9]");
+							Matcher matcher = pattern.matcher(beingCiteStr);
+							Result[13] = matcher.replaceAll("");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							Result[13] = "";
+							e.printStackTrace();
+						}
 
 						// Open the detail record page
-						String detailrecord = titleItem.getAttribute("href");
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-						Thread.sleep(3500);
 						try {
-							tempLink = detailrecord;
 							executor.executeScript("window.open('" + detailrecord + "')");
-							Thread.sleep(1000);
+
+							// Switch to detail page
+							tabs = new ArrayList<String>(webDriver.getWindowHandles());
+							if (tabs.size() > 1) {
+								for (int a = tabs.size(); a > 1; a--) {
+									if (a > 3) {
+										webDriver.switchTo().window(tabs.get(a - 1));
+										try {
+											Thread.sleep(500);
+										} catch (Exception e2) {
+										}
+										webDriver.close();
+									}
+								}
+								webDriver.switchTo().window(tabs.get(2));
+							}
+							tabs = null;
+
+							try {
+								Thread.sleep(4000);
+							} catch (InterruptedException e3) {
+								// TODO Auto-generated catch block
+								e3.printStackTrace();
+							}
+
+							wait = new WebDriverWait(webDriver, 40);
+							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+									By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
+
 							int detailStatus;
 							detailStatus = getDetail(webDriver);
-							if (detailStatus == 2) {
+							if (detailStatus == 0) {
 								webDriver.switchTo().window(tabs.get(2));
+								Thread.sleep(30000);
 								webDriver.navigate().refresh();
-								getDetail(webDriver);
+								detailStatus = getDetail(webDriver);
+								if (detailStatus == 0) {
+									webDriver.switchTo().window(tabs.get(2));
+									Thread.sleep(90000);
+									webDriver.navigate().refresh();
+									detailStatus = getDetail(webDriver);
+									if (detailStatus == 0) {
+										throw new Exception("throw error");
+									}
+								}
 							}
 						} catch (Exception e3) {
-							// result array clear
-							for (h = 0; h < 40; h++) {
-								Result[h] = " ";
+							Thread.sleep(600000);
+							// Re lanunch the webdriver2
+							// Initialize chrome drive in Seleuium
+							System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
+							// modify the download path
+							DesiredCapabilities caps = setDownloadsPath();
+
+							ChromeOptions options = new ChromeOptions();
+							options.addArguments("--lang=zh-cn");
+
+							WebDriver webDriver2 = new ChromeDriver(options);
+							// WebDriver webDriver = new ChromeDriver(caps);
+							webDriver2.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+							try {
+								// Open the detail record page
+								JavascriptExecutor executor2 = (JavascriptExecutor) webDriver2;
+								// Open the detail record page
+								executor2.executeScript("window.open('" + tempLink + "')");
+								int detailStatus;
+								detailStatus = getDetail(webDriver2);
+								// If get detailrecord fail, then throw error
+								if (detailStatus == 0) {
+									for (h = 0; h < 40; h++) {
+										Result[h] = "ROWER1";
+									}
+									Result[33] = tempLink;
+									Result[3] = tempTitle;
+									h = 0;
+								}
+								webDriver2.quit();
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								// result array clear
+								for (h = 0; h < 40; h++) {
+									Result[h] = "ROWER1";
+								}
+								Result[33] = tempLink;
+								Result[3] = tempTitle;
+								h = 0;
+								webDriver2.quit();
+								e.printStackTrace();
 							}
-							Result[33] = tempLink;
-							h = 0;
-							writrintExcel();
-							Result[33] = "";
-							tempLink = "";
-							continue;
 						}
 
 						// Write the data into excel
 						writrintExcel();
-
+						tempLink = "";
+						tempTitle = "";
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								if (a > 2) {
+									webDriver.switchTo().window(tabs.get(a - 1));
+									Thread.sleep(500);
+									webDriver.close();
+								}
+							}
+							webDriver.switchTo().window(tabs.get(1));
+						}
+						tabs = null;
 						// result array clear
 						for (h = 0; h < 40; h++) {
 							Result[h] = " ";
@@ -790,14 +969,18 @@ public class Main56_QBOne {
 					} catch (Exception e) {
 						// Write the data into excel
 						// result array clear
+						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = " ";
+							Result[h] = "ROWER2";
 						}
 						Result[33] = tempLink;
+						Result[3] = tempTitle;
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
+						Result[3] = "";
 						tempLink = "";
+						tempTitle = "";
 
 						// Close the detail page and return the list
 						// page
@@ -813,7 +996,7 @@ public class Main56_QBOne {
 							webDriver.switchTo().window(tabs.get(1));
 						}
 						tabs = null;
-						continue;
+						return 0;
 					}
 				}
 
@@ -832,20 +1015,26 @@ public class Main56_QBOne {
 				}
 				tabs = null;
 
-				// get the next page
+				// get the next page if it is not last page
 				int turnpage = 0;
-				try {
-					WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
-					next.click();
-				} catch (Exception e3) {
-					// writrintExcel();
-					Thread.sleep(10000);
-					int h;
-					for (h = 0; h < 40; h++) {
-						Result[h] = " ";
+				if (k < pages - 1) {
+					try {
+						WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
+						next.click();
+					} catch (Exception e3) {
+						// writrintExcel();
+						Thread.sleep(10000);
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = "TurnPageWR";
+						}
+						writrintExcel();
+						for (h = 0; h < 40; h++) {
+							Result[h] = "";
+						}
+						h = 0;
+						return 0;
 					}
-					h = 0;
-					return 0;
 				}
 			}
 			Thread.sleep(3000);
@@ -897,44 +1086,92 @@ public class Main56_QBOne {
 			}
 
 			try {
+				// Get publish year
+				try {
+					WebElement publishYearElement = webDriver
+							.findElement(By.xpath("//*[text()='出版年:']/following-sibling::value"));
+					String publishDate, publishYear, publishmonth;
+					publishDate = publishYearElement.getText();
+					// match year format
+					Pattern pattern = Pattern.compile("(19|20)[0-9]{2}");
+					Matcher matcher = pattern.matcher(publishDate);
+					publishmonth = matcher.replaceAll("");
+					publishYear = publishDate.substring(publishDate.indexOf(publishmonth) + publishmonth.length());
+					Result[22] = publishYear;
+					Result[21] = publishmonth;
+				} catch (Exception e) {
+					Result[22] = " ";
+					Result[21] = " ";
+				}
+
+				// Get Volume
+				try {
+					WebElement volumeElement = webDriver.findElement(By.xpath("//*[text()='卷:']/.."));
+					Result[4] = volumeElement.getText().replaceAll("卷:", "");
+				} catch (Exception e) {
+					Result[4] = " ";
+				}
+
 				// Get the author‘s short & full names
 				String authorCombine = "";
 				String authorShortName = "";
 				String authorFullName = "";
-				WebElement authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
-				authorCombine = authorItem.getText();
+				WebElement authorItem;
+				List<WebElement> authorItemList = webDriver.findElements(By.xpath("//*[text()='作者:']/.."));
 
-				if (authorCombine.contains("更多内容")) {
-					authorItem.findElement(By.cssSelector("#show_more_authors_authors_txt_label")).click();
+				if (authorItemList.size() < 2) {
+					// Single author label
+					authorItem = webDriver.findElements(By.xpath("//*[text()='作者:']/..")).get(0);
+					authorCombine = authorItem.getText();
+					if (authorCombine.contains("更多内容")) {
+						authorItem.findElement(By.cssSelector("#show_more_authors_authors_txt_label")).click();
 
-				}
+					}
 
-				authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
-				authorCombine = authorItem.getText();
-				if (authorCombine.contains("...更少内容")) {
-					authorCombine = authorCombine.substring(0, authorCombine.indexOf("...更少内容"));
-				}
-				// get the full & short names
-				Pattern pattern = Pattern.compile("\\(.*?\\)|\\[.*?\\]");
-				Matcher matcher = pattern.matcher(authorCombine);
+					authorCombine = authorItem.getText();
+					if (authorCombine.contains("...更少内容")) {
+						authorCombine = authorCombine.substring(0, authorCombine.indexOf("...更少内容"));
+					}
+					// get the full & short names
+					Pattern pattern = Pattern.compile("\\(.*?\\)|\\[.*?\\]");
+					Matcher matcher = pattern.matcher(authorCombine);
 
-				while (matcher.find()) {
-					for (int i = 0; i <= matcher.groupCount(); i++) {
-						if (matcher.group(i).subSequence(0, 1).equals("[")) {
-							authorFullName = authorFullName + " " + matcher.group(i);
-						} else {
-							authorFullName = authorFullName + ";" + matcher.group(i);
+					while (matcher.find()) {
+						for (int i = 0; i <= matcher.groupCount(); i++) {
+							if (matcher.group(i).subSequence(0, 1).equals("[")) {
+								authorFullName = authorFullName + " " + matcher.group(i);
+							} else {
+								authorFullName = authorFullName + ";" + matcher.group(i);
+							}
 						}
 					}
+					authorFullName = authorFullName.substring(1).replaceAll("\\(|\\)", "");
+					authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");
+					if (FRLabelStr.contains("团体作者:")) {
+						WebElement authorGroupItem = webDriver.findElement(By.xpath("//*[text()='团体作者:']/.."));
+						authorFullName = authorFullName + "||" + authorGroupItem.getText();
+					}
+					Result[1] = authorShortName.replace('\n', ' ').replace("作者:", "");
+					Result[2] = authorFullName.replace('\n', ' ');
+				} else {
+					// double author label
+					authorItem = webDriver.findElements(By.xpath("//*[text()='作者:']/..")).get(1);
+					authorCombine = authorItem.getText();
+
+					if (authorCombine.contains("更多内容")) {
+						authorItem.findElement(By.cssSelector("#show_more_authors_authors_txt_label")).click();
+
+					}
+
+					authorCombine = authorItem.getText();
+					if (authorCombine.contains("...更少内容")) {
+						authorCombine = authorCombine.substring(0, authorCombine.indexOf("...更少内容"));
+					}
+
+					Result[1] = "";
+					Result[2] = authorCombine.replace('\n', ' ').replace("作者:", "");
 				}
-				authorFullName = authorFullName.substring(1).replaceAll("\\(|\\)", "");
-				authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");
-				if (FRLabelStr.contains("团体作者:")) {
-					WebElement authorGroupItem = webDriver.findElement(By.xpath("//*[text()='团体作者:']/.."));
-					authorFullName = authorFullName + "||" + authorGroupItem.getText();
-				}
-				Result[1] = authorShortName.replace('\n', ' ').replace("作者:", "");
-				Result[2] = authorFullName.replace('\n', ' ');
+
 			} catch (Exception e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -955,15 +1192,29 @@ public class Main56_QBOne {
 				WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷:']/following-sibling::value"));
 				Result[23] = volumeStr.getText();
 			} catch (Exception e) {
-				Result[23] = " ";
+				try {
+					WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷:']/.."));
+					Result[23] = volumeStr.getText();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					Result[23] = "";
+					e1.printStackTrace();
+				}
 			}
 
 			// Get phase
 			try {
 				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));
-				Result[24] = "期: " + phaseStr.getText();
+				Result[24] = "*" + phaseStr.getText();
 			} catch (Exception e) {
-				Result[24] = " ";
+				try {
+					WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/.."));
+					Result[24] = "*" + phaseStr.getText();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					Result[24] = "";
+					e1.printStackTrace();
+				}
 			}
 
 			// Get page
@@ -1008,10 +1259,13 @@ public class Main56_QBOne {
 				try {
 					List<WebElement> tk = webDriver
 							.findElements(By.xpath("//*[text()='作者关键词:']/../following-sibling::a"));
+					if (tk.size() == 0) {
+						tk = webDriver.findElements(By.xpath("//*[text()='作者关键词:']/.."));
+					}
 					for (WebElement tkk : tk) {
 						keywordsStr = keywordsStr + ";" + tkk.getText();
 					}
-					keywordsStr = keywordsStr.substring(1);
+					keywordsStr = keywordsStr.substring(1).replace("作者关键词:", "");
 				} catch (Exception e) {
 					keywordsStr = "";
 				}
@@ -1029,24 +1283,29 @@ public class Main56_QBOne {
 				} catch (Exception e) {
 					keywordsPlusStr = "";
 				}
-				Result[7] = keywordsStr + ";" + keywordsPlusStr;
-				Result[7] = Result[7].substring(1).replace('\n', ' ');
-				;
 			}
+			Result[7] = keywordsStr + ";" + keywordsPlusStr;
+			Result[7] = Result[7].replace('\n', ' ');
 
 			// Get the corresponding address
 			try {
 				List<WebElement> addressItem = webDriver.findElements(
 						By.xpath("//span[contains(text(), '通讯作者地址:')]/../following-sibling::table/tbody/tr"));
-				for (WebElement tkk3 : addressItem) {
-					if (tkk3.getText().substring(0, 1).equals("[")) {
-						Result[8] = Result[8] + "||" + tkk3.getText();
-					} else {
-						Result[9] = tkk3.getText();
+				if (addressItem.size() != 0) {
+					for (WebElement tkk3 : addressItem) {
+						if (tkk3.getText().substring(0, 1).equals("[")) {
+							Result[8] = Result[8] + "||" + tkk3.getText();
+						} else {
+							Result[9] = tkk3.getText();
+						}
+					}
+					Result[8] = Result[8].substring(2).replace('\n', ' ');
+				} else {
+					addressItem = webDriver.findElements(By.xpath("//*[text()='地址:']/following-sibling::value"));
+					for (int k = 0; k < addressItem.size(); k++) {
+						Result[8] = Result[8] + "||" + addressItem.get(k).getText();
 					}
 				}
-				Result[8] = Result[8].substring(2).replace('\n', ' ');
-				;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1128,6 +1387,13 @@ public class Main56_QBOne {
 					;
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
+					try {
+						Result[11] = webDriver.findElement(By.xpath("//*[text()='基金资助致谢']/..")).getText();
+						Result[11] = "|" + Result[11].substring(Result[11].indexOf("基金资助致谢") + 7);
+					} catch (Exception e2) {
+						// TODO Auto-generated catch block
+						Result[11] = "";
+					}
 					e1.printStackTrace();
 				}
 			}
