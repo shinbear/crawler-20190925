@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,18 +16,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
-import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -37,12 +34,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -57,6 +51,7 @@ public class Main55_W_Lu0303 {
 	public static ButtonGroup jRadioGroup = new ButtonGroup();
 	public static JTextField recordFrom = new JTextField("");
 	public static JTextField recordTo = new JTextField("");
+	public static JTextField startPage = new JTextField("");
 
 	public static String URL = "";
 	public static String q;
@@ -100,9 +95,10 @@ public class Main55_W_Lu0303 {
 	public static boolean isPatentPage = false;
 	public static boolean isFirstSearch = true;
 	public static String Result[] = new String[40];
-	
-	public static String tempLink= "";
-	public static String tempTitle= "";
+
+	public static String tempLink = "";
+	public static String tempTitle = "";
+	public static String current_url = "";
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -139,16 +135,39 @@ public class Main55_W_Lu0303 {
 
 			ChromeOptions options = new ChromeOptions();
 			options.addArguments("--lang=zh-cn");
+
 			WebDriver webDriver = new ChromeDriver(options);
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			// lanunch the webdriver
 			webDriver.get(URL);
-			// WebElement focus_element = webDriver.findElement(By.linkText("Web
-			// of Science Core Collection"));
-			// focus_element.click();
-			// webDriver.get("");
+			// Input the query condition
 			Thread.sleep(3000);
+			ArrayList<String> tabs;
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			if (tabs.size() > 1) {
+				for (int a = tabs.size(); a > 1; a--) {
+					webDriver.switchTo().window(tabs.get(a - 1));
+					Thread.sleep(500);
+					webDriver.close();
+				}
+				webDriver.switchTo().window(tabs.get(0));
+			}
+			tabs = null;
+			webDriver.findElement(By.linkText("Web of Science Core Collection")).click();
+			Thread.sleep(3000);
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			webDriver.switchTo().window(tabs.get(0));
+			webDriver.close();
+			tabs = new ArrayList<String>(webDriver.getWindowHandles());
+			Thread.sleep(3000);
+			webDriver.switchTo().window(tabs.get(0));
+
+			WebElement searchElement = webDriver.findElement(By.cssSelector("ul.searchtype-nav"));
+			searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
+
+			// Get the serarch page URL
+			current_url = webDriver.getCurrentUrl();
 
 			// Show the dialog to wait
 			int res = JOptionPane.showConfirmDialog(null, "Waiting for you access the advanced search page", " ",
@@ -162,9 +181,6 @@ public class Main55_W_Lu0303 {
 				return;
 			}
 
-			// Input the query condition
-			ArrayList<String> tabs;
-			tabs = new ArrayList<String>(webDriver.getWindowHandles());
 			webDriver.switchTo().window(tabs.get(0));
 			tabs = null;
 
@@ -233,7 +249,7 @@ public class Main55_W_Lu0303 {
 						// write the excel the top item
 						writer.println(toptitle);
 					}
-					
+
 					try {
 						// Remain the search page
 						tabs = new ArrayList<String>(webDriver.getWindowHandles());
@@ -246,7 +262,7 @@ public class Main55_W_Lu0303 {
 							webDriver.switchTo().window(tabs.get(0));
 						}
 						tabs = null;
-						
+
 						int status = searchName(webDriver);
 						if (status == 1) {
 							// Get the item name
@@ -278,8 +294,7 @@ public class Main55_W_Lu0303 {
 							}
 							Thread.sleep(30000);
 							continue;
-						} 
-						else if (status == 4) {
+						} else if (status == 4) {
 							// Status is 3 means the search has error
 							int h;
 							for (h = 0; h < 40; h++) {
@@ -292,8 +307,7 @@ public class Main55_W_Lu0303 {
 							}
 							Thread.sleep(30000);
 							continue;
-						}
-						else {
+						} else {
 							try {
 								webDriver.navigate().refresh();
 							} catch (Exception e) {
@@ -332,14 +346,13 @@ public class Main55_W_Lu0303 {
 								h = 0;
 								writrintExcel();
 								Result[33] = "";
-								tempLink= "";
+								tempLink = "";
 								for (h = 0; h < 40; h++) {
 									Result[h] = "";
 								}
 								Thread.sleep(30000);
 								continue;
-							} 
-							else if (status == 4) {
+							} else if (status == 4) {
 								// Status is 3 means the search has error
 								int h;
 								for (h = 0; h < 40; h++) {
@@ -352,23 +365,38 @@ public class Main55_W_Lu0303 {
 								}
 								Thread.sleep(30000);
 								continue;
-							}
-							else {
+							} else {
 								throw new Exception("throw error");
-								}
 							}
-						} catch (Exception e1) {
-							Thread.sleep(60000);
-						// result array clear
+						}
+					} catch (Exception e1) {
+						Thread.sleep(60000);
+						// Close tabs other than 1st page
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								webDriver.switchTo().window(tabs.get(a - 1));
+								Thread.sleep(500);
+								webDriver.close();
+							}
+							webDriver.switchTo().window(tabs.get(0));
+						}
+						tabs = null;
+
+						// lanunch the webdriver
+						// webDriver.get(current_url);
+						Thread.sleep(3000);
 						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = "SEER";
+							Result[h] = "SEER1";
 						}
 						Result[33] = tempLink;
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
-						tempLink= "";
+						tempLink = "";
+						e1.printStackTrace();
+						continue;
 					}
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -387,13 +415,13 @@ public class Main55_W_Lu0303 {
 					// result array clear
 					int h;
 					for (h = 0; h < 40; h++) {
-						Result[h] = "SEER";
+						Result[h] = "SEER2";
 					}
 					Result[33] = tempLink;
 					h = 0;
 					writrintExcel();
 					Result[33] = "";
-					tempLink= "";
+					tempLink = "";
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -436,24 +464,23 @@ public class Main55_W_Lu0303 {
 			((JavascriptExecutor) webDriver).executeScript(js3, element);
 
 			// Year range from to
-				Thread.sleep(1000);
-				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));
-				yearRange.selectByIndex(6);
-				WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
-				List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
-				tss.get(0).click();
-				Thread.sleep(500);
-				WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
-				yearFrom.clear();
-				yearFrom.sendKeys(time_from);
-				yearFrom.sendKeys(Keys.ENTER);
-				tss.get(1).click();
-				Thread.sleep(500);
-				WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
-				yearTo.clear();
-				yearTo.sendKeys(time_to);
-				yearTo.sendKeys(Keys.ENTER);
-
+			Thread.sleep(1000);
+			Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));
+			yearRange.selectByIndex(6);
+			WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
+			List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
+			tss.get(0).click();
+			Thread.sleep(500);
+			WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
+			yearFrom.clear();
+			yearFrom.sendKeys(time_from);
+			yearFrom.sendKeys(Keys.ENTER);
+			tss.get(1).click();
+			Thread.sleep(500);
+			WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
+			yearTo.clear();
+			yearTo.sendKeys(time_to);
+			yearTo.sendKeys(Keys.ENTER);
 
 			if (isFirstSearch) {
 				try {
@@ -604,7 +631,7 @@ public class Main55_W_Lu0303 {
 					} else {
 						searchCount = 0;
 						pages = Integer.parseInt(pc_string);
-						if (pages >100) {
+						if (pages > 100) {
 							int h;
 							for (h = 0; h < 40; h++) {
 								Result[h] = "OT";
@@ -663,8 +690,31 @@ public class Main55_W_Lu0303 {
 			total = pages;
 			dataProgress.setPanel(total, page, row, sim_row);
 
+			// Count the start page
+			int startPageNum;
+			if (!startPage.getText().equals("")) {
+				startPageNum = Integer.parseInt(startPage.getText());
+			} else {
+				startPageNum = 1;
+			}
+			page = page + startPageNum;
+			dataProgress.setPanel(total, page, row, sim_row);
+
+			if (startPageNum != 1) {
+				WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
+				next.click();
+				// Waiting for element for 10 seconds
+				WebDriverWait wait = new WebDriverWait(webDriver, 40);
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));
+				String current_url = webDriver.getCurrentUrl();
+				String cut_url = current_url.substring(0, current_url.lastIndexOf("=") + 1);
+				webDriver.get(cut_url + String.valueOf(startPageNum));
+			}
+			WebDriverWait wait = new WebDriverWait(webDriver, 40);
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));
+
 			// Loop in pages
-			for (int k = 0; k < pages; k++) {
+			for (int k = startPageNum - 1; k < pages; k++) {
 				page++;
 
 				// Close detail page return the list page
@@ -683,7 +733,6 @@ public class Main55_W_Lu0303 {
 				tabs = null;
 				Thread.sleep(4000);
 				// Waiting for element for 10 seconds
-				WebDriverWait wait = new WebDriverWait(webDriver, 40);
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".search-results")));
 				WebElement ta = webDriver.findElement(By.cssSelector(".search-results"));
 				List<WebElement> tb = ta.findElements(By.cssSelector(".search-results-item"));
@@ -719,11 +768,11 @@ public class Main55_W_Lu0303 {
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
 						Result[3] = titleItem.getText();
 						tempTitle = Result[3];
-						
+
 						/// Get the record link
 						String detailrecord = titleItem.getAttribute("href");
 						tempLink = detailrecord;
-						
+
 						/*
 						 * author List<WebElement> authorItem =
 						 * tc.get(1).findElements(By.cssSelector("a[title]"));
@@ -797,7 +846,7 @@ public class Main55_W_Lu0303 {
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						try {
 							executor.executeScript("window.open('" + detailrecord + "')");
-							
+
 							// Switch to detail page
 							tabs = new ArrayList<String>(webDriver.getWindowHandles());
 							if (tabs.size() > 1) {
@@ -821,11 +870,11 @@ public class Main55_W_Lu0303 {
 								// TODO Auto-generated catch block
 								e3.printStackTrace();
 							}
-							
+
 							wait = new WebDriverWait(webDriver, 40);
 							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 									By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
-							
+
 							int detailStatus;
 							detailStatus = getDetail(webDriver);
 							if (detailStatus == 0) {
@@ -844,26 +893,57 @@ public class Main55_W_Lu0303 {
 								}
 							}
 						} catch (Exception e3) {
-							// result array clear
-							for (h = 0; h < 40; h++) {
-								Result[h] = "ROWER";
+							Thread.sleep(600000);
+							// Re lanunch the webdriver2
+							// Initialize chrome drive in Seleuium
+							System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
+							// modify the download path
+							DesiredCapabilities caps = setDownloadsPath();
+
+							ChromeOptions options = new ChromeOptions();
+							options.addArguments("--lang=zh-cn");
+
+							WebDriver webDriver2 = new ChromeDriver(options);
+							// WebDriver webDriver = new ChromeDriver(caps);
+							webDriver2.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+							try {
+								// Open the detail record page
+								JavascriptExecutor executor2 = (JavascriptExecutor) webDriver2;
+								// Open the detail record page
+								executor2.executeScript("window.open('" + tempLink + "')");
+								int detailStatus;
+								detailStatus = getDetail(webDriver2);
+								webDriver2.quit();
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								// result array clear
+								for (h = 0; h < 40; h++) {
+									Result[h] = "ROWER1";
+								}
+								Result[33] = tempLink;
+								Result[3] = tempTitle;
+								h = 0;
+								webDriver2.quit();
+								e.printStackTrace();
 							}
-							Result[33] = tempLink;
-							Result[3] = tempTitle;					
-							h = 0;
-							writrintExcel();
-							Result[33] = "";
-							Result[3] = "";
-							tempLink= "";
-							tempTitle = "";
-							continue;
 						}
 
 						// Write the data into excel
 						writrintExcel();
 						tempLink = "";
 						tempTitle = "";
-
+						tabs = new ArrayList<String>(webDriver.getWindowHandles());
+						if (tabs.size() > 1) {
+							for (int a = tabs.size(); a > 1; a--) {
+								if (a > 2) {
+									webDriver.switchTo().window(tabs.get(a - 1));
+									Thread.sleep(500);
+									webDriver.close();
+								}
+							}
+							webDriver.switchTo().window(tabs.get(1));
+						}
+						tabs = null;
 						// result array clear
 						for (h = 0; h < 40; h++) {
 							Result[h] = " ";
@@ -874,15 +954,15 @@ public class Main55_W_Lu0303 {
 						// result array clear
 						int h;
 						for (h = 0; h < 40; h++) {
-							Result[h] = "ROWER";
+							Result[h] = "ROWER2";
 						}
 						Result[33] = tempLink;
-						Result[3] = tempTitle;		
+						Result[3] = tempTitle;
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
 						Result[3] = "";
-						tempLink= "";
+						tempLink = "";
 						tempTitle = "";
 
 						// Close the detail page and return the list
@@ -899,7 +979,7 @@ public class Main55_W_Lu0303 {
 							webDriver.switchTo().window(tabs.get(1));
 						}
 						tabs = null;
-						continue;
+						return 0;
 					}
 				}
 
@@ -938,7 +1018,7 @@ public class Main55_W_Lu0303 {
 						h = 0;
 						return 0;
 					}
-				}				
+				}
 			}
 			Thread.sleep(3000);
 			return 1;
@@ -1378,6 +1458,8 @@ public class Main55_W_Lu0303 {
 		panel.add(recordFrom);
 		panel.add(new JLabel("To:"));
 		panel.add(recordTo);
+		panel.add(new JLabel("Start Page:"));
+		panel.add(startPage);
 
 		int result = JOptionPane.showConfirmDialog(null, panel, "web of science - Search Criteria", 2, -1);
 		if (result == 0) {
