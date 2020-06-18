@@ -70,7 +70,7 @@ public class Createwebdriver {
 		ChromeOptions options = new ChromeOptions();
 		options.setExperimentalOption("prefs", chromePrefs);
 		DesiredCapabilities caps = new DesiredCapabilities();
-		caps.setCapability(ChromeOptions.CAPABILITY, options);
+		caps.setCapability(ChromeOptions.CAPABILITY, options);;
 		return caps;
 	}
 
