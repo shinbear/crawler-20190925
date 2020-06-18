@@ -19,11 +19,11 @@ import com.stock.ReadProgress;
 
 import org.openqa.selenium.WebElement;
 
-public class Stock01 {
-	public static ArrayList<String> currTrantd = new ArrayList<>();
-	public static ArrayList<String> hisTrantd = new ArrayList<>();
-	public static ArrayList<String> cuposTrantd = new ArrayList<>();
-	public static ArrayList<String> hisposTrantd = new ArrayList<>();
+public class Stock {
+	public static ArrayList<String> currTrantd = new ArrayList<String>();
+	public static ArrayList<String> hisTrantd = new ArrayList<String>();
+	public static ArrayList<String> cuposTrantd = new ArrayList<String>();
+	public static ArrayList<String> hisposTrantd = new ArrayList<String>();
 	public static ArrayList<String> uniquevalues = new ArrayList<String>();
 	public static String currStr = "";
 	public static String posStr = "";
