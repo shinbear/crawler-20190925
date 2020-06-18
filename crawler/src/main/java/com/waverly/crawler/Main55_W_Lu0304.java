@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,18 +16,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
-import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -37,12 +34,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Select;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -51,13 +45,13 @@ public class Main55_W_Lu0304 {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
-	public static JTextField filename = new JTextField("Jobs");	
-	public static JRadioButton jRadio1 = new JRadioButton("Run all records",true);
+	public static JTextField filename = new JTextField("Jobs");
+	public static JRadioButton jRadio1 = new JRadioButton("Run all records", true);
 	public static JRadioButton jRadio2 = new JRadioButton("Run the specific records from- to");
 	public static ButtonGroup jRadioGroup = new ButtonGroup();
 	public static JTextField recordFrom = new JTextField("");
 	public static JTextField recordTo = new JTextField("");
-	
+
 	public static String URL = "";
 	public static String q;
 	public static String dcs;
@@ -73,22 +67,22 @@ public class Main55_W_Lu0304 {
 	private static int row = 0;
 	private static int sim_row = 0;
 	public static String auadQuery = "";
-	//The content read from Excel
-	public static String  ID= "";
-	public static String  Name= "";
-	public static String  LastName= "";
-	public static String  FirstName= "";
-	public static String  DissertationYear= "";
-	public static String  DissertationInstitution= "";
-	public static String  DissertationInstitution_WOS= "";
-	public static String  CurrentAffilication= "";
-	public static String  CurrentAffilication_WOS= "";
-	public static String  ProgramYear= "";
-	public static String  ProgramAffication= "";
-	public static String  ProgramAffication_WOS= "";
-	public static String  SearchKeywords= "";
-	public static String  YearFrom= "";
-	public static String  YearTo= "";
+	// The content read from Excel
+	public static String ID = "";
+	public static String Name = "";
+	public static String LastName = "";
+	public static String FirstName = "";
+	public static String DissertationYear = "";
+	public static String DissertationInstitution = "";
+	public static String DissertationInstitution_WOS = "";
+	public static String CurrentAffilication = "";
+	public static String CurrentAffilication_WOS = "";
+	public static String ProgramYear = "";
+	public static String ProgramAffication = "";
+	public static String ProgramAffication_WOS = "";
+	public static String SearchKeywords = "";
+	public static String YearFrom = "";
+	public static String YearTo = "";
 
 	public static String author = "";
 	public static String authorOrg = "";
@@ -103,9 +97,9 @@ public class Main55_W_Lu0304 {
 	public static boolean isPatentPage = false;
 	public static boolean isFirstSearch = true;
 	public static String Result[] = new String[40];
-	
-	public static String tempLink= "";
-	public static String tempTitle= "";
+
+	public static String tempLink = "";
+	public static String tempTitle = "";
 	/*
 	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
 	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
@@ -116,8 +110,8 @@ public class Main55_W_Lu0304 {
 	public static String easyflag = "";
 
 	public static void main(String[] args) throws IOException {
-		try {		
-			System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
+		try {
+			System.out.println("用户的当前工作目录:" + System.getProperty("user.dir"));
 			input();
 			if (filename.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Please enter the file path.");
@@ -137,7 +131,7 @@ public class Main55_W_Lu0304 {
 			URL = "https://www.lib.umd.edu/dbfinder/id/UMD04150";
 			// Initialize chrome drive in Seleuium
 			System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
-			//modify the download path	
+			// modify the download path
 			DesiredCapabilities caps = setDownloadsPath();
 
 			ChromeOptions options = new ChromeOptions();
@@ -145,13 +139,14 @@ public class Main55_W_Lu0304 {
 			WebDriver webDriver = new ChromeDriver(options);
 			// WebDriver webDriver = new ChromeDriver(caps);
 			webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-			// lanunch the webdriver 
-			// webDriver.get(URL);		
-			// WebElement focus_element = webDriver.findElement(By.linkText("Web of Science Core Collection"));
+			// lanunch the webdriver
+			// webDriver.get(URL);
+			// WebElement focus_element = webDriver.findElement(By.linkText("Web
+			// of Science Core Collection"));
 			// focus_element.click();
 			// webDriver.get("");
 			Thread.sleep(3000);
-			
+
 			// Show the dialog to wait
 			int res = JOptionPane.showConfirmDialog(null, "Waiting for you access the advanced search page", " ",
 					JOptionPane.YES_NO_OPTION);
@@ -169,7 +164,7 @@ public class Main55_W_Lu0304 {
 			tabs = new ArrayList<String>(webDriver.getWindowHandles());
 			webDriver.switchTo().window(tabs.get(0));
 			tabs = null;
-			
+
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 20);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\'value(input1)\']")));
@@ -194,7 +189,7 @@ public class Main55_W_Lu0304 {
 					+ "\tTI\tSO\tLA\tDT\tID\tC1\tRP\tEM\tFU\tFX\tTC\tZ9\tU1\tU2\tSN\t"
 					+ "EI\tJ9\tJI\tPD\tPY\tVL\tIS\tBP\tEP\tDI\tWC\tSC\tGA\tUT\tPM";
 			writer.println(toptitle);
-			
+
 			int startRow, endRow;
 			if (jRadio1.isSelected()) {
 				startRow = 1;
@@ -235,9 +230,9 @@ public class Main55_W_Lu0304 {
 						// write the excel the top item
 						writer.println(toptitle);
 					}
-					
+
 					try {
-						//Remain the search page
+						// Remain the search page
 						tabs = new ArrayList<String>(webDriver.getWindowHandles());
 						if (tabs.size() > 1) {
 							for (int a = tabs.size(); a > 1; a--) {
@@ -248,7 +243,7 @@ public class Main55_W_Lu0304 {
 							webDriver.switchTo().window(tabs.get(0));
 						}
 						tabs = null;
-						
+
 						int status = searchName(webDriver);
 						if (status == 1) {
 							// Get the item name
@@ -280,8 +275,7 @@ public class Main55_W_Lu0304 {
 							}
 							Thread.sleep(30000);
 							continue;
-						} 
-						else if (status == 4) {
+						} else if (status == 4) {
 							// Status is 3 means the search has error
 							int h;
 							for (h = 0; h < 40; h++) {
@@ -294,8 +288,7 @@ public class Main55_W_Lu0304 {
 							}
 							Thread.sleep(30000);
 							continue;
-						}
-						else {
+						} else {
 							try {
 								webDriver.navigate().refresh();
 							} catch (Exception e) {
@@ -334,14 +327,13 @@ public class Main55_W_Lu0304 {
 								h = 0;
 								writrintExcel();
 								Result[33] = "";
-								tempLink= "";
+								tempLink = "";
 								for (h = 0; h < 40; h++) {
 									Result[h] = "";
 								}
 								Thread.sleep(30000);
 								continue;
-							} 
-							else if (status == 4) {
+							} else if (status == 4) {
 								// Status is 3 means the search has error
 								int h;
 								for (h = 0; h < 40; h++) {
@@ -354,8 +346,7 @@ public class Main55_W_Lu0304 {
 								}
 								Thread.sleep(30000);
 								continue;
-							}
-							else {
+							} else {
 								throw new Exception("throw error");
 
 							}
@@ -401,7 +392,7 @@ public class Main55_W_Lu0304 {
 					h = 0;
 					writrintExcel();
 					Result[33] = "";
-					tempLink= "";
+					tempLink = "";
 					Thread.sleep(30000);
 					tabs = new ArrayList<String>(webDriver.getWindowHandles());
 					if (tabs.size() > 1) {
@@ -437,34 +428,33 @@ public class Main55_W_Lu0304 {
 			WebElement author_input = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
 			author_input.clear();
 			author_input.sendKeys(searchQuery);
-			
-			//scroll to the element
+
+			// scroll to the element
 			String js3 = "arguments[0].scrollIntoView();";
 			WebElement element = webDriver.findElement(By.xpath("//*[@id=\'value(input1)\']"));
 			((JavascriptExecutor) webDriver).executeScript(js3, element);
 
 			Thread.sleep(1000);
 			// Year range from to
-				Thread.sleep(1000);
-				Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));				
-				yearRange.selectByIndex(6);
-				WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
-				List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
-				tss.get(0).click();
-				Thread.sleep(500);
-				WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
-				yearFrom.clear();			
-				yearFrom.sendKeys(YearFrom);
-				yearFrom.sendKeys(Keys.ENTER);
-				tss.get(1).click();
-				Thread.sleep(500);
-				WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
-				yearTo.clear();
-				yearTo.sendKeys(YearTo);	
-				yearTo.sendKeys(Keys.ENTER);
-				Thread.sleep(200);
+			Thread.sleep(1000);
+			Select yearRange = new Select(webDriver.findElement(By.cssSelector(".j-custom-select-yeardropdown")));
+			yearRange.selectByIndex(6);
+			WebElement timeSpan = webDriver.findElement(By.cssSelector(".timespan_custom"));
+			List<WebElement> tss = timeSpan.findElements(By.cssSelector(".select2-container--yeardropdown"));
+			tss.get(0).click();
+			Thread.sleep(500);
+			WebElement yearFrom = webDriver.findElement(By.cssSelector(".select2-search__field"));
+			yearFrom.clear();
+			yearFrom.sendKeys(YearFrom);
+			yearFrom.sendKeys(Keys.ENTER);
+			tss.get(1).click();
+			Thread.sleep(500);
+			WebElement yearTo = webDriver.findElement(By.cssSelector(".select2-search__field"));
+			yearTo.clear();
+			yearTo.sendKeys(YearTo);
+			yearTo.sendKeys(Keys.ENTER);
+			Thread.sleep(200);
 
-								
 			if (isFirstSearch) {
 				try {
 					Thread.sleep(3000);
@@ -492,16 +482,16 @@ public class Main55_W_Lu0304 {
 					webDriver.findElement(By.cssSelector("#SearchHistoryTableBanner + table"))
 							.findElement(By.cssSelector("[title='选择所有检索式']")).click();
 					webDriver.findElement(By.cssSelector("#SearchHistoryTableBanner + table"))
-					.findElement(By.cssSelector("#deleteTop")).click();
+							.findElement(By.cssSelector("#deleteTop")).click();
 				}
 			} catch (Exception e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-			
+
 			// Click "search" button
 			((ChromeDriver) webDriver).findElementByXPath("//*[@id='search-button']").click();
-			
+
 			// Waiting for the result for 10 seconds
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".historyResults")));
 
@@ -521,17 +511,17 @@ public class Main55_W_Lu0304 {
 			tabs.clear();
 
 			JavascriptExecutor executor = (JavascriptExecutor) webDriver;
-			String searchlink="";
-			String searchResultNo = ""; 
-			
+			String searchlink = "";
+			String searchResultNo = "";
+
 			try {
 				if (webDriver.findElement(By.cssSelector(".errorText")).getText().length() > 0) {
 					return 3;
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			}	
-			
+			}
+
 			try {
 				searchResultNo = webDriver.findElements(By.cssSelector(".historyResults")).get(0).getText();
 				if (!searchResultNo.equals("0")) {
@@ -581,8 +571,8 @@ public class Main55_W_Lu0304 {
 				webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 				// Waiting for element for 10 seconds
 				WebDriverWait wait = new WebDriverWait(webDriver, 40);
-				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));			
-				
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));
+
 				// Get the result number
 				String pc_string = webDriver.findElement(By.cssSelector("#pageCount\\.top")).getText();
 				// Remove the characters
@@ -595,9 +585,9 @@ public class Main55_W_Lu0304 {
 						pages = 0;
 						// result array clear
 						int h;
-						for (h = 0; h < 40; h++) {									
-							Result[h] = "0";								
-						}	
+						for (h = 0; h < 40; h++) {
+							Result[h] = "0";
+						}
 						h = 0;
 						writrintExcel();
 						searchCount++;
@@ -624,9 +614,9 @@ public class Main55_W_Lu0304 {
 					}
 					// result array clear
 					int h;
-					for (h = 0; h < 40; h++) {									
-						Result[h] = "0";								
-					}	
+					for (h = 0; h < 40; h++) {
+						Result[h] = "0";
+					}
 					h = 0;
 					writrintExcel();
 					for (h = 0; h < 40; h++) {
@@ -650,7 +640,7 @@ public class Main55_W_Lu0304 {
 				h = 0;
 				writrintExcel();
 				Result[33] = "";
-				tempLink= "";
+				tempLink = "";
 				Thread.sleep(30000);
 				return 0;
 			}
@@ -658,7 +648,7 @@ public class Main55_W_Lu0304 {
 			total = pages;
 			dataProgress.setPanel(total, page, row, sim_row);
 
-			//Loop in pages
+			// Loop in pages
 			for (int k = 0; k < pages; k++) {
 				page++;
 
@@ -679,7 +669,7 @@ public class Main55_W_Lu0304 {
 				Thread.sleep(4000);
 				// Waiting for element for 10 seconds
 				WebDriverWait wait = new WebDriverWait(webDriver, 40);
-				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".search-results")));	
+				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".search-results")));
 				WebElement ta = webDriver.findElement(By.cssSelector(".search-results"));
 				List<WebElement> tb = ta.findElements(By.cssSelector(".search-results-item"));
 
@@ -699,13 +689,13 @@ public class Main55_W_Lu0304 {
 						}
 						tabs = null;
 
-					row++;
-					// result array clear
-					int h;
-					for (h = 0; h < 40; h++) {									
-						Result[h] = " ";								
-					}	
-					h = 0;
+						row++;
+						// result array clear
+						int h;
+						for (h = 0; h < 40; h++) {
+							Result[h] = " ";
+						}
+						h = 0;
 
 						// Get the result row
 						List<WebElement> tc = tbb.findElements(By.cssSelector(".search-results-content"));
@@ -714,11 +704,11 @@ public class Main55_W_Lu0304 {
 						WebElement titleItem = tbb.findElement(By.cssSelector("a.smallV110"));
 						Result[3] = titleItem.getText();
 						tempTitle = Result[3];
-						
+
 						/// Get the record link
 						String detailrecord = titleItem.getAttribute("href");
 						tempLink = detailrecord;
-						
+
 						/*
 						 * author List<WebElement> authorItem =
 						 * tc.get(1).findElements(By.cssSelector("a[title]"));
@@ -792,7 +782,7 @@ public class Main55_W_Lu0304 {
 						JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 						try {
 							executor.executeScript("window.open('" + detailrecord + "')");
-							
+
 							// Switch to detail page
 							tabs = new ArrayList<String>(webDriver.getWindowHandles());
 							if (tabs.size() > 1) {
@@ -816,11 +806,11 @@ public class Main55_W_Lu0304 {
 								// TODO Auto-generated catch block
 								e3.printStackTrace();
 							}
-							
+
 							wait = new WebDriverWait(webDriver, 40);
 							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 									By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
-							
+
 							int detailStatus;
 							detailStatus = getDetail(webDriver);
 							if (detailStatus == 0) {
@@ -844,12 +834,12 @@ public class Main55_W_Lu0304 {
 								Result[h] = "ROWER";
 							}
 							Result[33] = tempLink;
-							Result[3] = tempTitle;					
+							Result[3] = tempTitle;
 							h = 0;
 							writrintExcel();
 							Result[33] = "";
 							Result[3] = "";
-							tempLink= "";
+							tempLink = "";
 							tempTitle = "";
 							continue;
 						}
@@ -860,9 +850,9 @@ public class Main55_W_Lu0304 {
 						tempTitle = "";
 
 						// result array clear
-						for (h = 0; h < 40; h++) {									
-							Result[h] = " ";								
-						}	
+						for (h = 0; h < 40; h++) {
+							Result[h] = " ";
+						}
 						h = 0;
 					} catch (Exception e) {
 						// Write the data into excel
@@ -872,12 +862,12 @@ public class Main55_W_Lu0304 {
 							Result[h] = "ROWER";
 						}
 						Result[33] = tempLink;
-						Result[3] = tempTitle;		
+						Result[3] = tempTitle;
 						h = 0;
 						writrintExcel();
 						Result[33] = "";
 						Result[3] = "";
-						tempLink= "";
+						tempLink = "";
 						tempTitle = "";
 
 						// Close the detail page and return the list
@@ -933,7 +923,7 @@ public class Main55_W_Lu0304 {
 						h = 0;
 						return 0;
 					}
-				}				
+				}
 			}
 			Thread.sleep(3000);
 			return 1;
@@ -973,7 +963,7 @@ public class Main55_W_Lu0304 {
 			WebDriverWait wait = new WebDriverWait(webDriver, 40);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
 					By.xpath("//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value")));
-			
+
 			if (webDriver.findElement(By.cssSelector("#hidden_section_label")).getText().contains("查看更多数据字段")) {
 				// see more
 				try {
@@ -983,14 +973,14 @@ public class Main55_W_Lu0304 {
 					e1.printStackTrace();
 				}
 			}
-			
+
 			// Gether FR_label
-			List<WebElement> FRLabel =  webDriver.findElements(By.cssSelector(".FR_label"));
+			List<WebElement> FRLabel = webDriver.findElements(By.cssSelector(".FR_label"));
 			ArrayList<String> FRLabelStr = new ArrayList<String>();
 			for (WebElement FRLabellist : FRLabel) {
 				FRLabelStr.add(FRLabellist.getText());
 			}
-			
+
 			try {
 				// Get the author‘s short & full names
 				String authorCombine = "";
@@ -998,22 +988,22 @@ public class Main55_W_Lu0304 {
 				String authorFullName = "";
 				WebElement authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
 				authorCombine = authorItem.getText();
-				
+
 				if (authorCombine.contains("更多内容")) {
 					authorItem.findElement(By.cssSelector("#show_more_authors_authors_txt_label")).click();
 
 				}
-				
+
 				authorItem = webDriver.findElement(By.xpath("//*[text()='作者:']/.."));
 				authorCombine = authorItem.getText();
 				if (authorCombine.contains("...更少内容")) {
 					authorCombine = authorCombine.substring(0, authorCombine.indexOf("...更少内容"));
 				}
-					
+
 				// get the full & short names
 				Pattern pattern = Pattern.compile("\\(.*?\\)|\\[.*?\\]");
 				Matcher matcher = pattern.matcher(authorCombine);
-				
+
 				while (matcher.find()) {
 					for (int i = 0; i <= matcher.groupCount(); i++) {
 						if (matcher.group(i).subSequence(0, 1).equals("[")) {
@@ -1024,11 +1014,11 @@ public class Main55_W_Lu0304 {
 					}
 				}
 				authorFullName = authorFullName.substring(1).replaceAll("\\(|\\)", "");
-				authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");				
+				authorShortName = matcher.replaceAll("").replaceAll("  ; ", ";");
 				if (FRLabelStr.contains("团体作者:")) {
 					WebElement authorGroupItem = webDriver.findElement(By.xpath("//*[text()='团体作者:']/.."));
 					authorFullName = authorFullName + "||" + authorGroupItem.getText();
-				}				
+				}
 				Result[1] = authorShortName.replace('\n', ' ').replace("作者:", "");
 				Result[2] = authorFullName.replace('\n', ' ');
 			} catch (Exception e2) {
@@ -1044,7 +1034,7 @@ public class Main55_W_Lu0304 {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-								
+
 			// Get Volume
 			try {
 				WebElement volumeStr = webDriver.findElement(By.xpath("//*[text()='卷:']/following-sibling::value"));
@@ -1052,15 +1042,15 @@ public class Main55_W_Lu0304 {
 			} catch (Exception e) {
 				Result[23] = " ";
 			}
-			
+
 			// Get phase
 			try {
-				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));			
+				WebElement phaseStr = webDriver.findElement(By.xpath("//*[text()='期:']/following-sibling::value"));
 				Result[24] = "*" + phaseStr.getText();
 			} catch (Exception e) {
 				Result[24] = " ";
 			}
-			 
+
 			// Get page
 			try {
 				WebElement pageStr = webDriver.findElement(By.xpath("//*[text()='页:']/following-sibling::value"));
@@ -1070,8 +1060,8 @@ public class Main55_W_Lu0304 {
 			} catch (Exception e) {
 				Result[25] = "";
 				Result[26] = "";
-			}	
-			
+			}
+
 			// Get the all being cite
 			try {
 				WebElement beCite = webDriver.findElement(By.xpath("//*[text()=' / 所有数据库']"));
@@ -1079,14 +1069,14 @@ public class Main55_W_Lu0304 {
 			} catch (Exception e) {
 				Result[14] = "";
 			}
-			
+
 			// Get article category
 			try {
-				Result[6]= webDriver.findElement(By.xpath("//*[text()='文献类型:']/following-sibling::span")).getText();
+				Result[6] = webDriver.findElement(By.xpath("//*[text()='文献类型:']/following-sibling::span")).getText();
 			} catch (Exception e) {
 				Result[6] = "";
-			}		
-			
+			}
+
 			// Get the DOI
 			if (FRLabelStr.contains("DOI:")) {
 				try {
@@ -1096,7 +1086,7 @@ public class Main55_W_Lu0304 {
 					Result[27] = "";
 				}
 			}
-			
+
 			// get author keywords & keywords plus
 			String keywordsStr = "";
 			if (FRLabelStr.contains("作者关键词:")) {
@@ -1128,7 +1118,7 @@ public class Main55_W_Lu0304 {
 				Result[7] = Result[7].substring(1).replace('\n', ' ');
 				;
 			}
-			
+
 			// Get the corresponding address
 			try {
 				List<WebElement> addressItem = webDriver.findElements(
@@ -1140,14 +1130,15 @@ public class Main55_W_Lu0304 {
 						Result[9] = tkk3.getText();
 					}
 				}
-				Result[8] = Result[8].substring(2).replace('\n',' ');;
+				Result[8] = Result[8].substring(2).replace('\n', ' ');
+				;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Result[8] = "";
 				Result[9] = "";
 			}
-			
+
 			// scroll to the element of "email address" title
 			try {
 				String js4 = "arguments[0].scrollIntoView();";
@@ -1155,7 +1146,7 @@ public class Main55_W_Lu0304 {
 				((JavascriptExecutor) webDriver).executeScript(js4, element);
 			} catch (Exception e) {
 			}
-			
+
 			// Get email address
 			try {
 				List<WebElement> temail = webDriver
@@ -1166,21 +1157,21 @@ public class Main55_W_Lu0304 {
 			} catch (Exception e) {
 				Result[10] = "";
 			}
-					
+
 			// Get the being cite 180days&since 2013
 			WebElement sideBar = webDriver.findElement(By.cssSelector("#sidebar-container"));
-						
+
 			try {
-				List<WebElement> tbs = sideBar.findElements(
-						By.xpath("//*[text()='在 Web of Science 中 使用次数']/../following-sibling::div/div"));
+				List<WebElement> tbs = sideBar
+						.findElements(By.xpath("//*[text()='在 Web of Science 中 使用次数']/../following-sibling::div/div"));
 				Result[15] = tbs.get(0).getText();
 				Result[16] = tbs.get(1).getText();
 
 			} catch (Exception e) {
 				Result[15] = "";
 				Result[16] = "";
-			}		
-			
+			}
+
 			// Get the fund organization & authorized codes
 			// Gether title3
 			List<WebElement> title3 = webDriver.findElements(By.cssSelector(".title3"));
@@ -1188,7 +1179,7 @@ public class Main55_W_Lu0304 {
 			for (WebElement title3list : title3) {
 				title3Str.add(title3list.getText());
 			}
-			
+
 			if (title3Str.contains("基金资助致谢")) {
 				try {
 					List<WebElement> tfd = webDriver
@@ -1225,7 +1216,7 @@ public class Main55_W_Lu0304 {
 					e1.printStackTrace();
 				}
 			}
-			     		
+
 			// scroll to the element of fund assistant information
 			if (title3Str.contains("基金资助致谢")) {
 				try {
@@ -1235,8 +1226,8 @@ public class Main55_W_Lu0304 {
 				} catch (Exception e) {
 				}
 			}
-			
-			// Get the fund assistant information 
+
+			// Get the fund assistant information
 			if (title3Str.contains("基金资助致谢")) {
 				try {
 					webDriver.findElement(By.xpath("//*[contains(text(), '查看基金资助信息')]")).click();
@@ -1248,8 +1239,8 @@ public class Main55_W_Lu0304 {
 					Result[12] = "";
 				}
 			}
-			
-			// scroll to the element of "类别 / 分类" 
+
+			// scroll to the element of "类别 / 分类"
 			if (title3Str.contains("类别 / 分类")) {
 				try {
 					String js6 = "arguments[0].scrollIntoView();";
@@ -1258,8 +1249,8 @@ public class Main55_W_Lu0304 {
 				} catch (Exception e) {
 				}
 			}
-			
-			// Get the research direction 
+
+			// Get the research direction
 			if (FRLabelStr.contains("研究方向:")) {
 				try {
 					WebElement tl = webDriver.findElement(By.xpath("//*[text()='研究方向:']/.."));
@@ -1268,8 +1259,8 @@ public class Main55_W_Lu0304 {
 					Result[29] = "";
 				}
 			}
-			
-			// Get the Web of Science category 
+
+			// Get the Web of Science category
 			if (FRLabelStr.contains("Web of Science 类别:")) {
 				try {
 					WebElement tl = webDriver.findElement(By.xpath("//*[text()='Web of Science 类别:']/.."));
@@ -1278,7 +1269,7 @@ public class Main55_W_Lu0304 {
 					Result[28] = "";
 				}
 			}
-			
+
 			// Get language
 			try {
 				WebElement tl = webDriver.findElement(By.xpath("//*[text()='语言:']/.."));
@@ -1286,7 +1277,7 @@ public class Main55_W_Lu0304 {
 			} catch (Exception e) {
 				Result[5] = "";
 			}
-			
+
 			// Get ru zang number
 			if (FRLabelStr.contains("入藏号:")) {
 				try {
@@ -1296,7 +1287,7 @@ public class Main55_W_Lu0304 {
 					Result[31] = "";
 				}
 			}
-			
+
 			// Get IDS number
 			if (FRLabelStr.contains("IDS 号:")) {
 				try {
@@ -1306,7 +1297,7 @@ public class Main55_W_Lu0304 {
 					Result[30] = "";
 				}
 			}
-			
+
 			// Get PubMed ID
 			if (FRLabelStr.contains("PubMed ID:")) {
 				try {
@@ -1317,7 +1308,7 @@ public class Main55_W_Lu0304 {
 					Result[32] = "";
 				}
 			}
-			
+
 			// Get ISSN:
 			if (FRLabelStr.contains("ISSN:")) {
 				try {
@@ -1327,7 +1318,7 @@ public class Main55_W_Lu0304 {
 					Result[17] = "";
 				}
 			}
-			
+
 			// Get eISSN
 			if (FRLabelStr.contains("eISSN:")) {
 				try {
@@ -1336,12 +1327,12 @@ public class Main55_W_Lu0304 {
 				} catch (Exception e) {
 					Result[18] = "";
 				}
-			}	
-			return 1;			
+			}
+			return 1;
 		} catch (Exception e) {
 			return 0;
 		}
-		
+
 	}
 
 	public static void writrintExcel() throws IOException {
@@ -1364,7 +1355,7 @@ public class Main55_W_Lu0304 {
 		JPanel panel = new JPanel(new GridLayout(0, 1));
 		panel.add(new JLabel("File path to store results (without extention):"));
 		panel.add(filename);
-		
+
 		panel.add(new JLabel("Author name:"));
 		panel.add(jRadio1);
 		panel.add(jRadio2);
@@ -1374,7 +1365,7 @@ public class Main55_W_Lu0304 {
 		panel.add(recordFrom);
 		panel.add(new JLabel("To:"));
 		panel.add(recordTo);
-		
+
 		int result = JOptionPane.showConfirmDialog(null, panel, "web of science - Search Criteria", 2, -1);
 		if (result == 0) {
 			return;
@@ -1454,27 +1445,27 @@ public class Main55_W_Lu0304 {
 			cell15 = sheet.getCell(14, rowid);
 
 			if ("".equals(cell1.getContents()) != true) {
-				ID=cell1.getContents().replace('\n', ' ');
-				Name=cell2.getContents().replace('\n', ' ');
-				LastName=cell3.getContents().replace('\n', ' ');
-				FirstName=cell4.getContents().replace('\n', ' ');
-				DissertationYear=cell5.getContents().replace('\n', ' ');
-				DissertationInstitution=cell6.getContents().replace('\n', ' ');
-				DissertationInstitution_WOS=cell7.getContents().replace('\n', ' ');
-				CurrentAffilication=cell8.getContents().replace('\n', ' ');
-				CurrentAffilication_WOS=cell9.getContents().replace('\n', ' ');
-				ProgramYear=cell10.getContents().replace('\n', ' ');
-				ProgramAffication=cell11.getContents().replace('\n', ' ');
-				ProgramAffication_WOS=cell12.getContents().replace('\n', ' ');
-				SearchKeywords=cell13.getContents().replace('\n', ' ');
-				YearFrom=cell14.getContents().replace('\n', ' ');
-				YearTo=cell15.getContents().replace('\n', ' ');
+				ID = cell1.getContents().replace('\n', ' ');
+				Name = cell2.getContents().replace('\n', ' ');
+				LastName = cell3.getContents().replace('\n', ' ');
+				FirstName = cell4.getContents().replace('\n', ' ');
+				DissertationYear = cell5.getContents().replace('\n', ' ');
+				DissertationInstitution = cell6.getContents().replace('\n', ' ');
+				DissertationInstitution_WOS = cell7.getContents().replace('\n', ' ');
+				CurrentAffilication = cell8.getContents().replace('\n', ' ');
+				CurrentAffilication_WOS = cell9.getContents().replace('\n', ' ');
+				ProgramYear = cell10.getContents().replace('\n', ' ');
+				ProgramAffication = cell11.getContents().replace('\n', ' ');
+				ProgramAffication_WOS = cell12.getContents().replace('\n', ' ');
+				SearchKeywords = cell13.getContents().replace('\n', ' ');
+				YearFrom = cell14.getContents().replace('\n', ' ');
+				YearTo = cell15.getContents().replace('\n', ' ');
 
 			}
 		} catch (Exception e) {
 		}
 	}
-	
+
 	public static DesiredCapabilities setDownloadsPath() {
 		String downloadsPath = "E:\\jobs";
 		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
@@ -1483,6 +1474,7 @@ public class Main55_W_Lu0304 {
 		options.setExperimentalOption("prefs", chromePrefs);
 		DesiredCapabilities caps = new DesiredCapabilities();
 		caps.setCapability(ChromeOptions.CAPABILITY, options);
+		;
 		return caps;
 	}
 }
