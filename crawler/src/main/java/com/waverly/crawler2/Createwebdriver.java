@@ -42,6 +42,7 @@ public class Createwebdriver {
 				webDriver.close();
 			}
 			webDriver.switchTo().window(tabs.get(0));
+			;
 		}
 		tabs = null;
 		webDriver.findElement(By.linkText("Web of Science Core Collection")).click();

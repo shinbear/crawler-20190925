@@ -1561,6 +1561,8 @@ public class Main55_W_Lu0303 {
 		options.setExperimentalOption("prefs", chromePrefs);
 		DesiredCapabilities caps = new DesiredCapabilities();
 		caps.setCapability(ChromeOptions.CAPABILITY, options);
+		;
+		;
 		return caps;
 	}
 }
