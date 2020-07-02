@@ -176,15 +176,35 @@ public class Lu0303 {
 					writer.println(toptitle);
 				}
 
+				// Count the start page
+				int startPageNum;
+				if (!startPage.getText().equals("")) {
+					startPageNum = Integer.parseInt(startPage.getText());
+				} else {
+					startPageNum = 1;
+				}
+				
 				// assign the content to input parameter for runRecord
 				recordlist.clear();
 				recordlist.add(sheet);
 				recordlist.add(rowid);
 				recordlist.add(detailRowid);
 				recordlist.add(webDriver);
+				recordlist.add(startPageNum);
+				
+				//insert the status code into arraylist
+				//0 is the first run, 1 is the normal run, 2 is exception
+				recordlist.add("0");
 
-				// Run the record
-				recordlist = Runwebdriver.runRecord(recordlist);
+				int runflag = 0;
+				
+				do {
+					// Run the record
+					recordlist = Runwebdriver.runRecord(recordlist);
+					runflag = (Integer) recordlist.get(5);
+				} while (runflag == 2);
+				rowid ++;
+				detailRowid=1;
 			}
 			writer.close();
 			JOptionPane.showMessageDialog(frame, "Downloading over. Data ready in " + filename.getText() + ".xls");
