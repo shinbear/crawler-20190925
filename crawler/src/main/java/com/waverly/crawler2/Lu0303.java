@@ -87,6 +87,7 @@ public class Lu0303 {
 	public static Sheet sheet;
 	// Restore the current number of records in a search query
 	public static int detailRowid = 1;
+	public static int runStatus = 0;
 	// Restore the current download info into a arraylist
 	public static ArrayList<Object> recordlist = new ArrayList<Object>();
 	/*
@@ -190,14 +191,12 @@ public class Lu0303 {
 				recordlist.add(rowid);
 				recordlist.add(detailRowid);
 				recordlist.add(webDriver);
-				recordlist.add(startPageNum);
-				
+				recordlist.add(startPageNum);			
 				//insert the status code into arraylist
 				//0 is the first run, 1 is the normal run, 2 is exception
-				recordlist.add("0");
+				recordlist.add(runStatus);
 
-				int runflag = 0;
-				
+				int runflag = 0;				
 				do {
 					// Run the record
 					recordlist = Runwebdriver.runRecord(recordlist);

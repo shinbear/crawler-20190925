@@ -96,7 +96,11 @@ public class Runwebdriver {
 		runStatus = (Integer) recordlist.get(5);
 
 		// if this is the 1st run or runstatus is abnormal, get URL
-		if (recordlist.get(5).toString().equals("0")) {
+		if (runStatus == 0) {
+			webDriverIn = getAdvancedPage();
+		} else if (runStatus == 2) {
+			webDriverIn = (WebDriver) recordlist.get(3);
+			webDriverIn.close();
 			webDriverIn = getAdvancedPage();
 		}
 
@@ -151,11 +155,37 @@ public class Runwebdriver {
 				return webDriver;
 			} else {
 				// Status is else means the exception
+				int h;
+				for (h = 0; h < 40; h++) {
+					Result[h] = "SEER";
+				}
+				h = 0;
+				writrintExcel();
+				Thread.sleep(30000);
+				for (h = 0; h < 40; h++) {
+					Result[h] = "";
+				}
+				h = 0;
 				runStatus = 2;
 				return webDriver;
 			}
 		} catch (Exception e1) {
-			Thread.sleep(60000);
+			int h;
+			for (h = 0; h < 40; h++) {
+				Result[h] = "SEER";
+			}
+			h = 0;
+			try {
+				writrintExcel();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Thread.sleep(30000);
+			for (h = 0; h < 40; h++) {
+				Result[h] = "";
+			}
+			h = 0;
 			runStatus = 2;
 			return webDriver;
 		}
@@ -336,7 +366,6 @@ public class Runwebdriver {
 						h = 0;
 						// run status is normal
 						runStatus = 1;
-
 						writrintExcel();
 						searchCount++;
 						if (searchCount > 3) {
@@ -358,7 +387,6 @@ public class Runwebdriver {
 							h = 0;
 							// run status is normal
 							runStatus = 1;
-
 							writrintExcel();
 							for (h = 0; h < 40; h++) {
 								Result[h] = "";
@@ -427,6 +455,7 @@ public class Runwebdriver {
 			specRow = detailRowidIn % 10;
 			startPageNumIn = specPage;
 
+			// go to the specific page
 			try {
 				if (startPageNumIn != 1) {
 					WebElement next = webDriver.findElement(By.cssSelector("[title='下一页']"));
@@ -442,7 +471,6 @@ public class Runwebdriver {
 				wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#pageCount\\.top")));
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
-
 				int h;
 				for (h = 0; h < 40; h++) {
 					Result[h] = "RESTARTPAGE";
@@ -626,32 +654,32 @@ public class Runwebdriver {
 
 							int detailStatus;
 							detailStatus = getDetail(webDriver);
+							//if read the row data problem, throw exception
 							if (detailStatus == 0) {
-								webDriver.switchTo().window(tabs.get(2));
-								Thread.sleep(30000);
-								webDriver.navigate().refresh();
-								detailStatus = getDetail(webDriver);
-								if (detailStatus == 0) {
-									webDriver.switchTo().window(tabs.get(2));
-									Thread.sleep(90000);
-									webDriver.navigate().refresh();
-									detailStatus = getDetail(webDriver);
-									if (detailStatus == 0) {
-										throw new Exception("throw error");
-									}
+								int j;
+								for (j = 0; j < 40; j++) {
+									Result[j] = "ROWER1";
 								}
+								Result[33] = Integer.toString(pageRowID);
+								j = 0;
+								// run status is abnormal
+								runStatus = 2;
+								writrintExcel();
+								Result[33] = "";
+								return 2;
 							}
 						} catch (Exception e3) {
 							int j;
 							for (j = 0; j < 40; j++) {
 								Result[j] = "ROWER1";
 							}
-							Result[33] = tempLink;
+							Result[33] = Integer.toString(pageRowID);
 							j = 0;
 							// run status is abnormal
 							runStatus = 2;
 							writrintExcel();
 							Result[33] = "";
+							return 2;
 						}
 
 						// Write the data into excel
@@ -684,11 +712,10 @@ public class Runwebdriver {
 						for (j = 0; j < 40; j++) {
 							Result[j] = "ROWER2";
 						}
-						Result[33] = tempLink;
 						j = 0;
 						// run status is abnormal
 						runStatus = 2;
-						Result[33] = tempLink;
+						Result[33] = Integer.toString(pageRowID);
 						Result[3] = tempTitle;
 						writrintExcel();
 						Result[33] = "";
@@ -757,7 +784,7 @@ public class Runwebdriver {
 			Thread.sleep(3000);
 			return 1;
 		} catch (Exception e2) {
-			exceptionCode = 2;
+			runStatus = 2;
 			return 2;
 		}
 	}
@@ -780,13 +807,6 @@ public class Runwebdriver {
 			webDriver.switchTo().window(tabs.get(2));
 		}
 		tabs = null;
-
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e3) {
-			// TODO Auto-generated catch block
-			e3.printStackTrace();
-		}
 
 		try {
 			WebDriverWait wait = new WebDriverWait(webDriver, 40);
@@ -1219,11 +1239,13 @@ public class Runwebdriver {
 		webDriver.switchTo().window(tabs.get(0));
 
 		// Waiting for element for 10 seconds
+		/*
 		WebDriverWait wait = new WebDriverWait(webDriver, 30);
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("ul.searchtype-nav")));
 		WebElement searchElement = webDriver.findElement(By.cssSelector("ul.searchtype-nav"));
 		searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
+		*/
 		return webDriver;
 
 	}
