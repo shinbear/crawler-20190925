@@ -23,7 +23,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-public class Lu0303 {
+public class Lu0303_Waverly {
 	public static int i = 0;
 	public static int j = 0;
 	public static int pages = 0;
