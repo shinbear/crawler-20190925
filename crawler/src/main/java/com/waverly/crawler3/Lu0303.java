@@ -117,10 +117,10 @@ public class Lu0303 {
 			rowid_Total = sheet.getRows();
 
 			// Show the progress
-			dataProgress = new ReadProgress();
-			dataProgress.setVisible(true);
-			Thread thread1 = new Thread(dataProgress);
-			thread1.start();
+			/*
+			 * dataProgress = new ReadProgress(); dataProgress.setVisible(true);
+			 * Thread thread1 = new Thread(dataProgress); thread1.start();
+			 */
 
 			try {
 				writer = new PrintWriter(filename.getText() + "_0" + ".xls", "GB2312");
@@ -159,7 +159,7 @@ public class Lu0303 {
 			// Read the name from exccel sheet
 			for (int i = startRow; i <= endRow; i++) {
 				sim_row = i;
-				dataProgress.setPanel(total, page, row, sim_row);
+				// dataProgress.setPanel(total, page, row, sim_row);
 				rowid = i;
 				readExcel(sheet, rowid);
 				// Split the result file
@@ -184,26 +184,38 @@ public class Lu0303 {
 				} else {
 					startPageNum = 1;
 				}
-				
+
 				// assign the content to input parameter for runRecord
 				recordlist.clear();
 				recordlist.add(sheet);
 				recordlist.add(rowid);
 				recordlist.add(detailRowid);
-				recordlist.add(webDriver);
-				recordlist.add(startPageNum);			
-				//insert the status code into arraylist
-				//0 is the first run, 1 is the normal run, 2 is exception
+				// recordlist.add(webDriver);
+				recordlist.add("webDriverTemp");
+				recordlist.add(startPageNum);
+				// insert the status code into arraylist
+				// 0 is the first run, 1 is the normal run, 2 is exception
 				recordlist.add(runStatus);
+				recordlist.add(writer);
 
-				int runflag = 0;				
+				int runflag = 0;
 				do {
 					// Run the record
 					recordlist = Runwebdriver.runRecord(recordlist);
 					runflag = (Integer) recordlist.get(5);
+
+					// import the parameter
+					sheet = (Sheet) recordlist.get(0);
+					rowid = (Integer) recordlist.get(1);
+					detailRowid = (Integer) recordlist.get(2);
+					// webDriver = (WebDriver) recordlist.get(3);
+					startPageNum = (Integer) recordlist.get(4);
+					runStatus = (Integer) recordlist.get(5);
+					writer = (PrintWriter) recordlist.get(6);
+
 				} while (runflag == 2);
-				rowid ++;
-				detailRowid=1;
+				rowid++;
+				detailRowid = 1;
 			}
 			writer.close();
 			JOptionPane.showMessageDialog(frame, "Downloading over. Data ready in " + filename.getText() + ".xls");
