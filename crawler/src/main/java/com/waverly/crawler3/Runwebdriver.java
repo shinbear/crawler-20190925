@@ -1335,10 +1335,10 @@ public class Runwebdriver {
 
 	public static void writrintExcel() throws IOException {
 		// write into excel
-		writerIn.println(ID + "\t" + PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname + "\t"
-				+ phdu + "\t" + phdyr + "\t" + phd_country + "\t" + search_list + "\t" + time_from + "\t" + time_to
-				+ "\t" + Result[0] + "\t" + Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4] + "\t"
-				+ Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t"
+		writerIn.println(ID + "\t" + "*" + PID + "\t" + name + "\t" + lastname + "\t" + firstname + "\t" + midname
+				+ "\t" + phdu + "\t" + phdyr + "\t" + phd_country + "\t" + search_list + "\t" + time_from + "\t"
+				+ time_to + "\t" + Result[0] + "\t" + Result[1] + "\t" + Result[2] + "\t" + Result[3] + "\t" + Result[4]
+				+ "\t" + Result[5] + "\t" + Result[6] + "\t" + Result[7] + "\t" + Result[8] + "\t" + Result[9] + "\t"
 				+ Result[10] + "\t" + Result[11] + "\t" + Result[12] + "\t" + Result[13] + "\t" + Result[14] + "\t"
 				+ Result[15] + "\t" + Result[16] + "\t" + Result[17] + "\t" + Result[18] + "\t" + Result[19] + "\t"
 				+ Result[20] + "\t" + Result[21] + "\t" + Result[22] + "\t" + Result[23] + "\t" + Result[24] + "\t"
