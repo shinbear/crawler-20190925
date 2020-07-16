@@ -24,7 +24,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import jxl.Cell;
 import jxl.Sheet;
 
-public class Runwebdriver {
+public class Runwebdriver_Waverly {
 	public static String URL = "";
 	public static String current_url = "";
 
@@ -112,6 +112,7 @@ public class Runwebdriver {
 
 		// get advanced page URL
 		getaBlankPage();
+		getAdvancedPage();
 
 		// Run search
 		runSearch();
@@ -221,7 +222,6 @@ public class Runwebdriver {
 	public static int searchName(WebDriver webDriver) throws IOException {
 		try {
 			// Waiting for element for 10 seconds
-
 			WebDriverWait wait = new WebDriverWait(webDriver, 30);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\"value(input1)\"]")));
 
@@ -1348,48 +1348,43 @@ public class Runwebdriver {
 	}
 
 	public static void getAdvancedPage() throws InterruptedException {
-		// Acess the WOS page
-		// URL = "https://www.lib.umd.edu/dbfinder/id/UMD04150";
-		// Initialize chrome drive in Seleuium
-		System.getProperties().setProperty("webdriver.chrome.driver", "chromedriver.exe");
-		// modify the download path
-		DesiredCapabilities caps = setDownloadsPath();
-
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--lang=zh-cn");
-		webDriverIn = new ChromeDriver(options);
-		webDriverIn.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
 		// lanunch the webdriver
 		// webDriver.get(URL);
-		webDriverIn.get("data:,");
+		URL = "https://www.lib.umd.edu/dbfinder/id/UMD04150";
+		webDriverIn.get(URL);
 
-		/*
-		 * // Input the query condition Thread.sleep(3000); ArrayList<String>
-		 * tabs; tabs = new ArrayList<String>(webDriver.getWindowHandles()); if
-		 * (tabs.size() > 1) { for (int a = tabs.size(); a > 1; a--) {
-		 * webDriver.switchTo().window(tabs.get(a - 1)); Thread.sleep(500);
-		 * webDriver.close(); } webDriver.switchTo().window(tabs.get(0)); ; }
-		 * tabs = null; webDriver.findElement(By.linkText(
-		 * "Web of Science Core Collection")).click();
-		 * 
-		 * Thread.sleep(3000); tabs = new
-		 * ArrayList<String>(webDriver.getWindowHandles());
-		 * webDriver.switchTo().window(tabs.get(0)); webDriver.close(); tabs =
-		 * new ArrayList<String>(webDriver.getWindowHandles());
-		 * Thread.sleep(3000); webDriver.switchTo().window(tabs.get(0));
-		 * 
-		 * // Waiting for element for 10 seconds /* WebDriverWait wait = new
-		 * WebDriverWait(webDriver, 30);
-		 * wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.
-		 * cssSelector("ul.searchtype-nav"))); WebElement searchElement =
-		 * webDriver.findElement(By.cssSelector("ul.searchtype-nav"));
-		 * searchElement.findElements(By.cssSelector(
-		 * ".searchtype-sub-nav__list-item")).get(3).click();
-		 * wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.
-		 * cssSelector(".AdvSearchBox")));
-		 */
+		// Waiting for element for 30 seconds
+		WebDriverWait wait = new WebDriverWait(webDriverIn, 30);
 
+		// Input the query condition Thread.sleep(3000);
+		ArrayList<String> tabs;
+		tabs = new ArrayList<String>(webDriverIn.getWindowHandles());
+		if (tabs.size() > 1) {
+			for (int a = tabs.size(); a > 1; a--) {
+				webDriverIn.switchTo().window(tabs.get(a - 1));
+				Thread.sleep(500);
+				webDriverIn.close();
+			}
+			webDriverIn.switchTo().window(tabs.get(0));
+			;
+		}
+		tabs = null;
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.linkText("Web of Science Core Collection")));
+		webDriverIn.findElement(By.linkText("Web of Science Core Collection")).click();
+
+		Thread.sleep(3000);
+		tabs = new ArrayList<String>(webDriverIn.getWindowHandles());
+		webDriverIn.switchTo().window(tabs.get(0));
+		webDriverIn.close();
+		tabs = new ArrayList<String>(webDriverIn.getWindowHandles());
+		Thread.sleep(3000);
+		webDriverIn.switchTo().window(tabs.get(0));
+
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("ul.searchtype-nav")));
+		WebElement searchElement = webDriverIn.findElement(By.cssSelector("ul.searchtype-nav"));
+		searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
+		Thread.sleep(1000);
 	}
 
 	public static void getaBlankPage() throws InterruptedException {

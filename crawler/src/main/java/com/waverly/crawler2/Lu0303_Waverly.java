@@ -201,7 +201,7 @@ public class Lu0303_Waverly {
 				int runflag = 0;
 				do {
 					// Run the record
-					recordlist = Runwebdriver.runRecord(recordlist);
+					recordlist = Runwebdriver_Waverly.runRecord(recordlist);
 					runflag = (Integer) recordlist.get(5);
 
 					// import the parameter
