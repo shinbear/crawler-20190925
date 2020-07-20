@@ -112,7 +112,7 @@ public class Runwebdriver_Waverly {
 
 		// get advanced page URL
 		getaBlankPage();
-		getAdvancedPage2();
+		getAdvancedPage();
 
 		// Run search
 		runSearch();
@@ -1442,17 +1442,17 @@ public class Runwebdriver_Waverly {
 
 		// get into wos
 		try {
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("ul.searchtype-nav")));
-			WebElement searchElement = webDriverIn.findElement(By.cssSelector("ul.searchtype-nav"));
-			searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy((By.linkText("高级检索"))));
+			WebElement searchElement = webDriverIn.findElement(By.linkText("高级检索"));
+			searchElement.click();
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			String wosURL = webDriverIn.getCurrentUrl();
 			webDriverIn.get(wosURL);
-			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("ul.searchtype-nav")));
-			WebElement searchElement = webDriverIn.findElement(By.cssSelector("ul.searchtype-nav"));
-			searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy((By.linkText("高级检索"))));
+			WebElement searchElement = webDriverIn.findElement(By.linkText("高级检索"));
+			searchElement.click();
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
 		}
 		Thread.sleep(1000);
