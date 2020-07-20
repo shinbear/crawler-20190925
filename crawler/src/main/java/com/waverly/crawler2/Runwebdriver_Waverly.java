@@ -112,7 +112,7 @@ public class Runwebdriver_Waverly {
 
 		// get advanced page URL
 		getaBlankPage();
-		getAdvancedPage();
+		getAdvancedPage2();
 
 		// Run search
 		runSearch();
@@ -1384,6 +1384,77 @@ public class Runwebdriver_Waverly {
 		WebElement searchElement = webDriverIn.findElement(By.cssSelector("ul.searchtype-nav"));
 		searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
+		Thread.sleep(1000);
+	}
+
+	public static void getAdvancedPage2() throws InterruptedException {
+		// lanunch the webdriver
+		// webDriver.get(URL);
+		URL = "http://stpaper.cn/knowledgePush/emeb/database.htm";
+		webDriverIn.get(URL);
+
+		// Waiting for element for 30 seconds
+		WebDriverWait wait = new WebDriverWait(webDriverIn, 30);
+
+		// Input the query condition Thread.sleep(3000);
+		ArrayList<String> tabs;
+		tabs = new ArrayList<String>(webDriverIn.getWindowHandles());
+		if (tabs.size() > 1) {
+			for (int a = tabs.size(); a > 1; a--) {
+				webDriverIn.switchTo().window(tabs.get(a - 1));
+				Thread.sleep(500);
+				webDriverIn.close();
+			}
+			webDriverIn.switchTo().window(tabs.get(0));
+			;
+		}
+		tabs = null;
+
+		// Get Wos link
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("[alt=\"Web of Science\"]")));
+		WebElement wosLink = webDriverIn.findElement(By.cssSelector("[alt=\"Web of Science\"]"));
+		wosLink.click();
+
+		// Close the first page
+		Thread.sleep(3000);
+		tabs = new ArrayList<String>(webDriverIn.getWindowHandles());
+		webDriverIn.switchTo().window(tabs.get(0));
+		webDriverIn.close();
+		// Access the wos link page
+		tabs = new ArrayList<String>(webDriverIn.getWindowHandles());
+		webDriverIn.switchTo().window(tabs.get(0));
+		// waiting for access wos login page
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy((By.linkText("中国科技网通行证"))));
+		// Access login iframe
+		webDriverIn.switchTo().frame("Frame_test");
+		// login
+		WebElement woslogin = webDriverIn.findElement(By.cssSelector("#userName"));
+		woslogin.clear();
+		woslogin.sendKeys("wangan16@mails.ucas.edu.cn");
+		WebElement wospassword = webDriverIn.findElement(By.cssSelector("#password"));
+		wospassword.clear();
+		wospassword.sendKeys("ucas2005");
+		webDriverIn.findElement(By.cssSelector("[value=\"登录\"]")).click();
+		// confirm to proceeding wos
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#submmitBtn")));
+		Thread.sleep(2000);
+		webDriverIn.findElement(By.cssSelector(".loginBtn")).click();
+
+		// get into wos
+		try {
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("ul.searchtype-nav")));
+			WebElement searchElement = webDriverIn.findElement(By.cssSelector("ul.searchtype-nav"));
+			searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			String wosURL = webDriverIn.getCurrentUrl();
+			webDriverIn.get(wosURL);
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("ul.searchtype-nav")));
+			WebElement searchElement = webDriverIn.findElement(By.cssSelector("ul.searchtype-nav"));
+			searchElement.findElements(By.cssSelector(".searchtype-sub-nav__list-item")).get(3).click();
+			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
+		}
 		Thread.sleep(1000);
 	}
 
