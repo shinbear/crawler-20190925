@@ -99,10 +99,11 @@ public class Runwebdriver {
 		rowidIn = (Integer) recordlist.get(1);
 		readExcel(sheetIn, rowidIn);
 		detailRowidIn = (Integer) recordlist.get(2);
-
-		// webDriverIn = (WebDriver) recordlist.get(3);
-		startPageNumIn = (Integer) recordlist.get(4);
 		runStatus = (Integer) recordlist.get(5);
+		if (runStatus == 1) {
+			webDriverIn = (WebDriver) recordlist.get(3);
+		}
+		startPageNumIn = (Integer) recordlist.get(4);
 		writerIn = (PrintWriter) recordlist.get(6);
 
 		// Show the progress
@@ -110,18 +111,22 @@ public class Runwebdriver {
 		Thread thread1 = new Thread(dataProgress);
 		thread1.start();
 
-		// get advanced page URL
-		getaBlankPage();
-		getAdvancedPage2();
-
+		if (runStatus != 1) {
+			// get advanced page URL
+			getaBlankPage();
+			getAdvancedPage2();
+		}
 		// Run search
 		runSearch();
-		webDriverIn.quit();
-
+		if (runStatus != 1) {
+			webDriverIn.quit();
+		}
 		// 异常退出杀死chromedriver和chrome浏览器！
 		try {
-			command("taskkill /F /im " + "chromedriver.exe");
-			command("taskkill /F /im " + "chrome.exe");
+			if (runStatus != 1) {
+				command("taskkill /F /im " + "chromedriver.exe");
+				command("taskkill /F /im " + "chrome.exe");
+			}
 			command("taskkill /F /im " + "RuntimeBroker.exe");
 			command("taskkill /F /im " + "GoogleCrashHandler.exe");
 			command("taskkill /F /im " + "GoogleCrashHandler64.exe");
@@ -137,7 +142,11 @@ public class Runwebdriver {
 		recordlist.add(sheetIn);
 		recordlist.add(rowidIn);
 		recordlist.add(detailRowidIn);
-		recordlist.add("webDriverTemp");
+		if (runStatus != 1) {
+			recordlist.add("webDriverTemp");
+		} else {
+			recordlist.add(webDriverIn);
+		}
 		recordlist.add(startPageNumIn);
 		recordlist.add(runStatus);
 		recordlist.add(writerIn);
@@ -553,6 +562,7 @@ public class Runwebdriver {
 					if (pageRowID < specRow) {
 						continue;
 					}
+					specRow = 1;
 					try {
 						tabs = new ArrayList<String>(webDriver.getWindowHandles());
 						if (tabs.size() > 1) {
@@ -590,9 +600,8 @@ public class Runwebdriver {
 
 						/*
 						 * author List<WebElement> authorItem =
-						 * tc.get(1).findElements(By.cssSelector("a[title]"));
-						 * for (WebElement tAu : authorItem) { Result[1] =
-						 * Result[1] + ";" + tAu.getText(); } Result[1] =
+						 * tc.get(1).findElements(By.cssSelector("a[title]")); for (WebElement tAu :
+						 * authorItem) { Result[1] = Result[1] + ";" + tAu.getText(); } Result[1] =
 						 * Result[1].substring(1);
 						 */
 
@@ -693,8 +702,7 @@ public class Runwebdriver {
 							/*
 							 * temporal change wait.until(ExpectedConditions.
 							 * presenceOfAllElementsLocatedBy( By.xpath(
-							 * "//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value"
-							 * )));
+							 * "//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value" )));
 							 */
 							wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".title")));
 
@@ -888,8 +896,7 @@ public class Runwebdriver {
 			/*
 			 * temporal change wait.until(ExpectedConditions.
 			 * presenceOfAllElementsLocatedBy( By.xpath(
-			 * "//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value"
-			 * )));
+			 * "//*[@id='records_form']/div/div/div/div[1]/div/div[1]/value" )));
 			 */
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".title")));
 

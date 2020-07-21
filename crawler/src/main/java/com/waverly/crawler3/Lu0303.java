@@ -91,8 +91,8 @@ public class Lu0303 {
 	// Restore the current download info into a arraylist
 	public static ArrayList<Object> recordlist = new ArrayList<Object>();
 	/*
-	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID,
-	 * Job Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
+	 * store the page data Easy Apply, Assoc. Position ID, Dice ID Position ID, Job
+	 * Title, Employer, Job Description Location, Posted Keyword1, Keyword2,
 	 * Keyword3, Keyword4, comlink posiCount, companyOverview, companyWebsite,
 	 * quickFacts, easyApply2
 	 */
@@ -118,8 +118,8 @@ public class Lu0303 {
 
 			// Show the progress
 			/*
-			 * dataProgress = new ReadProgress(); dataProgress.setVisible(true);
-			 * Thread thread1 = new Thread(dataProgress); thread1.start();
+			 * dataProgress = new ReadProgress(); dataProgress.setVisible(true); Thread
+			 * thread1 = new Thread(dataProgress); thread1.start();
 			 */
 
 			try {
@@ -190,8 +190,11 @@ public class Lu0303 {
 				recordlist.add(sheet);
 				recordlist.add(rowid);
 				recordlist.add(detailRowid);
-				// recordlist.add(webDriver);
-				recordlist.add("webDriverTemp");
+				if (runStatus != 1) {
+					recordlist.add("webDriverTemp");
+				} else {
+					recordlist.add(webDriver);
+				}
 				recordlist.add(startPageNum);
 				// insert the status code into arraylist
 				// 0 is the first run, 1 is the normal run, 2 is exception
@@ -208,9 +211,11 @@ public class Lu0303 {
 					sheet = (Sheet) recordlist.get(0);
 					rowid = (Integer) recordlist.get(1);
 					detailRowid = (Integer) recordlist.get(2);
-					// webDriver = (WebDriver) recordlist.get(3);
 					startPageNum = (Integer) recordlist.get(4);
 					runStatus = (Integer) recordlist.get(5);
+					if (runStatus == 1) {
+						webDriver = (WebDriver) recordlist.get(3);
+					}
 					writer = (PrintWriter) recordlist.get(6);
 
 				} while (runflag == 2);
@@ -255,8 +260,8 @@ public class Lu0303 {
 		panel.add(recordFrom);
 		panel.add(new JLabel("To:"));
 		panel.add(recordTo);
-		panel.add(new JLabel("Start Page:"));
-		panel.add(startPage);
+		//panel.add(new JLabel("Start Page:"));
+		//panel.add(startPage);
 
 		int result = JOptionPane.showConfirmDialog(null, panel, "web of science - Search Criteria", 2, -1);
 		if (result == 0) {
