@@ -1479,7 +1479,7 @@ public class Runwebdriver_QBOne {
 		woslogin.sendKeys("wangan16@mails.ucas.edu.cn");
 		WebElement wospassword = webDriverIn.findElement(By.cssSelector("#password"));
 		wospassword.clear();
-		wospassword.sendKeys("ucas2005");
+		wospassword.sendKeys("Ucas202009@");
 		webDriverIn.findElement(By.cssSelector("[value=\"登录\"]")).click();
 		// confirm to proceeding wos
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#submmitBtn")));
