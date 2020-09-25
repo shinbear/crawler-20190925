@@ -16,6 +16,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -233,6 +234,48 @@ public class Runwebdriver {
 			// Waiting for element for 10 seconds
 			WebDriverWait wait = new WebDriverWait(webDriver, 30);
 			wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[@id=\"value(input1)\"]")));
+			
+			if (isFirstSearch) {
+				try {
+					Thread.sleep(3000);				
+					webDriver.findElement(By.cssSelector(".select2-selection__arrow")).click();
+					Actions action = new Actions(webDriver);
+					action.sendKeys(Keys.DOWN).perform(); 
+					action.sendKeys(Keys.ENTER).perform(); 		
+					
+					// get into wos
+					try {
+						wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy((By.linkText("高级检索"))));
+						WebElement searchElement = webDriverIn.findElement(By.linkText("高级检索"));
+						searchElement.click();
+						wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						String wosURL = webDriverIn.getCurrentUrl();
+						webDriverIn.get(wosURL);
+						wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy((By.linkText("高级检索"))));
+						WebElement searchElement = webDriverIn.findElement(By.linkText("高级检索"));
+						searchElement.click();
+						wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".AdvSearchBox")));
+					}
+					Thread.sleep(1000);
+					
+					// Select the article and language
+					// Input the language
+					Select select_language = new Select(webDriver.findElement(By.xpath("//*[@id='value(input2)']")));
+					// deselect all option
+					select_language.deselectAll();
+					select_language.selectByIndex(1);
+
+					// Input the article
+					Select select_article = new Select(webDriver.findElement(By.xpath("//*[@id='value(input3)']")));
+					// deselect all option
+					select_article.deselectAll();
+					select_article.selectByIndex(1);
+					isFirstSearch = false;
+				} catch (Exception e1) {
+				}
+			}
 
 			// Input the author
 			String searchQuery = search_list;
@@ -264,24 +307,7 @@ public class Runwebdriver {
 			yearTo.sendKeys(time_to);
 			yearTo.sendKeys(Keys.ENTER);
 
-			if (isFirstSearch) {
-				try {
-					Thread.sleep(3000);
-					// Input the language
-					Select select_language = new Select(webDriver.findElement(By.xpath("//*[@id='value(input2)']")));
-					// deselect all option
-					select_language.deselectAll();
-					select_language.selectByIndex(0);
 
-					// Input the article
-					Select select_article = new Select(webDriver.findElement(By.xpath("//*[@id='value(input3)']")));
-					// deselect all option
-					select_article.deselectAll();
-					select_article.selectByIndex(1);
-					isFirstSearch = false;
-				} catch (Exception e1) {
-				}
-			}
 
 			try {
 				String searchSetNumStr = webDriver.findElements(By.cssSelector(".historySetNum")).get(0).getText();
