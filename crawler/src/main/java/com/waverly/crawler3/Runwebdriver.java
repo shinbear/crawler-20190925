@@ -240,6 +240,7 @@ public class Runwebdriver {
 				try {
 					Thread.sleep(3000);
 					webDriver.findElement(By.cssSelector(".select2-selection__arrow")).click();
+					//keyboard down to option of wos
 					Actions action = new Actions(webDriver);
 					action.sendKeys(Keys.DOWN).perform();
 					action.sendKeys(Keys.ENTER).perform();
