@@ -1466,7 +1466,7 @@ public class Runwebdriver {
 		woslogin.sendKeys("luxiaoyang18@mails.ucas.ac.cn");
 		WebElement wospassword = webDriverIn.findElement(By.cssSelector("#password"));
 		wospassword.clear();
-		wospassword.sendKeys("567110lxy1127");
+		wospassword.sendKeys("567110Lxy*/1127");
 		webDriverIn.findElement(By.cssSelector("[value=\"登录\"]")).click();
 		// confirm to proceeding wos
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#submmitBtn")));
