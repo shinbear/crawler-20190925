@@ -1457,8 +1457,8 @@ public class Runwebdriver_QBOne {
 		tabs = null;
 
 		// Get Wos link
-		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("[alt=\"Web of Science\"]")));
-		WebElement wosLink = webDriverIn.findElement(By.cssSelector("[alt=\"Web of Science\"]"));
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("[src=\"https://file.scholarin.cn/files?fastdfspath=group1/M00/08/DA/CgMLDl7Z8mOAToh6AAAOiHdXcT00991533\"]")));
+		WebElement wosLink = webDriverIn.findElement(By.cssSelector("[src=\"https://file.scholarin.cn/files?fastdfspath=group1/M00/08/DA/CgMLDl7Z8mOAToh6AAAOiHdXcT00991533\"]"));
 		wosLink.click();
 
 		// Close the first page
